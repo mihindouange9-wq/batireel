@@ -12,7 +12,7 @@ const fontUrl = (p) => "file:///" + path.join(root, "node_modules", p).replace(/
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME ?? "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: "new" });
 const page = await browser.newPage();
 
-// ── icônes : le repère sur tuile graphite
+// ── icônes : le monogramme sur tuile graphite (public/favicon.svg)
 await page.goto("about:blank");
 for (const [size, name] of [[32, "favicon-32.png"], [180, "apple-touch-icon.png"]]) {
   const data = await page.evaluate(async (svg, size) => {
@@ -29,8 +29,8 @@ for (const [size, name] of [[32, "favicon-32.png"], [180, "apple-touch-icon.png"
   console.log("écrit public/" + name);
 }
 
-// ── image de partage : titre, lignes de plan, repère, dans les polices du site
-const mark = `<svg width="46" height="46" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="30" stroke="#FCFBF7" stroke-width="7"/><g stroke="#FCFBF7" stroke-width="7" stroke-linecap="square"><path d="M50 6V26"/><path d="M50 74V94"/><path d="M6 50H26"/><path d="M74 50H94"/></g><circle cx="50" cy="50" r="7" fill="#B86F45"/></svg>`;
+// ── image de partage : titre, lignes de plan, monogramme, dans les polices du site
+const mark = `<svg width="26" height="32" viewBox="14 10 65 80"><path fill="#FCFBF7" fill-rule="evenodd" d="M14 10H55A19 19 0 0 1 55 48H58A21 21 0 0 1 58 90H14Z M34 24H52V41H34Z M34 55H56V76H34Z"/><rect x="34" y="55" width="22" height="21" fill="#B86F45"/></svg>`;
 const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8">
 <style>
 @font-face{font-family:"Barlow";src:url("${fontUrl("@fontsource/barlow-condensed/files/barlow-condensed-latin-800-normal.woff2")}") format("woff2");font-weight:800;}
@@ -38,8 +38,9 @@ const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8">
 html,body{margin:0;width:1200px;height:630px;background:#191B19;color:#FCFBF7;font-family:"Manrope",sans-serif;overflow:hidden}
 .wrap{position:relative;width:1200px;height:630px;padding:60px 80px 56px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between}
 .top{display:flex;justify-content:space-between;align-items:center}
-.logo{display:flex;align-items:center;gap:16px;font-family:"Barlow";font-weight:800;font-size:40px;letter-spacing:.08em;text-transform:uppercase}
+.logo{display:flex;align-items:center;gap:16px;font-family:"Barlow";font-weight:800;font-size:46px;letter-spacing:.06em;text-transform:uppercase;line-height:1}
 .logo b{color:#D08C62;font-weight:800}
+.badge{display:grid;place-items:center;width:42px;height:42px;box-shadow:inset 0 0 0 1px rgba(252,251,247,.3);background:rgba(252,251,247,.04)}
 .tag{font-size:15px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#A5A39A;white-space:nowrap}
 h1{margin:0;font-family:"Barlow";font-weight:800;font-size:118px;line-height:.9;letter-spacing:-.01em;text-transform:uppercase}
 h1 span{display:block;color:#F0EDE4;margin-left:60px;opacity:.92}
@@ -48,7 +49,7 @@ svg.lines{position:absolute;inset:0;width:1200px;height:630px}
 svg.lines path{fill:none;stroke-width:1.5;vector-effect:non-scaling-stroke}
 </style></head><body><div class="wrap">
 <svg class="lines" viewBox="0 0 1200 630"><path d="M0 108H1200" stroke="rgba(252,251,247,.12)"/><path d="M0 522H1200" stroke="rgba(252,251,247,.12)"/><path d="M860 0V630" stroke="rgba(252,251,247,.12)"/><path d="M900 420H1120M900 410V430M1120 410V430" stroke="#D08C62"/><path d="M1150 150V330M1140 150H1160M1140 330H1160" stroke="#D08C62"/></svg>
-<div class="top"><div class="logo">${mark}<span>BATIR<b>É</b>EL</span></div><span class="tag">Mise en relation · devis · suivi de chantier · Gabon</span></div>
+<div class="top"><div class="logo"><span class="badge">${mark}</span><span>BATIR<b>É</b>EL</span></div><span class="tag">Mise en relation · devis · suivi de chantier · Gabon</span></div>
 <div><h1>Le chantier.<span>Sans zone grise.</span></h1></div>
 <p>Comparez les devis. Choisissez les bons professionnels. Suivez l'avancement de vos travaux en toute transparence.</p>
 </div></body></html>`;

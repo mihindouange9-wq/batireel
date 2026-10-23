@@ -2,7 +2,7 @@ import { Logo, LogoMark } from "../brand/Logo";
 import { FOOTER, NAV, NAV_CTA, SITE } from "../content/site";
 import "./footer.css";
 
-/* Pied de page : les lignes du plan convergent vers le repère, puis la navigation, les contacts à
+/* Pied de page : les lignes du plan convergent vers le monogramme, puis la navigation, les contacts à
    compléter et les mentions à prévoir. Sobre, architectural. */
 export default function Footer() {
   const email = SITE.contact.email.trim();
@@ -19,13 +19,13 @@ export default function Footer() {
           <path data-stroke d="M600 0V200" />
         </svg>
         <span className="footer__mark">
-          <LogoMark size={64} />
+          <LogoMark size={46} />
         </span>
       </div>
       <div className="container">
         <div className="footer__top">
           <div className="footer__brand">
-            <Logo size={28} tone="dark" />
+            <Logo size={24} tone="dark" />
             <p className="footer__mission">{FOOTER.mission}</p>
             <p className="footer__note">{FOOTER.nameNote}</p>
           </div>

@@ -3,7 +3,7 @@
   background: var(--graphite-deep);
 }
 
-/* la structure se referme : les lignes convergent vers le repère */
+/* la structure se referme : les lignes convergent vers le monogramme, posé sur une plaque carrée */
 .footer__close {
   position: relative;
   height: clamp(180px, 22vw, 260px);
@@ -38,7 +38,6 @@
   width: 96px;
   height: 96px;
   margin-bottom: -48px;
-  border-radius: 50%;
   background: var(--graphite-deep);
   color: var(--blanc);
   box-shadow: inset 0 0 0 1px var(--line-dark-strong);

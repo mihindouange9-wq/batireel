@@ -316,7 +316,7 @@ Les halos de cuivre (`radial-gradient` à 8–12 % d'opacité dans le hero, les 
 
 Angles vifs partout : aucun `border-radius` sur les boutons, les feuilles, les tampons, les cadres, les cases à cocher (22 px, bord 1 px). Les seuls cercles sont des repères : le point du logo, la puce de 7 px des statuts, les repères de 12 px sur le rail du Passeport, le nœud de contact de 14 px, le séparateur du texte monumental, le disque de 96 px du pied de page.
 
-Le trait fait 1 px (filets, bords, cadres) ou 1,5 px (flèche des boutons, anneau du statut « déclaré ») ; 2 px pour le rail et les repères actifs ; les dessins SVG utilisent `vector-effect: non-scaling-stroke` à 0,9–1,6 d'épaisseur. Les feuilles claires sont des polygones coupés en biais ; les photographies apparaissent par `clip-path: inset()` qui s'ouvre de gauche à droite. Le favicon pose le repère sur un carré graphite à coins de 12 px : c'est la seule concession au rayon, imposée par le format d'icône.
+Le trait fait 1 px (filets, bords, cadres) ou 1,5 px (flèche des boutons, anneau du statut « déclaré ») ; 2 px pour le rail et les repères actifs ; les dessins SVG utilisent `vector-effect: non-scaling-stroke` à 0,9–1,6 d'épaisseur. Les feuilles claires sont des polygones coupés en biais ; les photographies apparaissent par `clip-path: inset()` qui s'ouvre de gauche à droite. Le favicon pose le monogramme sur un carré graphite à coins de 12 px : c'est la seule concession au rayon, imposée par le format d'icône.
 
 ## Components
 
@@ -361,7 +361,7 @@ Bloc-titre de feuille en bas de chaque section : filet 1 px au-dessus, 14 px de 
 `.cote` : annotation 0.8125rem 600 espacée 0.16em capitales, pierre (encre-3 sur craie), trait de 22 px devant (absent en `--plain`), insécable sauf sous 480 px. `.plan-note` : 0.9rem, 40 ch max, trait cuivre de 16 px en marge gauche.
 
 ### Logo (signature)
-Repère de chantier : cercle de rayon 30 (trait 7, viewBox 100), quatre graduations carrées, point cuivre de rayon 7. Tracé blanc chantier sur graphite (`logo--dark`), graphite sur craie (`logo--light`). Mot BATIR·É·EL en Barlow Condensed 700, 1,08 × la taille du repère, espacé 0.08em, le É en cuivre clair (profond sur craie), seule couleur du mot. Le favicon le pose sur un carré graphite ; l'image Open Graph (1200 × 630) reprend graphite, blanc chantier, cuivre clair et lignes à 12 %.
+Monogramme « B bâti » : lettre massive (viewBox 14 10 65 80, fût de 20, barres de 14), deux bols en demi-cercle, deux contre-formes rectangulaires comme des ouvertures ; la contre-forme basse (22 × 21) est remplie de cuivre, l'étape validée. Lettre blanc chantier sur graphite (`logo--dark`), graphite sur craie (`logo--light`). Dans le bloc-marque, le monogramme (0,94 × la taille) est posé sur une plaque carrée de 1,3 × la taille, filetée à 1 px, comme la plaque du pied de page et la tuile du favicon. Mot BATIR·É·EL en Barlow Condensed 800, capitales à la hauteur du monogramme (1,43 × la taille), espacé 0.06em, le É en cuivre clair (profond sur craie), seule couleur du mot. Le favicon le pose sur un carré graphite ; l'image Open Graph (1200 × 630) reprend graphite, blanc chantier, cuivre clair et lignes à 12 %.
 
 ### Pièces de plan (signature)
 - **PlanDivider** : filet et graduations SVG qui se tracent entre deux feuilles, étiquette `.cote` à droite sur le fond de la section.

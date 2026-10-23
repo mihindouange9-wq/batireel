@@ -194,7 +194,7 @@
       "name": "Logo",
       "kind": "custom",
       "refersTo": "cartouche",
-      "description": "Repère de chantier (cercle, quatre graduations, point cuivre) et mot BATIRÉEL en Barlow Condensed, le É en cuivre.",
+      "description": "Monogramme « B bâti » (lettre massive, bols arrondis, contre-formes carrées, fenêtre basse en cuivre) et mot BATIRÉEL en Barlow Condensed 800, le É en cuivre.",
       "html": "<span class=\"ds-logo\" role=\"img\" aria-label=\"BATIRÉEL\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 100 100\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"30\" stroke=\"currentColor\" stroke-width=\"7\"/><g stroke=\"currentColor\" stroke-width=\"7\" stroke-linecap=\"square\"><path d=\"M50 6V26\"/><path d=\"M50 74V94\"/><path d=\"M6 50H26\"/><path d=\"M74 50H94\"/></g><circle cx=\"50\" cy=\"50\" r=\"7\" fill=\"#b86f45\"/></svg><span class=\"ds-logo-word\" aria-hidden=\"true\">BATIR<span class=\"ds-logo-accent\">É</span>EL</span></span>",
       "css": ".ds-logo { display: inline-flex; align-items: center; gap: 12px; line-height: 1; padding: 16px; background: var(--graphite, #191b19); color: var(--blanc, #fcfbf7); } .ds-logo-word { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 0.08em; text-transform: uppercase; transform: translateY(0.03em); } .ds-logo-accent { color: var(--cuivre-light, #d08c62); }"
     }

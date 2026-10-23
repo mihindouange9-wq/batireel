@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion, prepareStrokes } from "../lib/motion";
+import { MARK_PATH, MARK_WINDOW } from "../brand/Logo";
 import "./intro.css";
 
 const KEY = "batireel-intro";
@@ -18,7 +19,7 @@ export function introPending() {
 }
 
 /* Introduction cinématographique, brève et non bloquante : des lignes de construction se tracent, deux
-   cotes s'affichent, le repère se pose, puis le calque s'efface et le hero se met en place. Un clic ou
+   cotes s'affichent, le monogramme se trace et sa fenêtre s'allume, puis le calque s'efface et le hero se met en place. Un clic ou
    Échap la passe ; elle ne se rejoue pas dans la session. Durée totale : moins de trois secondes. */
 export default function Intro() {
   const [state, setState] = useState<"playing" | "done">(() => (introPending() ? "playing" : "done"));
@@ -50,14 +51,15 @@ export default function Intro() {
     const q = (s: string) => Array.from(el.querySelectorAll<SVGElement>(s));
     const strokes = q("[data-stroke]");
     prepareStrokes(strokes);
-    gsap.set(q("[data-pop]"), { autoAlpha: 0 });
+    gsap.set(q("[data-pop], .intro__window"), { autoAlpha: 0 });
     const tl = gsap.timeline({ onComplete: finish });
     tl.to(q(".intro__grid"), { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut", stagger: 0.04 }, 0)
       .to(q(".intro__wall"), { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut", stagger: 0.12 }, 0.35)
       .to(q(".intro__cote"), { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut", stagger: 0.1 }, 0.9)
       .to(q("[data-pop]"), { autoAlpha: 1, duration: 0.35, stagger: 0.07 }, 1.15)
-      .to(q(".intro__mark"), { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut" }, 1.3)
-      .to({}, { duration: 0.5 });
+      .to(q(".intro__mark"), { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, 1.3)
+      .to(q(".intro__window"), { autoAlpha: 1, duration: 0.3, ease: "power2.out" }, 1.8)
+      .to({}, { duration: 0.35 });
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && finish();
     window.addEventListener("keydown", onKey);
     return () => {
@@ -105,11 +107,10 @@ export default function Intro() {
             B
           </text>
         </g>
-        {/* le repère se pose au centre */}
-        <g className="intro__repere" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle className="intro__mark" data-stroke cx="600" cy="400" r="26" />
-          <path className="intro__mark" data-stroke d="M600 358V380M600 420V442M558 400H580M620 400H642" />
-          <circle data-pop cx="600" cy="400" r="5" fill="var(--cuivre)" stroke="none" />
+        {/* le monogramme se trace au centre, sa fenêtre s'allume */}
+        <g className="intro__repere" fill="none" stroke="currentColor" strokeWidth="2" transform="translate(544 340) scale(1.2)">
+          <path className="intro__mark" data-stroke d={MARK_PATH} />
+          <rect className="intro__window" x={MARK_WINDOW.x} y={MARK_WINDOW.y} width={MARK_WINDOW.width} height={MARK_WINDOW.height} fill="var(--cuivre)" stroke="none" />
         </g>
       </svg>
       <p className="intro__skip cote cote--plain">Cliquer ou Échap pour passer</p>

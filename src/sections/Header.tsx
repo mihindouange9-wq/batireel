@@ -35,7 +35,7 @@ export default function Header() {
     <header className={`header ${compact ? "is-compact" : ""} ${open ? "is-open" : ""}`}>
       <div className="header__bar">
         <a className="header__logo" href="#top" aria-label="BATIRÉEL, retour en haut de page">
-          <Logo size={26} tone="dark" />
+          <Logo size={22} tone="dark" />
         </a>
         <nav className="header__nav" aria-label="Navigation principale">
           {NAV.map((item) => (
