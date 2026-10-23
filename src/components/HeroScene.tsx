@@ -20,6 +20,9 @@ export type SceneDrive = {
   active: boolean;
 };
 
+/** Mode film : l'instant du cycle est imposé de l'extérieur (tools/video-render.mjs place la tête de lecture). */
+export type FilmDrive = { time: number };
+
 const GRAPHITE = "#191b19";
 const CUIVRE = "#b86f45";
 
@@ -238,10 +241,11 @@ function Villa({ m, lite }: { m: Mats; lite: boolean }) {
 }
 
 /* ---- la caméra, le pointeur, l'horloge du chantier ---- */
-function Driver({ drive, clock, children }: { drive: MutableRefObject<SceneDrive>; clock: MutableRefObject<number>; children: ReactNode }) {
+function Driver({ drive, clock, film, onReady, children }: { drive: MutableRefObject<SceneDrive>; clock: MutableRefObject<number>; film?: MutableRefObject<FilmDrive>; onReady?: () => void; children: ReactNode }) {
   const group = useRef<THREE.Group>(null);
   const rot = useRef({ x: 0, y: 0 });
   const ready = useRef(false);
+  const lastFilm = useRef(NaN);
   const { gl, scene, camera, advance } = useThree();
 
   // les programmes se compilent en parallèle (KHR_parallel_shader_compile) avant la première image,
@@ -252,10 +256,22 @@ function Driver({ drive, clock, children }: { drive: MutableRefObject<SceneDrive
     gl.compileAsync(scene, camera)
       .catch(() => undefined)
       .then(() => {
-        if (!cancelled) ready.current = true;
+        if (cancelled) return;
+        ready.current = true;
+        onReady?.();
       });
     const loop = (now: number) => {
-      if (ready.current && drive.current.active) advance(now);
+      if (ready.current && drive.current.active) {
+        // en mode film, une seule image par instant demandé : le rendu logiciel est lent
+        if (film) {
+          if (film.current.time !== lastFilm.current) {
+            lastFilm.current = film.current.time;
+            advance(now);
+          }
+        } else {
+          advance(now);
+        }
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -263,12 +279,16 @@ function Driver({ drive, clock, children }: { drive: MutableRefObject<SceneDrive
       cancelled = true;
       cancelAnimationFrame(raf);
     };
-  }, [drive, advance, gl, scene, camera]);
+  }, [drive, advance, gl, scene, camera, onReady, film]);
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.25);
-    clock.current += dt;
-    if (clock.current >= CYCLE) clock.current -= CYCLE;
+    if (film) {
+      clock.current = film.current.time;
+    } else {
+      clock.current += dt;
+      if (clock.current >= CYCLE) clock.current -= CYCLE;
+    }
 
     const d = drive.current;
     if (group.current) {
@@ -281,7 +301,8 @@ function Driver({ drive, clock, children }: { drive: MutableRefObject<SceneDrive
     const cam = state.camera;
     const s = d.scroll;
     const target = new THREE.Vector3(23 - s * 5.5, 9.8 - s * 3.6, 25 - s * 6.5);
-    cam.position.lerp(target, Math.min(1, dt * 2.4));
+    if (film) cam.position.copy(target);
+    else cam.position.lerp(target, Math.min(1, dt * 2.4));
     cam.lookAt(-1.3 + s * 1.0, 3.0 + s * 0.8, 0.4);
   });
 
@@ -393,7 +414,7 @@ function useMaterials(): Mats {
   }, [bitmaps]);
 }
 
-export default function HeroScene({ drive, lite }: { drive: MutableRefObject<SceneDrive>; lite: boolean }) {
+export default function HeroScene({ drive, lite, film, onReady }: { drive: MutableRefObject<SceneDrive>; lite: boolean; film?: MutableRefObject<FilmDrive>; onReady?: () => void }) {
   const m = useMaterials();
   // le chantier commence une fois l'introduction passée, puis boucle
   const clock = useRef(typeof document !== "undefined" && document.documentElement.classList.contains("intro-active") ? -2.6 : -0.4);
@@ -429,7 +450,7 @@ export default function HeroScene({ drive, lite }: { drive: MutableRefObject<Sce
       />
       <directionalLight position={[-10, 6, -8]} intensity={0.45} color="#9db0c4" />
       <ClockCtx.Provider value={clock}>
-        <Driver drive={drive} clock={clock}>
+        <Driver drive={drive} clock={clock} film={film} onReady={onReady}>
           {/* le terrain */}
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} material={m.sol} receiveShadow>
             <planeGeometry args={[90, 90]} />

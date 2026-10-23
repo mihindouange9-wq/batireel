@@ -14,7 +14,7 @@ npm run verify     # contrôles automatisés sur la prévisualisation (tools/che
 
 Node 22 (fichier `.node-version`). Pile : Vite 6, React 19, TypeScript, CSS natif, GSAP (ScrollTrigger), Lenis (défilement à inertie), Three.js avec React Three Fiber (scène du hero, chargée à la demande sur les écrans non tactiles), Lucide, polices Barlow Condensed et Manrope auto-hébergées (fontsource). Aucun backend, aucun service tiers, aucune donnée collectée.
 
-`?nointro` dans l'adresse saute l'introduction (utile pour les tests) ; `?no3d` remplace la scène 3D par le dessin axonométrique. La scène 3D est chargée après le premier rendu, quand le navigateur est libre, et seulement sur les écrans non tactiles.
+`?nointro` dans l'adresse saute l'introduction (utile pour les tests) ; `?no3d` remplace la scène 3D par le dessin axonométrique ; `?scene` affiche la scène du film de présentation (1920 × 1080), pilotée image par image par `tools/video-render.mjs`. La scène 3D est chargée après le premier rendu, quand le navigateur est libre, et seulement sur les écrans non tactiles.
 
 ## Ce que le site contient
 
@@ -31,6 +31,10 @@ Node 22 (fichier `.node-version`). Pile : Vite 6, React 19, TypeScript, CSS nati
 - **Pied de page** : les lignes du plan convergent vers le monogramme ; navigation, contacts à compléter, mentions à prévoir, collaboration MÉTHODE AURA.
 
 Chaque section porte un cartouche (numéro de feuille, titre, échelle), comme une feuille d'un dossier de plans.
+
+## Film de présentation
+
+`node tools/video-render.mjs` (la prévisualisation doit tourner) rend un film de 38 secondes en 1080p et 720p, H.264 + AAC, dans `public/film/` et `livrables/` : le monogramme se trace et se coule, la villa se monte sous le titre, les trois zones grises, le comparateur, le Passeport Chantier, un profil et ses preuves, la villa achevée avec la signature et le partenaire. La scène (`src/components/Scene.tsx`, `/?scene`) est une ligne de temps GSAP en pause : l'outil place la tête de lecture à chaque image, le chantier 3D reçoit son instant de l'extérieur, puis une seconde page Chrome encode (`video/encodeur.html`, WebCodecs, bande-son synthétisée). `--apercu` produit une planche-contact (`video/apercu.jpg`) sans encoder ; `--sans-mobile` saute le 720p. Le rendu 3D passe par SwiftShader : compter une vingtaine de minutes, et ne pas recompiler le site pendant le rendu.
 
 ## Palette et typographie
 
@@ -49,16 +53,18 @@ Palette imposée par le brief : Noir graphite `#191B19`, Craie minérale `#F0EDE
 ```
 index.html              métadonnées, Open Graph, icônes
 public/                 favicon.svg, favicon-32.png, apple-touch-icon.png, og-image.png (tools/build-brand.mjs),
-                        photos/*.webp (tools/fetch-photos.mjs), textures/*.webp (tools/fetch-textures.mjs), partenaires/ (logo MÉTHODE AURA)
+                        photos/*.webp (tools/fetch-photos.mjs), textures/*.webp (tools/fetch-textures.mjs), film/ (tools/video-render.mjs),
+                        partenaires/ (logo MÉTHODE AURA)
 src/content/site.ts     tous les textes publics (français), navigation, contact
 src/content/demo.ts     données fictives : devis, Passeport Chantier, profils
 src/brand/Logo.tsx      logo : le B sculpté (lettre massive en une couleur, bols en coussin, entaille fine, chanfreins de béton) + le mot
-src/components/         Intro (introduction), HeroScene (3D), HeroDrawing (dessin), Plan (cartouche, ligne de
+src/components/         Intro (introduction), HeroScene (3D), HeroDrawing (dessin), Scene (film), Plan (cartouche, ligne de
                         transition, révélation photographique, texte monumental, annotation)
 src/sections/           une section = un composant + sa feuille de style
 src/lib/motion.ts       Lenis, révélations (titres, blocs, tracés, filets), grammaire de mouvement
 src/styles/             tokens.css (palette, typographie, rythme) et global.css (base, boutons, statuts, cartouche)
-tools/                  build-brand.mjs, fetch-photos.mjs, fetch-textures.mjs, check.mjs, shoot.mjs, fullpage.mjs, render-deploy.mjs
+tools/                  build-brand.mjs, fetch-photos.mjs, fetch-textures.mjs, check.mjs, shoot.mjs, fullpage.mjs, render-deploy.mjs, video-render.mjs
+video/                  encodeur.html (WebCodecs, bande-son), mp4-muxer.js
 docs/                   credits-photos.md, credits-textures.md
 render.yaml             blueprint Render prêt, non déployé
 PRODUCT.md, DESIGN.md   contexte produit et système de design

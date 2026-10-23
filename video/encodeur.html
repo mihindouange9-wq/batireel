@@ -1,0 +1,116 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Encodeur BATIRÉEL</title>
+<script src="mp4-muxer.js"></script>
+<script>
+/* Encode les images capturées (frames/iNNNNN.png) en MP4 H.264 + AAC par WebCodecs. */
+
+/* Bande sonore minérale : une nappe grave et lente, des chocs sourds quand les dalles se posent,
+   des touches claires pour les étapes du Passeport, une respiration finale. Tout est synthétisé. */
+async function bandeSon(duree, reperes) {
+  const sr = 48000;
+  const ac = new OfflineAudioContext(2, Math.ceil(duree * sr), sr);
+  const master = ac.createGain(); master.gain.value = 0.9; master.connect(ac.destination);
+  const nappe = (t0, t1, notes, gain, fc) => {
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(gain, t0 + 1.8); g.gain.setValueAtTime(gain, t1 - 1.6); g.gain.linearRampToValueAtTime(0, t1);
+    const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(fc, t0); f.frequency.linearRampToValueAtTime(fc * 1.5, t1);
+    g.connect(f); f.connect(master);
+    notes.forEach((fr, i) => { for (const [type, det, k] of [['sine', 0, 1], ['triangle', 5, 0.3], ['sine', -4, 0.5]]) { const o = ac.createOscillator(); o.type = type; o.frequency.value = fr; o.detune.value = det + (i % 2 ? 2 : -2); const og = ac.createGain(); og.gain.value = k / notes.length; o.connect(og); og.connect(g); o.start(t0); o.stop(t1 + 0.1); } });
+  };
+  const note = (t, fr, gain = 0.1, dur = 1.4) => {
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = fr;
+    const o2 = ac.createOscillator(); o2.type = 'sine'; o2.frequency.value = fr * 2; const g2 = ac.createGain(); g2.gain.value = 0.22;
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master); o.start(t); o2.start(t); o.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
+  };
+  /* un choc sourd : une sinusoïde grave qui descend et un souffle bref, comme une dalle qui se pose */
+  const choc = (t, gain = 0.22) => {
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(92, t); o.frequency.exponentialRampToValueAtTime(38, t + 0.35);
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0006, t + 0.9);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 1);
+    const n = ac.createBuffer(1, Math.ceil(0.25 * sr), sr); const d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+    const s = ac.createBufferSource(); s.buffer = n; const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900;
+    const ng = ac.createGain(); ng.gain.value = gain * 0.5; s.connect(f); f.connect(ng); ng.connect(master); s.start(t);
+  };
+  const souffle = (t0, t1, gain = 0.04) => {
+    const n = ac.createBuffer(1, Math.ceil((t1 - t0) * sr), sr); const d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
+    const s = ac.createBufferSource(); s.buffer = n; const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(260, t0); f.frequency.exponentialRampToValueAtTime(2000, t1); f.Q.value = 0.7;
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(gain, t1 - 0.1); g.gain.linearRampToValueAtTime(0, t1);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t0); s.stop(t1);
+  };
+  /* Ré mineur → Si bémol majeur → Sol mineur → Fa majeur → Do majeur : calme, grave, sans résolution dramatique */
+  nappe(0.0, 5.2, [73.42, 110, 146.83, 220], 0.11, 420);
+  nappe(4.6, 13.8, [58.27, 116.54, 174.61, 233.08], 0.12, 480);
+  nappe(13.4, 24.8, [98, 146.83, 196, 293.66], 0.10, 560);
+  nappe(24.4, 33.6, [87.31, 130.81, 174.61, 261.63], 0.11, 640);
+  nappe(33.2, duree, [65.41, 130.81, 196, 261.63, 329.63], 0.12, 820);
+  /* plan 1 : le B se trace, puis se coule */
+  [0.5, 0.9, 1.3, 1.7].forEach((t, i) => note(t, [587.33, 659.25, 783.99, 880][i], 0.03, 0.9));
+  note(2.0, 293.66, 0.06, 1.8);
+  note(2.4, 1174.66, 0.04, 1.4);
+  /* plan 2 : les dalles se posent, les murs montent */
+  reperes.forEach((t) => choc(t));
+  souffle(6.6, 7.4, 0.03);
+  souffle(9.0, 9.8, 0.03);
+  note(12.3, 440, 0.05, 1.6); note(12.32, 659.25, 0.04, 1.6);
+  /* plan 3 : trois zones grises */
+  [14.5, 14.95, 15.4].forEach((t, i) => note(t, [392, 440, 523.25][i], 0.045, 1.1));
+  /* plan 4 : les lignes du comparateur, puis l'alerte */
+  [19.8, 20.2, 20.6, 21.0].forEach((t) => note(t, 1046.5, 0.022, 0.4));
+  note(21.8, 311.13, 0.05, 1.2);
+  note(22.4, 523.25, 0.05, 1.4);
+  /* plan 5 : les six étapes du Passeport */
+  [25.4, 25.82, 26.24, 26.66, 27.08, 27.5].forEach((t, i) => note(t, [523.25, 587.33, 659.25, 698.46, 783.99, 880][i], 0.04, 0.9));
+  /* plan 6 : les preuves, une à une */
+  [31.0, 31.3, 31.6, 31.9].forEach((t, i) => note(t, [659.25, 659.25, 523.25, 392][i], 0.035, 0.8));
+  /* plan 7 : la villa achevée, la signature, le partenaire */
+  note(33.4, 261.63, 0.07, 2.8); note(33.42, 392, 0.05, 2.8);
+  note(34.7, 523.25, 0.05, 2.2);
+  note(36.1, 659.25, 0.045, 2.0);
+  return await ac.startRendering();
+}
+
+window.encoder = async ({ dossier, total, ips, largeur, hauteur, debit, reperes }) => {
+  const vcfg = { codec: 'avc1.640028', width: largeur, height: hauteur, bitrate: debit, framerate: ips, bitrateMode: 'variable', latencyMode: 'quality', avc: { format: 'avc' } };
+  const acfg = { codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 160000 };
+  const vs = await VideoEncoder.isConfigSupported(vcfg);
+  const as = await AudioEncoder.isConfigSupported(acfg);
+  if (!vs.supported) throw new Error('H.264 non pris en charge');
+  const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: largeur, height: hauteur, frameRate: ips }, audio: as.supported ? { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 } : undefined, fastStart: 'in-memory', firstTimestampBehavior: 'offset' });
+  window.audio = as.supported;
+  if (as.supported) {
+    const son = await bandeSon(total / ips, reperes);
+    const aenc = new AudioEncoder({ output: (c, m) => muxer.addAudioChunk(c, m), error: (e) => { window.erreur = 'audio ' + e.message; } });
+    aenc.configure(acfg);
+    const L = son.getChannelData(0), R = son.getChannelData(1), N = 1024;
+    for (let i = 0; i < L.length; i += N) { const n = Math.min(N, L.length - i); const d = new Float32Array(n * 2); d.set(L.subarray(i, i + n), 0); d.set(R.subarray(i, i + n), n); const ad = new AudioData({ format: 'f32-planar', sampleRate: 48000, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round((i * 1e6) / 48000), data: d }); aenc.encode(ad); ad.close(); }
+    await aenc.flush();
+  }
+  const venc = new VideoEncoder({ output: (c, m) => muxer.addVideoChunk(c, m), error: (e) => { window.erreur = 'vidéo ' + e.message; } });
+  venc.configure(vcfg);
+  const canvas = new OffscreenCanvas(largeur, hauteur);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  window.erreur = '';
+  for (let i = 0; i < total; i++) {
+    const img = new Image();
+    img.src = dossier + '/i' + String(i).padStart(5, '0') + '.png';
+    await img.decode();
+    ctx.drawImage(img, 0, 0, largeur, hauteur);
+    const vf = new VideoFrame(canvas, { timestamp: Math.round((i * 1e6) / ips), duration: Math.round(1e6 / ips) });
+    venc.encode(vf, { keyFrame: i % (ips * 2) === 0 });
+    vf.close();
+    while (venc.encodeQueueSize > 6) await new Promise((r) => setTimeout(r, 4));
+    window.avancement = i + 1;
+  }
+  await venc.flush();
+  muxer.finalize();
+  const octets = new Uint8Array(muxer.target.buffer);
+  window.resultat = octets;
+  return octets.length;
+};
+/* lecture par tranches pour le transfert CDP */
+window.tranche = (debut, fin) => { const o = window.resultat.subarray(debut, fin); let s = ''; for (let i = 0; i < o.length; i += 32768) s += String.fromCharCode.apply(null, o.subarray(i, i + 32768)); return btoa(s); };
+window.pret = true;
+</script>

@@ -1,0 +1,470 @@
+/* ───────────── Scène du film de présentation (1920 × 1080) ───────────── */
+html.scene,
+html.scene body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--graphite);
+}
+
+.scene {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  color: var(--on-dark);
+  background:
+    radial-gradient(60% 55% at 72% 40%, rgb(184 111 69 / 0.1) 0%, transparent 70%),
+    linear-gradient(180deg, var(--graphite-deep) 0%, var(--graphite) 55%, var(--graphite-2) 100%);
+  font-family: var(--font-text);
+}
+
+/* aucune transition CSS dans la scène : chaque image est fixée par la ligne de temps */
+.scene *,
+.scene *::before,
+.scene *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+.scene__plan {
+  position: absolute;
+  inset: 0;
+}
+
+/* la scène 3D occupe la droite et s'estompe sous la colonne du titre, comme dans le hero */
+.scene__stage {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 1420px;
+  height: 1080px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.18) 22%, rgb(0 0 0 / 0.5) 44%, #000 62%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.18) 22%, rgb(0 0 0 / 0.5) 44%, #000 62%);
+}
+
+.scene__stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ---- plan 1 : le repère ---- */
+.scene__p1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+.scene__lignes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--on-dark);
+}
+
+.scene__mark {
+  width: 198px;
+  height: 220px;
+  color: var(--blanc);
+}
+
+.scene__cote {
+  white-space: nowrap;
+}
+
+/* ---- titres : les mots montent derrière leur masque ---- */
+.scene__title {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: 128px;
+  font-weight: 800;
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+.scene__title--compact {
+  font-size: 104px;
+}
+
+.scene__title span {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.scene__title span > i {
+  display: block;
+  font-style: normal;
+}
+
+.scene__title span:nth-child(2) {
+  color: var(--craie-2);
+}
+
+[data-tone="light"] .scene__title span:nth-child(2) {
+  color: var(--encre-2);
+}
+
+.scene__sub {
+  margin-top: 28px;
+  max-width: 34ch;
+  font-size: 30px;
+  line-height: 1.4;
+  color: var(--on-dark-2);
+  text-wrap: pretty;
+}
+
+.scene__sub--encre {
+  color: var(--encre-2);
+}
+
+.scene__sub--right {
+  margin-top: 0;
+  max-width: 30ch;
+  font-size: 26px;
+  text-align: right;
+}
+
+.scene__cotes {
+  display: flex;
+  gap: 36px;
+  margin-top: 34px;
+}
+
+/* ---- plans 2 et 7 : le texte à gauche, la scène à droite ---- */
+.scene__copy {
+  position: absolute;
+  left: 120px;
+  top: 300px;
+  width: 980px;
+}
+
+.scene__copy--static {
+  position: static;
+  width: auto;
+}
+
+/* un voile de brume derrière le bloc titre, comme dans le hero */
+.scene__p2 .scene__copy::before,
+.scene__p7 .scene__copy::before {
+  content: "";
+  position: absolute;
+  inset: -16% -24% -18% -30%;
+  z-index: -1;
+  background: radial-gradient(70% 65% at 38% 50%, rgb(18 20 18 / 0.72) 0%, rgb(18 20 18 / 0.35) 45%, transparent 72%);
+}
+
+.scene__logo {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-top: 48px;
+}
+
+.scene__partner {
+  position: absolute;
+  left: 120px;
+  bottom: 96px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.scene__partner-label,
+.scene__partner-note {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.scene__partner-note {
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--on-dark-2);
+}
+
+.scene__partner-logo {
+  display: block;
+  width: auto;
+  height: 64px;
+}
+
+/* ---- feuilles ---- */
+.scene__inner {
+  position: absolute;
+  inset: 120px 120px 100px;
+}
+
+.scene__inner--duo {
+  display: grid;
+  grid-template-columns: 900px 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.scene__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 60px;
+}
+
+/* ---- plan 3 : les zones grises ---- */
+.scene__zones {
+  display: grid;
+  margin-top: 72px;
+  border-top: 1px solid var(--line-light-strong);
+}
+
+.scene__zone {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: baseline;
+  padding: 34px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.scene__zone-num {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--cuivre-deep);
+}
+
+.scene__zone h3 {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--encre);
+}
+
+.scene__zone .cote {
+  margin-top: 12px;
+  font-size: 20px;
+}
+
+/* ---- plan 4 : le comparateur ---- */
+.scene__table {
+  width: 100%;
+  margin-top: 56px;
+  border-collapse: collapse;
+  font-size: 26px;
+}
+
+.scene__table th,
+.scene__table td {
+  padding: 22px 20px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.scene__table thead th {
+  padding-top: 0;
+  border-bottom: 2px solid var(--craie);
+}
+
+.scene__table thead th b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.scene__table thead th span {
+  display: block;
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.scene__table thead th:first-child {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+  vertical-align: bottom;
+}
+
+.scene__table tbody th {
+  width: 30%;
+  font-weight: 600;
+}
+
+.scene__table td .tabular {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.scene__table td.is-min .tabular {
+  color: var(--oxyde-light);
+}
+
+.scene__table td.is-absent {
+  background: rgb(184 77 61 / 0.08);
+}
+
+.scene__table tfoot th {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.scene__table tfoot th,
+.scene__table tfoot td {
+  border-top: 2px solid var(--craie);
+  border-bottom: 0;
+}
+
+.scene__table tfoot td .tabular {
+  font-size: 46px;
+  font-weight: 800;
+}
+
+.scene__table .statut {
+  font-size: 18px;
+}
+
+.scene__table tfoot .statut {
+  display: inline-flex;
+  margin-left: 16px;
+  vertical-align: middle;
+}
+
+/* ---- plan 5 : le Passeport ---- */
+.scene__chrono {
+  position: relative;
+  margin-top: 90px;
+  padding-top: 40px;
+}
+
+.scene__rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--cuivre);
+}
+
+.scene__etapes {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px;
+}
+
+.scene__etape {
+  display: grid;
+  gap: 10px;
+  color: var(--encre);
+}
+
+.scene__etape img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--pierre);
+}
+
+.scene__etape-num {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--cuivre-deep);
+}
+
+.scene__etape b {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.scene__etape-date {
+  font-size: 20px;
+  color: var(--encre-2);
+}
+
+.scene__etape .statut {
+  justify-self: start;
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+.scene__p5 .scene__sub {
+  margin-top: 56px;
+  max-width: 60ch;
+  font-size: 26px;
+}
+
+/* ---- plan 6 : le profil ---- */
+.scene__card {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 36px;
+  padding: 36px;
+  background: var(--graphite-deep);
+  box-shadow: inset 0 0 0 1px var(--line-dark-strong);
+}
+
+.scene__card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.scene__card h3 {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.scene__card .cote {
+  margin-top: 12px;
+  font-size: 18px;
+}
+
+.scene__infos {
+  display: grid;
+  margin-top: 30px;
+  border-top: 1px solid var(--line-dark);
+}
+
+.scene__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0;
+  font-size: 22px;
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.scene__info .statut {
+  font-size: 15px;
+}
