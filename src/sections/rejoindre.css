@@ -1,0 +1,118 @@
+/* ───────────── Entrer sur le chantier : deux entrées, un point de contact ───────────── */
+.rejoindre {
+  background:
+    radial-gradient(60% 50% at 30% 20%, rgb(184 111 69 / 0.12) 0%, transparent 70%),
+    var(--graphite);
+}
+
+.rejoindre__head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 32px 64px;
+  align-items: end;
+}
+
+.rejoindre__lead {
+  color: var(--on-dark-2);
+}
+
+.rejoindre__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: clamp(48px, 6vw, 96px);
+  border-top: 1px solid var(--line-dark-strong);
+}
+
+.rejoindre__col {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: clamp(28px, 4vw, 56px) clamp(24px, 4vw, 64px) clamp(28px, 4vw, 56px) 0;
+}
+
+.rejoindre__col--pro {
+  padding-left: clamp(24px, 4vw, 64px);
+  padding-right: 0;
+  border-left: 1px solid var(--line-dark);
+}
+
+.rejoindre__col h3 {
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+}
+
+.rejoindre__col h3 + .cote {
+  margin-top: -4px;
+}
+
+.rejoindre__col p {
+  color: var(--on-dark-2);
+  max-width: 44ch;
+  text-wrap: pretty;
+}
+
+.rejoindre__col .btn {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+/* le point de contact : un nœud sur la ligne */
+.rejoindre__contact {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: clamp(32px, 4vw, 56px);
+  padding: 24px 0 28px 36px;
+  border-top: 1px solid var(--line-dark-strong);
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.rejoindre__node {
+  position: absolute;
+  left: 0;
+  top: 32px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--cuivre);
+  background: var(--graphite);
+}
+
+.rejoindre__contact p {
+  display: grid;
+  gap: 6px;
+}
+
+.rejoindre__contact strong {
+  color: var(--cuivre-light);
+}
+
+.rejoindre__mail {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.rejoindre__hint {
+  font-size: var(--fs-small);
+  color: var(--on-dark-3);
+}
+
+.rejoindre .cartouche {
+  margin-top: 40px;
+}
+
+@media (max-width: 900px) {
+  .rejoindre__head,
+  .rejoindre__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rejoindre__col--pro {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line-dark);
+  }
+}

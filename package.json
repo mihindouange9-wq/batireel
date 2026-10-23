@@ -1,0 +1,42 @@
+{
+  "name": "batireel-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5205",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5206",
+    "typecheck": "tsc --noEmit",
+    "shots": "node tools/shoot.mjs http://127.0.0.1:5206 .impeccable/review/shots 1440,390",
+    "verify": "node tools/check.mjs http://127.0.0.1:5206"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.2.5",
+    "@fontsource/barlow-condensed": "^5.2.5",
+    "@gsap/react": "^2.1.2",
+    "@react-three/fiber": "^9.1.2",
+    "gsap": "^3.13.0",
+    "lenis": "^1.3.27",
+    "lucide-react": "^0.511.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "three": "^0.176.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/three": "^0.176.0",
+    "@vitejs/plugin-react": "^4.4.1",
+    "puppeteer-core": "^25.12.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "overrides": {
+    "rollup": "4.40.0",
+    "esbuild": "0.25.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

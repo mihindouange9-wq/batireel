@@ -1,0 +1,77 @@
+/* ───────────── BATIRÉEL · jetons « Matière & Structure » ─────────────
+   Palette imposée par le brief : graphite et craie dominent, le cuivre signe, l'oxyde ponctue,
+   le rouge contrôle n'est jamais décoratif. Les nuances dérivées servent aux surfaces posées. */
+:root {
+  /* structure */
+  --graphite: #191b19;
+  --graphite-deep: #121412;
+  --graphite-2: #222523;
+  --graphite-3: #2d312e;
+  /* papier technique */
+  --craie: #f0ede4;
+  --craie-2: #e7e3d7;
+  --craie-3: #ddd8c9;
+  --blanc: #fcfbf7;
+  /* signature et secondaires */
+  --cuivre: #b86f45;
+  --cuivre-deep: #9a5a36;
+  --cuivre-light: #d08c62;
+  --oxyde: #657568;
+  --oxyde-deep: #4f5d52;
+  --oxyde-light: #8d9c8f;
+  --pierre: #a5a39a;
+  --pierre-deep: #7e7c74;
+  /* fonctionnel */
+  --controle: #b84d3d;
+  --controle-deep: #9b3f31;
+
+  /* texte : sur craie, encres tirées du graphite ; sur graphite, blanc chantier et pierre */
+  --encre: #1c1e1c;
+  --encre-2: #4a4d49;
+  --encre-3: #6a6d68;
+  --on-dark: #fcfbf7;
+  --on-dark-2: #cdcabf;
+  --on-dark-3: #a5a39a;
+
+  /* filets et grilles de plan */
+  --line-dark: rgb(252 251 247 / 0.14);
+  --line-dark-strong: rgb(252 251 247 / 0.3);
+  --line-light: rgb(25 27 25 / 0.16);
+  --line-light-strong: rgb(25 27 25 / 0.36);
+  --grid-dark: rgb(252 251 247 / 0.16);
+  --grid-light: rgb(25 27 25 / 0.18);
+
+  /* typographie */
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-text: "Manrope Variable", "Segoe UI", Roboto, sans-serif;
+  --fs-display: clamp(3.75rem, 11vw, 10rem);
+  --fs-h2: clamp(2.75rem, 6.2vw, 5.75rem);
+  --fs-h3: clamp(1.625rem, 2.8vw, 2.5rem);
+  --fs-lead: clamp(1.125rem, 1.4vw, 1.375rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9rem;
+  --fs-label: 0.75rem;
+  --fs-cote: 0.8125rem;
+
+  /* rythme */
+  --container: 1360px;
+  --gutter: clamp(20px, 4.5vw, 64px);
+  --section-y: clamp(96px, 12vw, 184px);
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 40px;
+  --space-5: 64px;
+  --space-6: 96px;
+
+  /* mouvement : masse et précision, jamais de rebond */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --d-fast: 200ms;
+  --d: 520ms;
+  --d-slow: 1100ms;
+
+  --header-h: 76px;
+  --header-h-compact: 76px;
+}

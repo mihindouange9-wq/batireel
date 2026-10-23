@@ -1,0 +1,83 @@
+/* ───────────── La présentation : graphite, coupe en strates, photographie, texte monumental ───────────── */
+.presentation {
+  padding-bottom: clamp(26px, 3.2vw, 60px);
+}
+
+.presentation__head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 32px 64px;
+  align-items: end;
+}
+
+.presentation__lead {
+  color: var(--on-dark-2);
+}
+
+.presentation__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  gap: clamp(40px, 6vw, 96px);
+  align-items: center;
+  margin-top: clamp(56px, 7vw, 112px);
+}
+
+.presentation__coupe {
+  color: var(--on-dark-2);
+}
+
+.presentation__coupe svg {
+  width: 100%;
+  height: auto;
+}
+
+.presentation__coupe path {
+  vector-effect: non-scaling-stroke;
+}
+
+.presentation__strates {
+  display: grid;
+  border-top: 1px solid var(--line-dark-strong);
+}
+
+.presentation__strate {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.presentation__strate h3 {
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+}
+
+.presentation__strate h3 + .cote {
+  margin-top: 10px;
+}
+
+.presentation__strate p {
+  margin-top: 12px;
+  color: var(--on-dark-2);
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+.presentation__image {
+  margin-top: clamp(64px, 8vw, 128px);
+}
+
+.presentation .cartouche {
+  margin-top: 48px;
+  margin-bottom: clamp(56px, 7vw, 96px);
+}
+
+@media (max-width: 900px) {
+  .presentation__head,
+  .presentation__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .presentation svg[data-draw] text {
+    font-size: 15px;
+  }
+}

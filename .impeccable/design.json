@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-23T00:00:00+01:00",
+  "title": "Design System: BATIRÉEL",
+  "extensions": {
+    "colorMeta": {
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Noir graphite",
+        "canonical": "#191b19",
+        "tonalRamp": ["oklch(15% 0.005 150)", "oklch(22% 0.005 150)", "oklch(30% 0.005 150)", "oklch(42% 0.005 150)", "oklch(55% 0.005 150)", "oklch(68% 0.005 150)", "oklch(82% 0.005 150)", "oklch(95% 0.005 150)"]
+      },
+      "craie": {
+        "role": "neutral",
+        "displayName": "Craie minérale",
+        "canonical": "#f0ede4",
+        "tonalRamp": ["oklch(15% 0.012 95)", "oklch(28% 0.012 95)", "oklch(42% 0.012 95)", "oklch(55% 0.012 95)", "oklch(68% 0.012 95)", "oklch(80% 0.012 95)", "oklch(89% 0.012 95)", "oklch(94% 0.012 95)"]
+      },
+      "blanc-chantier": {
+        "role": "neutral",
+        "displayName": "Blanc chantier",
+        "canonical": "#fcfbf7",
+        "tonalRamp": ["oklch(15% 0.005 95)", "oklch(28% 0.005 95)", "oklch(42% 0.005 95)", "oklch(55% 0.005 95)", "oklch(68% 0.005 95)", "oklch(82% 0.005 95)", "oklch(92% 0.005 95)", "oklch(99% 0.005 95)"]
+      },
+      "cuivre": {
+        "role": "primary",
+        "displayName": "Ocre cuivre",
+        "canonical": "#b86f45",
+        "tonalRamp": ["oklch(18% 0.06 50)", "oklch(28% 0.08 50)", "oklch(38% 0.10 50)", "oklch(48% 0.11 50)", "oklch(59% 0.11 50)", "oklch(70% 0.10 50)", "oklch(82% 0.07 50)", "oklch(94% 0.03 50)"]
+      },
+      "cuivre-light": {
+        "role": "primary",
+        "displayName": "Cuivre clair",
+        "canonical": "#d08c62",
+        "tonalRamp": ["oklch(18% 0.06 55)", "oklch(28% 0.08 55)", "oklch(38% 0.10 55)", "oklch(48% 0.11 55)", "oklch(59% 0.11 55)", "oklch(69% 0.10 55)", "oklch(82% 0.07 55)", "oklch(94% 0.03 55)"]
+      },
+      "cuivre-deep": {
+        "role": "primary",
+        "displayName": "Cuivre profond",
+        "canonical": "#9a5a36",
+        "tonalRamp": ["oklch(18% 0.06 48)", "oklch(28% 0.08 48)", "oklch(38% 0.10 48)", "oklch(50% 0.11 48)", "oklch(59% 0.11 48)", "oklch(70% 0.10 48)", "oklch(82% 0.07 48)", "oklch(94% 0.03 48)"]
+      },
+      "oxyde": {
+        "role": "secondary",
+        "displayName": "Vert oxyde",
+        "canonical": "#657568",
+        "tonalRamp": ["oklch(15% 0.02 150)", "oklch(25% 0.025 150)", "oklch(36% 0.025 150)", "oklch(45% 0.025 150)", "oklch(53% 0.025 150)", "oklch(66% 0.025 150)", "oklch(80% 0.02 150)", "oklch(95% 0.01 150)"]
+      },
+      "pierre": {
+        "role": "neutral",
+        "displayName": "Gris pierre",
+        "canonical": "#a5a39a",
+        "tonalRamp": ["oklch(15% 0.01 100)", "oklch(26% 0.01 100)", "oklch(38% 0.01 100)", "oklch(50% 0.01 100)", "oklch(58% 0.01 100)", "oklch(70% 0.01 100)", "oklch(84% 0.01 100)", "oklch(95% 0.01 100)"]
+      },
+      "controle": {
+        "role": "tertiary",
+        "displayName": "Rouge contrôle",
+        "canonical": "#b84d3d",
+        "tonalRamp": ["oklch(15% 0.07 30)", "oklch(26% 0.10 30)", "oklch(37% 0.13 30)", "oklch(46% 0.14 30)", "oklch(52% 0.14 30)", "oklch(64% 0.12 30)", "oklch(80% 0.08 30)", "oklch(94% 0.03 30)"]
+      },
+      "encre": {
+        "role": "neutral",
+        "displayName": "Encre sur craie",
+        "canonical": "#1c1e1c",
+        "tonalRamp": ["oklch(15% 0.004 150)", "oklch(23% 0.004 150)", "oklch(39% 0.004 150)", "oklch(50% 0.004 150)", "oklch(60% 0.004 150)", "oklch(72% 0.004 150)", "oklch(84% 0.004 150)", "oklch(95% 0.004 150)"]
+      },
+      "on-dark": {
+        "role": "neutral",
+        "displayName": "Blanc sur graphite",
+        "canonical": "#fcfbf7",
+        "tonalRamp": ["oklch(15% 0.005 95)", "oklch(28% 0.005 95)", "oklch(42% 0.005 95)", "oklch(55% 0.005 95)", "oklch(70% 0.01 100)", "oklch(84% 0.01 95)", "oklch(92% 0.005 95)", "oklch(99% 0.005 95)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Le h1 du hero : deux lignes, la seconde décalée et en craie-2." },
+      "monumental": { "displayName": "Monumental", "purpose": "Le texte qui traverse l'écran (Marquee), une seule fois dans la page." },
+      "headline": { "displayName": "Headline", "purpose": "Le h2 de chaque feuille, révélé mot à mot (data-title)." },
+      "title": { "displayName": "Title", "purpose": "Les h3 ; souvent resserrés à clamp(1.5rem, 2.4vw, 2.1rem) dans les sections." },
+      "title-compact": { "displayName": "Title compact", "purpose": "Onglets du Passeport, libellés d'étapes, en-têtes et totaux du comparateur, numéro de cartouche." },
+      "button": { "displayName": "Button", "purpose": "Boutons, sélecteurs d'offres, libellés de phase." },
+      "lead": { "displayName": "Lead", "purpose": "L'introduction sous chaque h2, 44 ch maximum." },
+      "body": { "displayName": "Body", "purpose": "Paragraphes, 46 à 62 ch ; chiffres tabulaires." },
+      "small": { "displayName": "Small", "purpose": "Lignes de listes, dates, notes, pied de page." },
+      "cote": { "displayName": "Cote", "purpose": "Annotation de plan : référence, lieu, métier, légende, en-tête de liste. Jamais un surtitre." },
+      "label": { "displayName": "Label", "purpose": "Cartouche, statuts, étiquettes de tampon, en-têtes de postes." }
+    },
+    "shadows": [
+      { "name": "feuille-posee", "value": "0 24px 48px -28px rgb(25 27 25 / 0.35), 0 1px 0 rgb(25 27 25 / 0.16)", "purpose": "La fiche d'étape du Passeport, blanc chantier posé sur la craie." },
+      { "name": "filet-en-tete", "value": "0 1px 0 rgb(252 251 247 / 0.14)", "purpose": "Bord bas de l'en-tête compact (graphite à 88 %, backdrop-filter: blur(14px))." },
+      { "name": "anneau-repere", "value": "inset 0 0 0 1px rgb(252 251 247 / 0.3)", "purpose": "Le disque de 96 px qui ferme le pied de page." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Déplacements qui s'arrêtent net : libellé et flèche des boutons, traits de liens, rail, menu mobile." },
+      { "name": "ease-inout", "value": "cubic-bezier(0.7, 0, 0.2, 1)", "purpose": "Indicateur de défilement du hero." },
+      { "name": "ease", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Changements de couleur et de bord." },
+      { "name": "d-fast", "value": "200ms", "purpose": "Couleurs, bords, lien d'évitement." },
+      { "name": "d", "value": "520ms", "purpose": "Déplacements courts, en-tête compact." },
+      { "name": "d-slow", "value": "1100ms", "purpose": "Remplissage du rail du Passeport." },
+      { "name": "gsap-default", "value": "power4.out, 1.1s", "purpose": "Défaut de toute animation GSAP : masse et précision, jamais de rebond." },
+      { "name": "title-reveal", "value": "yPercent 112 → 0, 1.2s, power4.out, stagger 0.05s", "purpose": "data-title : mots masqués qui montent derrière leur masque (.w > i)." },
+      { "name": "block-reveal", "value": "autoAlpha 0 → 1, y 28px → 0, 1.1s, stagger 0.08s", "purpose": "data-reveal : montée courte en fondu, data-reveal-delay optionnel." },
+      { "name": "draw", "value": "strokeDashoffset → 0, 0.35–1.6s selon la longueur, power2.inOut", "purpose": "data-draw / data-stroke : traits SVG tracés dans l'ordre ; data-pop apparaît ensuite." },
+      { "name": "rule", "value": "scaleX 0 → 1, 1.3s, power4.out, origine gauche", "purpose": "data-rule : filet qui s'étire." },
+      { "name": "image-reveal", "value": "clip-path inset(0 100% 0 0) → inset(0), 1.5s, power4.inOut ; dessin → 18 % en 1.2s", "purpose": "ImageReveal : la photographie apparaît derrière son dessin." },
+      { "name": "marquee", "value": "xPercent 4 → -22, scrub 0.5", "purpose": "Texte monumental lié au défilement, une occurrence par page." },
+      { "name": "pin-etapes", "value": "pin, scrub 0.9, end +=n×70%", "purpose": "La seule section épinglée : le bâtiment se monte en coupe par phases." },
+      { "name": "lenis", "value": "lerp 0.085, smoothWheel, syncTouch false", "purpose": "Défilement à inertie sur roue ; natif au toucher ; désactivé en mouvement réduit." },
+      { "name": "scroll-to", "value": "1.4s, 1 - (1 - t)^4", "purpose": "Aller à une section depuis la navigation, 64 px sous l'en-tête." },
+      { "name": "intro", "value": "~2.3s de tracé puis clip-path inset(0 0 100% 0) en 0.9s power4.inOut", "purpose": "Introduction une fois par session, passable au clic ou à Échap, ?nointro pour la sauter." },
+      { "name": "header-compact", "value": "scrollY > 32px, 520ms", "purpose": "L'en-tête passe de transparent à graphite 88 % flouté." },
+      { "name": "reduced-motion", "value": "durées 0.01ms, révélations rendues à l'état final, Lenis et épinglage coupés", "purpose": "prefers-reduced-motion : rien n'est masqué, le bâtiment est montré terminé." }
+    ],
+    "breakpoints": [
+      { "name": "fiches", "value": "1100px" },
+      { "name": "mobile", "value": "900px" },
+      { "name": "etroit", "value": "600px" },
+      { "name": "cotes", "value": "480px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Bouton principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "L'action principale, cuivre plein ; le libellé et la flèche dessinée glissent au survol.",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><span class=\"ds-btn-label\">Découvrir BATIRÉEL</span><i class=\"ds-btn-arrow\"></i></button>",
+      "css": ".ds-btn { position: relative; display: inline-flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 26px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; white-space: nowrap; overflow: hidden; border: 0; border-radius: 0; cursor: pointer; transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms cubic-bezier(0.4, 0, 0.2, 1), border-color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-label { display: inline-block; transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-arrow { display: inline-block; width: 26px; height: 1.5px; background: currentColor; position: relative; transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-arrow::after { content: ''; position: absolute; right: 0; top: 50%; width: 8px; height: 8px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: translateY(-50%) rotate(45deg); } .ds-btn:hover .ds-btn-label, .ds-btn:focus-visible .ds-btn-label { transform: translateX(4px); } .ds-btn:hover .ds-btn-arrow, .ds-btn:focus-visible .ds-btn-arrow { transform: translateX(8px); } .ds-btn:focus-visible { outline: 2px solid var(--cuivre-light, #d08c62); outline-offset: 3px; } .ds-btn:disabled { opacity: 0.45; cursor: not-allowed; } .ds-btn-primary { background: var(--cuivre, #b86f45); color: var(--graphite-deep, #121412); } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: var(--cuivre-light, #d08c62); }"
+    },
+    {
+      "name": "Bouton fantôme",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "L'action secondaire : transparent, bord 1 px qui devient plein au survol. Même glissement de flèche.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\"><span class=\"ds-btn-label\">Explorer le concept</span><i class=\"ds-btn-arrow\"></i></button>",
+      "css": ".ds-btn { position: relative; display: inline-flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 26px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; white-space: nowrap; overflow: hidden; border: 0; border-radius: 0; cursor: pointer; background: none; transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms cubic-bezier(0.4, 0, 0.2, 1), border-color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-label { display: inline-block; transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-arrow { display: inline-block; width: 26px; height: 1.5px; background: currentColor; position: relative; transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-arrow::after { content: ''; position: absolute; right: 0; top: 50%; width: 8px; height: 8px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: translateY(-50%) rotate(45deg); } .ds-btn:hover .ds-btn-label, .ds-btn:focus-visible .ds-btn-label { transform: translateX(4px); } .ds-btn:hover .ds-btn-arrow, .ds-btn:focus-visible .ds-btn-arrow { transform: translateX(8px); } .ds-btn:focus-visible { outline: 2px solid var(--cuivre-light, #d08c62); outline-offset: 3px; } .ds-btn-ghost { color: var(--on-dark, #fcfbf7); border: 1px solid var(--line-dark-strong, rgb(252 251 247 / 0.3)); } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { border-color: var(--on-dark, #fcfbf7); }"
+    },
+    {
+      "name": "Bouton sombre",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "Variante pleine utilisée sur feuille claire : graphite, texte blanc chantier, graphite-3 au survol.",
+      "html": "<button class=\"ds-btn ds-btn-dark\"><span class=\"ds-btn-label\">Décrire mon projet</span><i class=\"ds-btn-arrow\"></i></button>",
+      "css": ".ds-btn { position: relative; display: inline-flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 26px; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; white-space: nowrap; overflow: hidden; border: 0; border-radius: 0; cursor: pointer; transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-label { display: inline-block; transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-arrow { display: inline-block; width: 26px; height: 1.5px; background: currentColor; position: relative; transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-arrow::after { content: ''; position: absolute; right: 0; top: 50%; width: 8px; height: 8px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: translateY(-50%) rotate(45deg); } .ds-btn:hover .ds-btn-label, .ds-btn:focus-visible .ds-btn-label { transform: translateX(4px); } .ds-btn:hover .ds-btn-arrow, .ds-btn:focus-visible .ds-btn-arrow { transform: translateX(8px); } .ds-btn:focus-visible { outline: 2px solid var(--cuivre-deep, #9a5a36); outline-offset: 3px; } .ds-btn-dark { background: var(--graphite, #191b19); color: var(--blanc, #fcfbf7); } .ds-btn-dark:hover, .ds-btn-dark:focus-visible { background: var(--graphite-3, #2d312e); }"
+    },
+    {
+      "name": "Navigation d'en-tête",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Liens 0.9rem 600 ; un trait cuivre clair se trace sous le libellé de gauche à droite au survol.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#constat\">Le constat</a><a class=\"ds-nav-link\" href=\"#passeport\">Passeport Chantier</a><a class=\"ds-nav-link\" href=\"#comparateur\">Comparer</a><a class=\"ds-nav-link\" href=\"#pros\">Professionnels</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 30px; background: var(--graphite, #191b19); padding: 16px 24px; } .ds-nav-link { position: relative; padding: 10px 0; font-family: 'Manrope Variable', 'Segoe UI', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.02em; color: var(--on-dark-2, #cdcabf); text-decoration: none; transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-nav-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 4px; height: 1px; background: var(--cuivre-light, #d08c62); transform: scaleX(0); transform-origin: left center; transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-nav-link:hover, .ds-nav-link:focus-visible { color: var(--on-dark, #fcfbf7); } .ds-nav-link:hover::after, .ds-nav-link:focus-visible::after { transform: scaleX(1); } .ds-nav-link:focus-visible { outline: 2px solid var(--cuivre-light, #d08c62); outline-offset: 3px; }"
+    },
+    {
+      "name": "Statuts",
+      "kind": "chip",
+      "refersTo": "statut",
+      "description": "Cadre au trait, label espacé, puce ronde ; ok en oxyde, attente en pierre, alerte en rouge contrôle, déclaré avec puce évidée.",
+      "html": "<div class=\"ds-statuts\"><span class=\"ds-statut ds-statut-ok\">Vérifié</span><span class=\"ds-statut ds-statut-attente\">En attente</span><span class=\"ds-statut ds-statut-alerte\">Anomalie</span><span class=\"ds-statut ds-statut-declare\">Déclaré</span></div>",
+      "css": ".ds-statuts { display: flex; flex-wrap: wrap; gap: 10px; background: var(--graphite, #191b19); padding: 16px; } .ds-statut { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border: 1px solid currentColor; border-radius: 0; font-family: 'Manrope Variable', 'Segoe UI', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.2; white-space: nowrap; } .ds-statut::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; } .ds-statut-ok { color: var(--oxyde-light, #8d9c8f); } .ds-statut-attente { color: var(--pierre, #a5a39a); } .ds-statut-alerte { color: var(--controle, #b84d3d); } .ds-statut-declare { color: var(--on-dark-2, #cdcabf); } .ds-statut-declare::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }"
+    },
+    {
+      "name": "Sélecteur d'offre",
+      "kind": "chip",
+      "refersTo": "pick",
+      "description": "Bouton bascule du comparateur : bord 1 px, case de 22 px ; sélectionné, bord cuivre, fond cuivre à 10 %, case pleine avec coche graphite.",
+      "html": "<div class=\"ds-picks\"><button class=\"ds-pick is-on\" aria-pressed=\"true\"><span class=\"ds-pick-mark\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></span><span class=\"ds-pick-label\">Devis A</span><span class=\"ds-pick-total\">24 850 000 FCFA</span></button><button class=\"ds-pick\" aria-pressed=\"false\"><span class=\"ds-pick-mark\"></span><span class=\"ds-pick-label\">Devis B</span><span class=\"ds-pick-total\">27 300 000 FCFA</span></button></div>",
+      "css": ".ds-picks { display: flex; flex-wrap: wrap; gap: 12px; background: var(--graphite, #191b19); padding: 16px; } .ds-pick { display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 18px 0 14px; border: 1px solid var(--line-dark-strong, rgb(252 251 247 / 0.3)); border-radius: 0; background: none; color: var(--on-dark-2, #cdcabf); cursor: pointer; font: inherit; transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms cubic-bezier(0.4, 0, 0.2, 1), background-color 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-pick:hover { border-color: var(--on-dark, #fcfbf7); color: var(--on-dark, #fcfbf7); } .ds-pick:focus-visible { outline: 2px solid var(--cuivre-light, #d08c62); outline-offset: 3px; } .ds-pick.is-on { border-color: var(--cuivre, #b86f45); color: var(--on-dark, #fcfbf7); background: rgb(184 111 69 / 0.1); } .ds-pick-mark { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid currentColor; color: var(--on-dark-3, #a5a39a); } .ds-pick.is-on .ds-pick-mark { background: var(--cuivre, #b86f45); border-color: var(--cuivre, #b86f45); color: var(--graphite, #191b19); } .ds-pick-label { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: 1.25rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; } .ds-pick-total { font-family: 'Manrope Variable', 'Segoe UI', sans-serif; font-size: 0.9rem; color: var(--on-dark-3, #a5a39a); font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Cartouche",
+      "kind": "custom",
+      "refersTo": "cartouche",
+      "description": "Bloc-titre de feuille en bas de chaque section : numéro cuivre, titre espacé, échelle.",
+      "html": "<p class=\"ds-cartouche\"><span class=\"ds-cartouche-num\">03<span class=\"ds-cartouche-total\"> / 10</span></span><b>Le Passeport Chantier</b><span>Échelle 1:100</span></p>",
+      "css": ".ds-cartouche { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; margin: 0; padding: 14px 16px 16px; border-top: 1px solid var(--line-dark, rgb(252 251 247 / 0.14)); background: var(--graphite, #191b19); font-family: 'Manrope Variable', 'Segoe UI', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-dark-3, #a5a39a); font-variant-numeric: tabular-nums; } .ds-cartouche b { font-weight: 700; color: var(--on-dark-2, #cdcabf); } .ds-cartouche-num { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: 0; color: var(--cuivre-light, #d08c62); } .ds-cartouche-total { font-size: 0.9rem; color: var(--on-dark-3, #a5a39a); }"
+    },
+    {
+      "name": "Cote et note de marge",
+      "kind": "custom",
+      "refersTo": "cote",
+      "description": "L'annotation de plan (trait de 22 px puis microtexte espacé) et la note de marge au trait cuivre. Posées à côté ou en légende, jamais en surtitre.",
+      "html": "<div class=\"ds-annot\"><p class=\"ds-cote\">Réf. CH-2026-014 · Maison R+1, Angondjé</p><p class=\"ds-note\">Chantier fictif : dates, documents et validations sont inventés pour illustrer le fonctionnement.</p></div>",
+      "css": ".ds-annot { display: grid; gap: 18px; background: var(--craie, #f0ede4); color: var(--encre, #1c1e1c); padding: 20px; } .ds-cote { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-family: 'Manrope Variable', 'Segoe UI', sans-serif; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--encre-3, #6a6d68); } .ds-cote::before { content: ''; width: 22px; height: 1px; background: currentColor; opacity: 0.7; } .ds-note { position: relative; margin: 0; padding-left: 26px; font-family: 'Manrope Variable', 'Segoe UI', sans-serif; font-size: 0.9rem; line-height: 1.5; color: var(--encre-3, #6a6d68); max-width: 40ch; } .ds-note::before { content: ''; position: absolute; left: 0; top: 0.7em; width: 16px; height: 1px; background: var(--cuivre, #b86f45); }"
+    },
+    {
+      "name": "Fiche posée et tampon daté",
+      "kind": "card",
+      "refersTo": "sheet-passeport",
+      "description": "La feuille d'étape du Passeport : blanc chantier posé sur la craie avec une ombre diffuse, tampon graphite daté, encadré d'anomalie au trait rouge contrôle.",
+      "html": "<div class=\"ds-sheet-wrap\"><article class=\"ds-sheet\"><div class=\"ds-sheet-photo\"><span class=\"ds-stamp\"><span class=\"ds-stamp-label\">Photo datée</span>12 mars 2026</span></div><div class=\"ds-sheet-body\"><p class=\"ds-sheet-title\"><span class=\"ds-sheet-big\">03</span><span class=\"ds-sheet-h\">Élévation des murs</span></p><p class=\"ds-sheet-text\">Murs du rez-de-chaussée montés, chaînages coulés, ouvertures réservées.</p><p class=\"ds-alerte\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/></svg>Anomalie relevée : linteau non conforme au plan, reprise demandée.</p></div></article></div>",
+      "css": ".ds-sheet-wrap { background: var(--craie, #f0ede4); padding: 24px; } .ds-sheet { background: var(--blanc, #fcfbf7); color: var(--encre, #1c1e1c); border-radius: 0; box-shadow: 0 24px 48px -28px rgb(25 27 25 / 0.35), 0 1px 0 var(--line-light, rgb(25 27 25 / 0.16)); font-family: 'Manrope Variable', 'Segoe UI', sans-serif; } .ds-sheet-photo { position: relative; aspect-ratio: 16 / 9; background: var(--craie-3, #ddd8c9); } .ds-stamp { position: absolute; left: 18px; bottom: 18px; display: inline-flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--graphite, #191b19); color: var(--blanc, #fcfbf7); font-size: 0.9rem; font-weight: 700; } .ds-stamp-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--on-dark-3, #a5a39a); } .ds-sheet-body { padding: clamp(24px, 3vw, 40px); } .ds-sheet-title { display: flex; align-items: baseline; gap: 16px; margin: 0; } .ds-sheet-big { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 800; color: var(--cuivre-deep, #9a5a36); line-height: 1; } .ds-sheet-h { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: clamp(1.625rem, 2.8vw, 2.5rem); font-weight: 700; text-transform: uppercase; line-height: 0.98; } .ds-sheet-text { margin: 16px 0 0; color: var(--encre-2, #4a4d49); line-height: 1.6; max-width: 60ch; } .ds-alerte { display: flex; gap: 12px; align-items: flex-start; margin: 20px 0 0; padding: 14px 16px; border: 1px solid var(--controle, #b84d3d); color: var(--controle-deep, #9b3f31); font-weight: 600; font-size: 0.9rem; line-height: 1.5; } .ds-alerte svg { flex: none; margin-top: 2px; }"
+    },
+    {
+      "name": "Logo",
+      "kind": "custom",
+      "refersTo": "cartouche",
+      "description": "Repère de chantier (cercle, quatre graduations, point cuivre) et mot BATIRÉEL en Barlow Condensed, le É en cuivre.",
+      "html": "<span class=\"ds-logo\" role=\"img\" aria-label=\"BATIRÉEL\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 100 100\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"30\" stroke=\"currentColor\" stroke-width=\"7\"/><g stroke=\"currentColor\" stroke-width=\"7\" stroke-linecap=\"square\"><path d=\"M50 6V26\"/><path d=\"M50 74V94\"/><path d=\"M6 50H26\"/><path d=\"M74 50H94\"/></g><circle cx=\"50\" cy=\"50\" r=\"7\" fill=\"#b86f45\"/></svg><span class=\"ds-logo-word\" aria-hidden=\"true\">BATIR<span class=\"ds-logo-accent\">É</span>EL</span></span>",
+      "css": ".ds-logo { display: inline-flex; align-items: center; gap: 12px; line-height: 1; padding: 16px; background: var(--graphite, #191b19); color: var(--blanc, #fcfbf7); } .ds-logo-word { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 0.08em; text-transform: uppercase; transform: translateY(0.03em); } .ds-logo-accent { color: var(--cuivre-light, #d08c62); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Le dossier de plans",
+    "overview": "Le site est un dossier de plans que l'on feuillette en défilant. Chaque section est une feuille : un cartouche la numérote (01 / 10, titre, échelle), un filet se trace pour passer à la suivante, les feuilles claires (craie) se posent en biais sur le fond graphite comme des calques coupés au cutter. La matière vient des aplats : graphite pour la structure, craie pour le papier technique, blanc chantier pour la feuille active ; le cuivre est la seule chaleur, réservé à ce qui signe (accent du É, point du repère, numéros, rail d'avancement, action principale). L'oxyde ponctue le « vérifié », la pierre soutient (annotations, séparateurs), le rouge contrôle n'apparaît que sur une anomalie.\n\nDensité éditoriale : titres condensés très grands, colonnes de texte courtes (44 à 62 ch), grilles asymétriques 7/5, 6/5, 5/7, 4/8 qui changent d'une feuille à l'autre, et beaucoup d'air entre les feuilles (96 à 184 px). Aucun arrondi, aucune carte flottante : les blocs sont délimités par des filets d'un pixel, les listes par des traits, les statuts par un cadre au trait. Le dessin technique précède la matière : les plans SVG se tracent, puis la photographie apparaît derrière son dessin.\n\nLe mouvement a de la masse et de la précision : power4.out sur 1,1 s par défaut, les titres montent mot à mot derrière leur masque, les filets s'étirent, les traits se tracent, rien ne rebondit, rien n'anime une largeur ou une hauteur. Rejets confirmés par la livraison : aspect de gabarit SaaS, cartes arrondies, dégradés bleus ou violets, blobs, verre dépoli décoratif, parallaxe par élément, plus d'une section épinglée.",
+    "keyCharacteristics": [
+      "Feuilles de plan : cartouche numéroté, filet de transition tracé, découpe en biais (clip-path) entre craie et graphite.",
+      "Deux tons seulement (data-tone=\"light\" sur craie, dark sur graphite) ; chaque composant a ses deux encres.",
+      "Cuivre = signature, jamais surface : accents, repères, numéros, rail, un seul bouton plein par vue.",
+      "Barlow Condensed en capitales serrées pour tout ce qui titre et numérote ; Manrope pour le texte, les données et les annotations espacées.",
+      "Trait d'abord, matière ensuite : dessins SVG tracés (data-draw), photographie révélée derrière son plan.",
+      "Aucun rayon (hors points ronds de repère), aucune ombre portée nette, aucun dégradé coloré ; la profondeur vient des aplats et des filets."
+    ],
+    "rules": [
+      { "name": "La règle du rouge muet", "body": "Le rouge contrôle n'existe que pour une anomalie, un poste absent ou un statut d'alerte. Aucun titre, aucun bouton, aucun ornement ne le porte.", "section": "colors" },
+      { "name": "La règle des deux encres", "body": "Chaque composant déclare sa couleur sur graphite et sa couleur sous [data-tone=\"light\"] ; aucune couleur de texte n'est posée en dur dans une section sans sa contrepartie.", "section": "colors" },
+      { "name": "La règle de la signature", "body": "Le cuivre signe (accent, point, numéro, rail, une action principale) ; il ne remplit jamais une surface plus grande qu'un bouton ni un dégradé visible au-delà d'un halo à 8–12 % d'opacité.", "section": "colors" },
+      { "name": "La règle des capitales condensées", "body": "Tout titre, numéro, onglet et bouton est en Barlow Condensed capitales, interlettrage négatif ou nul (−0.01em à 0.04em). Manrope ne titre jamais ; Barlow ne compose jamais un paragraphe.", "section": "typography" },
+      { "name": "La règle de la cote", "body": "Le microtexte espacé est une annotation de plan (référence, lieu, métier, légende, en-tête de liste), jamais un surtitre éditorial posé au-dessus d'un h2.", "section": "typography" },
+      { "name": "La règle des chiffres tabulaires", "body": "font-variant-numeric: tabular-nums est actif sur le corps ; montants, dates et numéros s'alignent.", "section": "typography" },
+      { "name": "La règle du calque", "body": "Une surface se distingue par son ton, sa trame ou sa découpe, pas par une ombre. Si un bloc a besoin de se détacher, il devient blanc chantier sur craie ou graphite-deep sur graphite.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do ouvrir chaque nouvelle feuille par un h2 data-title en Barlow Condensed capitales, une introduction .lead (44 ch) alignée en bas de la colonne de droite, et la fermer par un Cartouche numéroté.",
+      "Do alterner les tons de feuille (data-tone=\"light\" sur craie tramée, dark sur graphite) et couper les feuilles claires en biais avec --cut et clip-path, en inversant le sens de coupe d'une feuille à l'autre.",
+      "Do déclarer les deux encres de tout nouveau composant (sur graphite et sous [data-tone=\"light\"]) et prendre ses couleurs dans tokens.css.",
+      "Do réserver le cuivre aux signes : accent, point, numéro, rail, trait de rappel, une seule action pleine par vue  ; dans le comparateur, « le plus bas » en oxyde clair et « le plus haut » en pierre avec son écart, jamais en cuivre (le cuivre reste l'action).",
+      "Do dessiner avant de montrer : plans SVG data-draw avec vector-effect: non-scaling-stroke, photographie en ImageReveal derrière son dessin, filets data-rule.",
+      "Do n'animer que transform, opacity et clip-path, avec les durées et courbes des jetons ; rendre l'état final lisible sans JavaScript et en mouvement réduit.",
+      "Do garder les contrôles à 44 px minimum, les tableaux larges en défilement horizontal, les annotations .cote autorisées à passer à la ligne sous 480 px.",
+      "Do marquer toute donnée de démonstration comme fictive dans le texte même (« entreprise fictive », « chantier fictif ») et laisser « À compléter » visible tant que le client n'a pas fourni l'information."
+    ],
+    "donts": [
+      "Don't utiliser le rouge contrôle hors d'une anomalie, d'un poste absent ou d'un statut d'alerte ; jamais sur un titre, un bouton, un ornement.",
+      "Don't poser de surtitre ou d'eyebrow au-dessus d'un h2 ; .cote annote (référence, lieu, métier, légende, en-tête de liste), il ne précède pas un titre de feuille.",
+      "Don't animer width, height, top, left ni une marge ; pas de rebond (back, elastic), pas de parallaxe par élément, pas plus d'une section épinglée, pas de second texte monumental.",
+      "Don't arrondir : aucun border-radius hors des points et disques de repère ; aucune carte flottante, aucune ombre portée nette, aucun verre dépoli en dehors de l'en-tête compact.",
+      "Don't introduire de dégradé coloré (bleu, violet, multicolore) ni de blob ; les seuls dégradés sont des halos de cuivre à 8–12 % et les fondus de masque du hero.",
+      "Don't composer un titre en Manrope ni un paragraphe en Barlow Condensed ; pas de graisse Barlow en dessous de 600.",
+      "Don't utiliser d'emoji, d'icône glyphe de police ou de pictogramme décoratif ; les icônes sont des SVG au trait (Lucide : flèches, coche, moins, calendrier, document, triangle d'alerte, menu) et restent fonctionnelles.",
+      "Don't inventer de partenaires, de témoignages, de statistiques, de professionnels vérifiés ni de chantiers réels ; le seul partenaire affiché est MÉTHODE AURA (conception et réalisation), avec son logo fourni.",
+      "Don't répéter une composition image à gauche / texte à droite d'une feuille à l'autre ; changer de grille (7/5, 6/5, 4/8, 5/7, 5/6, 1/1)."
+    ]
+  }
+}

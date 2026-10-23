@@ -1,0 +1,48 @@
+# Blueprint Render : site statique construit par Vite, servi par le CDN de Render.
+# PRÉPARÉ, NON DÉPLOYÉ : au moment de publier, créer le service par l'API (RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs)
+# ou connecter ce blueprint depuis le tableau de bord Render. Un push ne redéploie pas forcément : relancer tools/render-deploy.mjs.
+# VITE_SITE_URL et VITE_CONTACT_EMAIL restent à renseigner (voir README).
+services:
+  - type: web
+    name: batireel
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: VITE_SITE_URL
+        value: https://batireel.onrender.com
+      # Adresse de contact affichée par les boutons « Discuter du projet » et « Devenir partenaire ».
+      # Laisser vide tant qu'elle n'est pas fournie : le site l'indique alors honnêtement.
+      - key: VITE_CONTACT_EMAIL
+        value: ""
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000; includeSubDomains
+      # Aucun service tiers : scripts, polices et images viennent du domaine lui-même.
+      # Les styles en ligne sont nécessaires aux animations (attributs style posés par GSAP).
+      - path: /*
+        name: Content-Security-Policy
+        value: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests

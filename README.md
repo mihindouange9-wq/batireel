@@ -1,0 +1,77 @@
+# BATIRÉEL — site vitrine
+
+Site d'une seule page qui présente BATIRÉEL, plateforme gabonaise qui met en relation particuliers, entreprises et professionnels du bâtiment, facilite la comparaison des devis et le suivi des chantiers. Direction artistique « Matière & Structure » : papier technique, béton, lignes de plan, cuivre en signature. Le site ne contient pas l'application : les devis, le chantier et les profils présentés sont des démonstrations explicitement fictives.
+
+## Lancer
+
+```
+npm install
+npm run dev        # http://127.0.0.1:5205
+npm run build      # vérification TypeScript puis dist/
+npm run preview    # http://127.0.0.1:5206 (sert dist/)
+npm run verify     # contrôles automatisés sur la prévisualisation (tools/check.mjs)
+```
+
+Node 22 (fichier `.node-version`). Pile : Vite 6, React 19, TypeScript, CSS natif, GSAP (ScrollTrigger), Lenis (défilement à inertie), Three.js avec React Three Fiber (scène du hero, chargée à la demande sur les écrans non tactiles), Lucide, polices Barlow Condensed et Manrope auto-hébergées (fontsource). Aucun backend, aucun service tiers, aucune donnée collectée.
+
+`?nointro` dans l'adresse saute l'introduction (utile pour les tests) ; `?no3d` remplace la scène 3D par le dessin axonométrique. La scène 3D est chargée après le premier rendu, quand le navigateur est libre, et seulement sur les écrans non tactiles.
+
+## Ce que le site contient
+
+- **Introduction** (moins de trois secondes, une fois par session, passable au clic ou à Échap) : des lignes de construction se tracent, deux cotes s'affichent, le repère se pose, puis le calque s'efface et le hero se met en place.
+- **Hero** « Le chantier. Sans zone grise. » : volume architectural en 3D (dalle, corps en porte-à-faux sur trois poteaux, casquette, escalier, montant cuivre), caméra qui se rapproche au défilement, inclinaison au pointeur, lignes structurelles qui apparaissent ; sur écran tactile, sans WebGL ou en mouvement réduit, le même volume en dessin axonométrique tracé au trait (le module 3D n'est alors pas chargé).
+- **Le constat** (feuille claire) : les trois zones grises, relevées dans un dessin technique dont les traits se tracent.
+- **La présentation** : une coupe du bâtiment en trois strates (le prix, la personne, l'avancement), une photographie qui apparaît derrière son dessin, le texte monumental « Bâtir avec confiance » qui traverse l'écran.
+- **Le Passeport Chantier** : chronologie interactive à six étapes (onglets au clic et au clavier) avec photographie datée, documents, validations et anomalie.
+- **Comparez autrement** : comparateur de trois devis fictifs, sélection de deux ou trois offres, lignes communes (matériaux, main-d'œuvre, quantités, délais), montant le plus bas et le plus haut marqués avec l'écart, poste absent signalé, totaux, écart avec l'offre complète la moins chère (une offre incomplète n'est jamais « la plus basse »), prestations incluses ; sur téléphone, chaque poste devient une fiche avec les offres côte à côte.
+- **Des professionnels, des preuves** : trois profils fictifs qui distinguent le vérifié du déclaré et disent ce qui manque.
+- **Chaque étape sous contrôle** : section épinglée où le bâtiment se monte en coupe au rythme du défilement, en sept phases.
+- **Pensé pour le terrain** : la vision pour le Gabon et un plan de situation de l'Estuaire.
+- **Entrer sur le chantier** : deux entrées (particuliers et entreprises, professionnels) et le point de contact.
+- **Pied de page** : les lignes du plan convergent vers le repère ; navigation, contacts à compléter, mentions à prévoir, collaboration MÉTHODE AURA.
+
+Chaque section porte un cartouche (numéro de feuille, titre, échelle), comme une feuille d'un dossier de plans.
+
+## Palette et typographie
+
+Palette imposée par le brief : Noir graphite `#191B19`, Craie minérale `#F0EDE4`, Ocre cuivre `#B86F45`, Vert oxyde `#657568`, Gris pierre `#A5A39A`, Blanc chantier `#FCFBF7`, Rouge contrôle `#B84D3D` (anomalies uniquement). Variables dans `src/styles/tokens.css`. Titres en Barlow Condensed, texte et données en Manrope.
+
+## À renseigner avant publication
+
+| Quoi | Où |
+| --- | --- |
+| Adresse de contact (boutons « Décrire mon projet » et « Présenter mon activité », pied de page) | variable `VITE_CONTACT_EMAIL` au déploiement, ou `src/content/site.ts` |
+| Adresse publique du site (canonical, Open Graph, sitemap, robots) | variable `VITE_SITE_URL` |
+| Mentions légales et politique de confidentialité | `src/content/site.ts` (`SITE.legal`) |
+
+## Structure
+
+```
+index.html              métadonnées, Open Graph, icônes
+public/                 favicon.svg, favicon-32.png, apple-touch-icon.png, og-image.png (tools/build-brand.mjs),
+                        photos/*.webp (tools/fetch-photos.mjs), partenaires/ (logo MÉTHODE AURA)
+src/content/site.ts     tous les textes publics (français), navigation, contact
+src/content/demo.ts     données fictives : devis, Passeport Chantier, profils
+src/brand/Logo.tsx      logo : le repère de chantier (croix de visée cerclée, point cuivre) + le mot
+src/components/         Intro (introduction), HeroScene (3D), HeroDrawing (dessin), Plan (cartouche, ligne de
+                        transition, révélation photographique, texte monumental, annotation)
+src/sections/           une section = un composant + sa feuille de style
+src/lib/motion.ts       Lenis, révélations (titres, blocs, tracés, filets), grammaire de mouvement
+src/styles/             tokens.css (palette, typographie, rythme) et global.css (base, boutons, statuts, cartouche)
+tools/                  build-brand.mjs, fetch-photos.mjs, check.mjs, shoot.mjs, fullpage.mjs, render-deploy.mjs
+docs/                   credits-photos.md
+render.yaml             blueprint Render prêt, non déployé
+PRODUCT.md, DESIGN.md   contexte produit et système de design
+```
+
+Photographies : banque d'images Pexels (licence Pexels, usage libre), téléchargées en plusieurs largeurs (`srcset`) par `node tools/fetch-photos.mjs` ; chantiers et personnes n'ont aucun lien avec BATIRÉEL, crédits dans `docs/credits-photos.md`.
+
+## Vérifications
+
+`npm run verify` : polices, un seul h1, hiérarchie des titres, textes alternatifs, libellés, scène 3D sur ordinateur (dessin et absence du module 3D sur mobile), en-tête compact, Passeport Chantier (clic, flèches, Début), comparateur (sélection, minimum deux offres, écarts et poste absent, offre incomplète jamais donnée « la plus basse », fiches côte à côte sur mobile), ancres et focus, destinations des boutons, aucune erreur console, aucun débordement à 1600, 1280, 768, 390 et 320 px, menu mobile, cibles tactiles, mouvement réduit (rien de masqué, bâtiment montré terminé), focus clavier.
+
+Lighthouse 12 sur le build local, le 23 oct. 2026 (les scores de performance varient de quelques points d'une mesure à l'autre) : ordinateur 77 à 81 / 100 / 100 / 100, mobile 72 à 77 / 100 / 100 / 100 ; détecteur impeccable sans anti-pattern.
+
+## Déploiement
+
+Non effectué. `render.yaml` et `tools/render-deploy.mjs` (`RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs`) sont prêts ; au moment de déployer, renseigner `VITE_SITE_URL` et `VITE_CONTACT_EMAIL`.

@@ -1,0 +1,111 @@
+/* ───────────── Le constat : feuille claire, coupée en biais sur le graphite ───────────── */
+.constat {
+  --cut: clamp(26px, 3.2vw, 60px);
+  margin-top: calc(-1 * var(--cut));
+  padding-top: calc(var(--section-y) + var(--cut));
+  clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%);
+}
+
+.constat__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  gap: clamp(40px, 6vw, 96px) clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+
+.constat__copy {
+  grid-column: 1;
+}
+
+.constat__lead {
+  margin-top: 28px;
+  color: var(--encre-2);
+}
+
+.constat__drawing {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  position: sticky;
+  top: calc(var(--header-h-compact) + 32px);
+  color: var(--encre);
+}
+
+.constat__drawing svg {
+  width: 100%;
+  height: auto;
+}
+
+.constat__drawing path,
+.constat__drawing circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.constat__legende {
+  margin-top: 18px;
+}
+
+.constat__points {
+  grid-column: 1;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line-light-strong);
+}
+
+.constat__point {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 16px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.constat__point h3 {
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+}
+
+.constat__point p {
+  margin-top: 12px;
+  color: var(--encre-2);
+  max-width: 48ch;
+  text-wrap: pretty;
+}
+
+.constat__num {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--cuivre-deep);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.constat__note {
+  margin-top: 14px;
+}
+
+.constat__cartouche {
+  grid-column: 1 / -1;
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .constat__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .constat__drawing {
+    grid-column: 1;
+    grid-row: auto;
+    position: static;
+  }
+
+  .constat__points {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .constat svg[data-draw] text {
+    font-size: 16px;
+  }
+}

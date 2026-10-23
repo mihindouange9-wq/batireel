@@ -1,0 +1,37 @@
+.logo {
+  --logo-size: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--logo-size) * 0.42);
+  line-height: 1;
+}
+
+.logo--dark {
+  color: var(--blanc);
+}
+
+.logo--light {
+  color: var(--graphite);
+}
+
+.logo__mark {
+  flex: none;
+}
+
+.logo__word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: calc(var(--logo-size) * 1.08);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(0.03em);
+}
+
+/* l'accent du É, en cuivre : la seule couleur du mot */
+.logo__accent {
+  color: var(--cuivre-light);
+}
+
+.logo--light .logo__accent {
+  color: var(--cuivre-deep);
+}

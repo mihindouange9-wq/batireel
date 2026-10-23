@@ -1,0 +1,264 @@
+/* ───────────── Le hero : titre asymétrique, volume à droite, cotes autour ───────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  padding: calc(var(--header-h) + 40px) 0 56px;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 55% at 72% 40%, rgb(184 111 69 / 0.1) 0%, transparent 70%),
+    linear-gradient(180deg, var(--graphite-deep) 0%, var(--graphite) 55%, var(--graphite-2) 100%);
+  color: var(--on-dark);
+}
+
+/* la scène occupe la droite et déborde derrière le titre */
+.hero__stage {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(74vw, 1180px);
+  height: 100%;
+  /* la scène s'estompe sous la colonne du titre : le texte garde son contraste */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.18) 22%, rgb(0 0 0 / 0.5) 44%, #000 62%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.18) 22%, rgb(0 0 0 / 0.5) 44%, #000 62%);
+}
+
+.hero__stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hero__drawing {
+  position: absolute;
+  right: 4%;
+  top: 50%;
+  width: min(62vw, 820px);
+  transform: translateY(-50%);
+  color: var(--on-dark-2);
+}
+
+.hero__drawing--fallback {
+  opacity: 0.6;
+}
+
+.hero__dims {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hero__dims path {
+  fill: none;
+  stroke: var(--cuivre-light);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.8;
+}
+
+.hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-rows: 1fr auto;
+  gap: 24px 40px;
+  min-height: calc(100svh - var(--header-h) - 96px);
+}
+
+.hero__copy {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+  max-width: 760px;
+}
+
+.hero__title {
+  display: grid;
+  gap: 0.02em;
+}
+
+.hero__line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* la seconde ligne, décalée : l'asymétrie du cartouche */
+.hero__line:nth-child(2) {
+  margin-left: clamp(0px, 6vw, 110px);
+  color: var(--craie-2);
+}
+
+.hero__sub {
+  margin-top: 28px;
+  color: var(--on-dark-2);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.hero__cotes {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+}
+
+.hero__scroll {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--on-dark-2);
+}
+
+.hero__scroll svg {
+  animation: hero-cue 2.4s var(--ease-inout) infinite;
+}
+
+@keyframes hero-cue {
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: 0;
+    min-height: 0;
+  }
+
+  .hero__stage {
+    order: 2;
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 48svh;
+    margin-top: 24px;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 18%);
+  }
+
+  .hero__grid {
+    order: 1;
+  }
+
+  .hero__drawing {
+    right: 50%;
+    top: 55%;
+    width: min(92vw, 520px);
+    transform: translate(50%, -50%);
+  }
+
+  .hero__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    min-height: 0;
+    gap: 20px;
+  }
+
+  .hero__copy {
+    align-self: start;
+    padding-top: 10px;
+  }
+
+  .hero__line {
+    white-space: normal;
+  }
+
+  .hero__line:nth-child(2) {
+    margin-left: 0;
+  }
+
+  .hero__scroll {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: start;
+  }
+
+  .hero__cotes {
+    grid-row: 2;
+  }
+
+  .hero__cotes .cote:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll svg {
+    animation: none;
+  }
+}
+
+/* un voile de brume graphite derrière le bloc titre : le volume reste visible, le texte garde son contraste */
+.hero__copy {
+  position: relative;
+}
+
+.hero__copy::before {
+  content: "";
+  position: absolute;
+  inset: -12% -22% -14% -30%;
+  z-index: -1;
+  background: radial-gradient(70% 65% at 38% 50%, rgb(18 20 18 / 0.72) 0%, rgb(18 20 18 / 0.35) 45%, transparent 72%);
+  pointer-events: none;
+}
+
+/* téléphone : le volume dessiné arrive juste sous les boutons, puis les repères et l'invitation à descendre */
+@media (max-width: 900px) {
+  .hero__copy::before {
+    display: none;
+  }
+
+  .hero__grid {
+    display: contents;
+  }
+
+  .hero__copy,
+  .hero__cotes,
+  .hero__scroll {
+    width: min(var(--container), 100% - 2 * var(--gutter));
+    margin-inline: auto;
+  }
+
+  .hero__copy {
+    order: 1;
+  }
+
+  .hero__stage {
+    order: 2;
+    margin-top: 8px;
+  }
+
+  .hero__cotes {
+    order: 3;
+    margin-top: 12px;
+  }
+
+  .hero__scroll {
+    order: 4;
+    margin-top: 6px;
+    margin-bottom: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__drawing text {
+    font-size: 22px;
+  }
+}

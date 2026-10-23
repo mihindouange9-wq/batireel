@@ -1,0 +1,205 @@
+/* ───────────── Chaque étape sous contrôle : section épinglée, bâtiment en coupe ───────────── */
+.etapes {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding-block: clamp(72px, 8vw, 120px);
+  overflow: hidden;
+  background:
+    radial-gradient(50% 40% at 70% 60%, rgb(184 111 69 / 0.08) 0%, transparent 70%),
+    var(--graphite);
+}
+
+.etapes__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-rows: 1fr auto;
+  gap: 24px clamp(32px, 5vw, 80px);
+  align-items: center;
+  width: min(var(--container), 100% - 2 * var(--gutter));
+}
+
+.etapes__lead {
+  margin-top: 24px;
+  color: var(--on-dark-2);
+}
+
+.etapes__list {
+  display: grid;
+  margin-top: 32px;
+  border-top: 1px solid var(--line-dark-strong);
+}
+
+.etapes__item {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  grid-template-rows: auto auto;
+  gap: 0 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-dark);
+  color: var(--on-dark-3);
+  transition: color var(--d) var(--ease);
+}
+
+.etapes__item-num {
+  grid-row: 1 / span 2;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--on-dark-3);
+  transition: color var(--d) var(--ease);
+}
+
+.etapes__item-label {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.etapes__item-text {
+  display: none;
+  margin-top: 4px;
+  font-size: var(--fs-small);
+}
+
+.etapes__item.is-done {
+  color: var(--on-dark-2);
+}
+
+.etapes__item.is-active {
+  color: var(--on-dark);
+}
+
+.etapes__item.is-active .etapes__item-num {
+  color: var(--cuivre-light);
+}
+
+.etapes__item.is-active .etapes__item-text {
+  display: block;
+  color: var(--on-dark-2);
+}
+
+.etapes__stage {
+  position: relative;
+  color: var(--craie);
+}
+
+.etapes__svg {
+  width: 100%;
+  height: auto;
+}
+
+.etapes__svg path,
+.etapes__svg circle,
+.etapes__svg rect {
+  vector-effect: non-scaling-stroke;
+}
+
+.etapes__phase {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.etapes__phase-num {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 800;
+  color: var(--cuivre-light);
+  line-height: 1;
+}
+
+.etapes__phase-label {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.etapes__cartouche {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .etapes {
+    align-items: flex-start;
+  }
+
+  .etapes__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    align-items: start;
+  }
+
+  .etapes__list {
+    display: none;
+  }
+
+  .etapes__lead {
+    margin-top: 16px;
+  }
+
+  .etapes__stage {
+    margin-top: 48px;
+  }
+}
+
+/* écrans peu hauts (portables) : la colonne de gauche se resserre pour tenir dans l'écran épinglé */
+@media (min-width: 901px) and (max-height: 960px) {
+  .etapes {
+    padding-block: 96px 40px;
+  }
+
+  .etapes__copy h2 {
+    font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+  }
+
+  .etapes__lead {
+    margin-top: 14px;
+    font-size: 1rem;
+  }
+
+  .etapes__list {
+    margin-top: 20px;
+  }
+
+  .etapes__item {
+    padding: 7px 0;
+  }
+
+  .etapes__item-label {
+    font-size: 1.25rem;
+  }
+
+  .etapes__svg {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: calc(100svh - 220px);
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 800px) {
+  .etapes__list {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+  }
+
+  .etapes__item.is-active .etapes__item-text {
+    display: none;
+  }
+}
+
+/* 7. téléphone : les cotes du dessin restent lisibles une fois la vue réduite */
+@media (max-width: 640px) {
+  .etapes__svg text {
+    font-size: 19px;
+  }
+}

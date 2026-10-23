@@ -1,0 +1,85 @@
+/* ───────────── Le terrain : plan de situation à gauche, vision à droite ───────────── */
+.terrain {
+  --cut: clamp(26px, 3.2vw, 60px);
+  margin-top: calc(-1 * var(--cut));
+  padding-top: calc(var(--section-y) + var(--cut));
+  clip-path: polygon(0 0, 100% var(--cut), 100% 100%, 0 100%);
+  padding-bottom: calc(var(--section-y) * 0.6);
+}
+
+.terrain__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(40px, 6vw, 112px);
+  align-items: start;
+}
+
+.terrain__map {
+  position: sticky;
+  top: calc(var(--header-h) + 24px);
+  color: var(--encre);
+  border: 1px solid var(--line-light-strong);
+  padding: clamp(12px, 2vw, 24px);
+  background: var(--blanc);
+}
+
+.terrain__map svg {
+  width: 100%;
+  height: auto;
+}
+
+.terrain__map path,
+.terrain__map circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.terrain__lead {
+  margin-top: 24px;
+  color: var(--encre-2);
+}
+
+.terrain__points {
+  display: grid;
+  margin-top: 36px;
+  border-top: 1px solid var(--line-light-strong);
+}
+
+.terrain__points li {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.terrain__points h3 {
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+}
+
+.terrain__points p {
+  margin-top: 10px;
+  color: var(--encre-2);
+  max-width: 50ch;
+  text-wrap: pretty;
+}
+
+.terrain__copy .plan-note {
+  margin-top: 24px;
+}
+
+.terrain__cartouche {
+  grid-column: 1 / -1;
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .terrain__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .terrain__map {
+    position: static;
+    order: 2;
+  }
+
+  .terrain__cartouche {
+    order: 3;
+  }
+}

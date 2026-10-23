@@ -1,0 +1,409 @@
+/* ───────────── Le comparateur : une grille de devis sur graphite ───────────── */
+.comparateur__head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 32px 64px;
+  align-items: end;
+}
+
+.comparateur__lead {
+  color: var(--on-dark-2);
+}
+
+.comparateur__bar {
+  display: grid;
+  gap: 20px;
+  margin-top: clamp(40px, 5vw, 72px);
+  padding-top: 24px;
+  border-top: 1px solid var(--line-dark-strong);
+}
+
+.comparateur__project {
+  white-space: normal;
+}
+
+.comparateur__choice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+/* une offre à sélectionner : un bouton bascule, jamais une carte */
+.comparateur__pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 18px 0 14px;
+  border: 1px solid var(--line-dark-strong);
+  color: var(--on-dark-2);
+  transition:
+    border-color var(--d-fast) var(--ease),
+    color var(--d-fast) var(--ease),
+    background-color var(--d-fast) var(--ease);
+}
+
+.comparateur__pick:hover {
+  border-color: var(--on-dark);
+  color: var(--on-dark);
+}
+
+.comparateur__pick.is-on {
+  border-color: var(--cuivre);
+  color: var(--on-dark);
+  background: rgb(184 111 69 / 0.1);
+}
+
+.comparateur__pick-mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid currentColor;
+  color: var(--on-dark-3);
+}
+
+.comparateur__pick.is-on .comparateur__pick-mark {
+  background: var(--cuivre);
+  border-color: var(--cuivre);
+  color: var(--graphite);
+}
+
+.comparateur__pick-label {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.comparateur__pick-total {
+  font-size: var(--fs-small);
+  color: var(--on-dark-3);
+}
+
+.comparateur__hint {
+  font-size: var(--fs-small);
+  color: var(--on-dark-3);
+}
+
+/* la table : défilement horizontal sur petit écran, jamais de débordement */
+.comparateur__scroll {
+  margin-top: 28px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.comparateur__table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+}
+
+.comparateur__table th,
+.comparateur__table td {
+  padding: 18px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.comparateur__table thead th {
+  padding-top: 0;
+  border-bottom: 2px solid var(--craie);
+}
+
+.comparateur__th-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.comparateur__th-ent {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.comparateur__poste-head {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.comparateur__table tbody th {
+  font-weight: 600;
+  width: 26%;
+}
+
+.comparateur__poste {
+  display: block;
+  color: var(--on-dark);
+}
+
+.comparateur__qte {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--on-dark-3);
+}
+
+.comparateur__total {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.comparateur__detail {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+  font-size: var(--fs-label);
+  color: var(--on-dark-3);
+}
+
+/* les écarts : le plus bas en oxyde, le plus haut en pierre avec son écart, l'absent en rouge contrôle.
+   Le cuivre reste la couleur de l'action : il ne doit jamais désigner le montant le plus cher. */
+.comparateur__table td.is-min .comparateur__total {
+  color: var(--oxyde-light);
+}
+
+.comparateur__table td.is-max .comparateur__total {
+  color: var(--pierre);
+}
+
+.comparateur__delta {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--on-dark-2);
+}
+
+.comparateur__row-total td .comparateur__total-note {
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  margin-top: 8px;
+}
+
+.comparateur__pick-flag {
+  margin-left: 8px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-dark-2);
+}
+
+.comparateur__table td.is-absent {
+  background: rgb(184 77 61 / 0.08);
+}
+
+.comparateur__absent {
+  display: grid;
+  gap: 8px;
+}
+
+.comparateur__absent small {
+  font-size: var(--fs-label);
+  color: var(--on-dark-2);
+  line-height: 1.4;
+}
+
+.comparateur__table tfoot th {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.comparateur__row-total th,
+.comparateur__row-total td {
+  border-top: 2px solid var(--craie);
+}
+
+.comparateur__row-total td {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.comparateur__inclus {
+  display: grid;
+  gap: 6px;
+  font-size: var(--fs-small);
+}
+
+.comparateur__inclus li {
+  display: flex;
+  gap: 8px;
+}
+
+.comparateur__inclus li::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 1px;
+  margin-top: 0.75em;
+  background: var(--oxyde-light);
+}
+
+.comparateur__garantie {
+  color: var(--on-dark-3);
+}
+
+.comparateur__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin-top: 20px;
+  font-size: var(--fs-small);
+  color: var(--on-dark-2);
+}
+
+.comparateur__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comparateur__swatch {
+  width: 14px;
+  height: 14px;
+  border: 1px solid currentColor;
+}
+
+.comparateur__swatch--min {
+  background: var(--oxyde-light);
+  border-color: var(--oxyde-light);
+}
+
+.comparateur__swatch--max {
+  background: var(--pierre);
+  border-color: var(--pierre);
+}
+
+.comparateur__swatch--absent {
+  background: rgb(184 77 61 / 0.3);
+  border-color: var(--controle);
+}
+
+.comparateur .plan-note {
+  margin-top: 20px;
+}
+
+.comparateur .cartouche {
+  margin-top: 48px;
+}
+
+@media (max-width: 900px) {
+  .comparateur__head {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* téléphone : chaque poste devient une fiche, les offres sélectionnées restent côte à côte ; l'en-tête reste
+   lu par les lecteurs d'écran et chaque cellule porte le nom de son offre */
+@media (max-width: 640px) {
+  .comparateur__scroll {
+    overflow: visible;
+  }
+
+  .comparateur__table,
+  .comparateur__table tbody,
+  .comparateur__table tfoot {
+    display: block;
+    min-width: 0;
+  }
+
+  .comparateur__table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .comparateur__table tr {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: 4px 12px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line-dark);
+  }
+
+  .comparateur__table tbody th,
+  .comparateur__table tfoot th {
+    grid-column: 1 / -1;
+    width: auto;
+    padding: 0 0 8px;
+    border: 0;
+  }
+
+  .comparateur__table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .comparateur__table td.is-absent {
+    padding: 8px;
+  }
+
+  .comparateur__table td::before {
+    content: attr(data-devis);
+    display: block;
+    margin-bottom: 6px;
+    font-size: var(--fs-label);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--on-dark-3);
+  }
+
+  .comparateur__total {
+    font-size: 1.125rem;
+  }
+
+  .comparateur__detail {
+    display: none;
+  }
+
+  .comparateur__row-total {
+    border-top: 2px solid var(--craie);
+  }
+
+  .comparateur__row-total th,
+  .comparateur__row-total td {
+    border-top: 0;
+  }
+
+  .comparateur__row-total td {
+    font-size: 1.125rem;
+  }
+
+  .comparateur__inclus {
+    font-size: var(--fs-label);
+  }
+
+  .comparateur__table .statut {
+    padding: 4px 6px;
+    letter-spacing: 0.06em;
+    white-space: normal;
+  }
+}
