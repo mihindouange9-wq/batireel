@@ -24,6 +24,12 @@ const PHOTOS = [
   { name: "pro-maconnerie", id: 19982408, w: 720, h: 900, who: "Professionnels · maçonnerie (profil fictif)", by: "@illustrate-digital-ug", title: "Smiling construction worker in helmet, Kitgum Matidi, Uganda" },
   { name: "pro-electricite", id: 33630755, w: 720, h: 900, who: "Professionnels · électricité (profil fictif)", by: "@barde_shots", title: "Young worker in orange safety gear holding helmet, outdoors" },
   { name: "pro-architecture", id: 6282116, w: 720, h: 900, who: "Professionnels · architecture (profil fictif)", by: "@yaroslav-shuraev", title: "Black male architect working on blueprints in a well-lit office" },
+  /* film de présentation : le même couple (fictif) du rêve aux clés */
+  { name: "film-couple-reve", id: 7765593, w: 1920, h: 1080, who: "Film · le couple imagine sa maison", by: "@kindelmedia", title: "A joyful couple imagines their dream home with creative interior sketches" },
+  { name: "film-couple-cles", id: 7579195, w: 1920, h: 1080, who: "Film · le couple reçoit ses clés", by: "@kindelmedia", title: "A joyful couple celebrates receiving the key to their new home" },
+  { name: "film-couple-sourire", id: 7579211, w: 1920, h: 1080, who: "Film · le couple, clés en main", by: "@kindelmedia", title: "Smiling African American couple holding keys, celebrating home ownership" },
+  { name: "film-chantier-arret", id: 38132565, w: 1920, h: 1080, who: "Film · un chantier à l'arrêt (Ghana)", by: "@eons", title: "Partial construction in lush greenery, Greater Accra Region, Ghana" },
+  { name: "film-couple-entree", id: 7579198, w: 1920, h: 1080, who: "Film · le couple entre chez lui", by: "@kindelmedia", title: "A cheerful couple stands in their new home" },
 ];
 
 const url = (p, w, h) => `https://images.pexels.com/photos/${p.id}/pexels-photo-${p.id}.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=${w}&h=${h}&fm=webp&q=80`;

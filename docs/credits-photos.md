@@ -16,3 +16,8 @@ Fichiers : `public/photos/<nom>.webp` (et `<nom>-<largeur>.webp`, variantes serv
 | `pro-maconnerie.webp` | Professionnels · maçonnerie (profil fictif) | [19982408](https://www.pexels.com/photo/19982408/) | @illustrate-digital-ug | Smiling construction worker in helmet, Kitgum Matidi, Uganda |
 | `pro-electricite.webp` | Professionnels · électricité (profil fictif) | [33630755](https://www.pexels.com/photo/33630755/) | @barde_shots | Young worker in orange safety gear holding helmet, outdoors |
 | `pro-architecture.webp` | Professionnels · architecture (profil fictif) | [6282116](https://www.pexels.com/photo/6282116/) | @yaroslav-shuraev | Black male architect working on blueprints in a well-lit office |
+| `film-couple-reve.webp` | Film · le couple imagine sa maison | [7765593](https://www.pexels.com/photo/7765593/) | @kindelmedia | A joyful couple imagines their dream home with creative interior sketches |
+| `film-couple-cles.webp` | Film · le couple reçoit ses clés | [7579195](https://www.pexels.com/photo/7579195/) | @kindelmedia | A joyful couple celebrates receiving the key to their new home |
+| `film-couple-sourire.webp` | Film · le couple, clés en main | [7579211](https://www.pexels.com/photo/7579211/) | @kindelmedia | Smiling African American couple holding keys, celebrating home ownership |
+| `film-chantier-arret.webp` | Film · un chantier à l'arrêt (Ghana) | [38132565](https://www.pexels.com/photo/38132565/) | @eons | Partial construction in lush greenery, Greater Accra Region, Ghana |
+| `film-couple-entree.webp` | Film · le couple entre chez lui | [7579198](https://www.pexels.com/photo/7579198/) | @kindelmedia | A cheerful couple stands in their new home |

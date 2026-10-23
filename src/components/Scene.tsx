@@ -1,54 +1,90 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Logo, LogoMark, MARK_PATH } from "../brand/Logo";
 import HeroScene, { type FilmDrive, type SceneDrive } from "./HeroScene";
-import { DEVIS, ETAPES_PASSEPORT, POSTES, PROFILS, fcfa, postesManquants, totalDevis, type Validation } from "../content/demo";
-import { CONSTAT, FOOTER, HERO } from "../content/site";
+import { DEVIS, ETAPES_PASSEPORT, POSTES, PROFILS, fcfa, postesManquants, totalDevis } from "../content/demo";
+import { FOOTER } from "../content/site";
 import { gsap, prepareStrokes } from "../lib/motion";
 import "./scene.css";
 
-/* ───────────── Le film de présentation (38 s, 1920 × 1080) ─────────────
+/* ───────────── Le film : « Nadège et Joël construisent » (116 s, 1920 × 1080) ─────────────
+   Une histoire, pas une visite guidée : un couple fictif veut construire sa maison à Libreville, a peur de se
+   faire avoir, et choisit BATIRÉEL. Trois gestes (comparer, choisir, suivre), puis les clés.
    Ligne de temps GSAP en pause : l'outil de rendu place la tête de lecture image par image (`window.seek`)
-   et capture. Aucune transition CSS ici, et la scène 3D reçoit l'instant du chantier de l'extérieur : chaque
-   image est identique d'un rendu à l'autre. Sept plans :
-   0–4,6 s le monogramme se trace et se coule · 4,6–13,4 s le chantier se monte sous le titre
-   13,4–18,6 s les trois zones grises · 18,6–24,4 s le comparateur · 24,4–30 s le Passeport Chantier
-   30–33,2 s un profil, ses preuves · 33,2–38 s la villa achevée, la signature, le partenaire. */
+   et capture ; le chantier 3D reçoit son instant de l'extérieur. Aucune transition CSS : chaque image est
+   identique d'un rendu à l'autre. La bande-son est composée dans l'encodeur à partir de `window.SON`.
+
+   0–7     ouverture : BATIRÉEL, en collaboration avec MÉTHODE AURA
+   7–16    le rêve : un terrain, une maison à construire
+   16–32   la peur : les histoires qu'on entend, la question
+   32–42   la décision : BATIRÉEL, trois gestes
+   42–61   1 · comparer : le projet décrit, trois devis sur les mêmes lignes
+   61–77   2 · choisir : un profil, ses preuves
+   77–99   3 · suivre : le Passeport Chantier, la villa qui se monte, un écart relevé
+   99–107  le résultat : les clés
+   107–116 l'appel, la signature, le partenaire */
 
 declare global {
   interface Window {
     seek: (t: number) => void;
     DUREE: number;
     pret: boolean;
+    SON: Record<string, unknown>;
   }
 }
 
-export const DUREE = 38;
-/** instant où le chantier 3D démarre (fin du plan 1) */
-const T3D = 4.6;
+export const DUREE = 116;
+
+/* instants clés (secondes) */
+const T = {
+  reve: 7.0,
+  peur: 16.0,
+  decision: 32.6,
+  comparer: 42.2,
+  choisir: 61.5,
+  suivre: 77.4,
+  resultat: 99.6,
+  fin: 107.0,
+} as const;
+/** instant du film où le chantier 3D démarre */
+const T3D = 78.0;
+
+const ZONES = [
+  "Deux devis, du simple au double, pour la même maison.",
+  "Un prix bas… et la toiture qui manque.",
+  "Des acomptes versés, puis plus de nouvelles.",
+  "Un chantier qui s'arrête. Sans trace.",
+];
 
 const INFO = {
   verified: { cls: "statut--ok", text: "Vérifié" },
   declared: { cls: "statut--declare", text: "Déclaré" },
   missing: { cls: "statut--attente", text: "Non fourni" },
 } as const;
-const ETAT: Record<Validation["state"], { cls: string; text: string }> = {
-  ok: { cls: "statut--ok", text: "Validé" },
-  attente: { cls: "statut--attente", text: "À valider" },
-  alerte: { cls: "statut--alerte", text: "Écart relevé" },
-  avenir: { cls: "statut--attente", text: "À venir" },
-};
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 
+function Lines({ className, lines }: { className?: string; lines: string[] }) {
+  return (
+    <p className={`film__title ${className ?? ""}`}>
+      {lines.map((l) => (
+        <span className="w" key={l}>
+          <i>{l}</i>
+        </span>
+      ))}
+    </p>
+  );
+}
+
 export default function Scene() {
   const root = useRef<HTMLDivElement>(null);
-  // la scène 3D ne se rend que lorsqu'elle est visible (plans 2 et 7) : le rendu logiciel est lent
-  const drive = useRef<SceneDrive>({ scroll: 0, px: 0, py: 0, active: false });
+  // la scène 3D ne se rend que pendant « suivre » (77–99 s)
+  const drive = useRef<SceneDrive>({ scroll: 0.15, px: 0, py: 0, active: false });
   const film = useRef<FilmDrive>({ time: -1 });
   const [ready3d, setReady3d] = useState(false);
   const onReady = useCallback(() => setReady3d(true), []);
   const postes = POSTES.slice(0, 4);
   const pro = PROFILS[0];
+  const devisA = DEVIS[0];
 
   useEffect(() => {
     const scope = root.current!;
@@ -57,80 +93,258 @@ export default function Scene() {
     const d = drive.current;
     const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out", duration: 1 } });
 
-    /* ---- plan 1 : le repère se pose, le B se trace puis se coule ---- */
-    prepareStrokes(qa(".scene__p1 [data-stroke]"));
-    tl.to(qa(".scene__p1 .scene__ligne"), { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut", stagger: 0.08 }, 0.1)
-      .to(q(".scene__mark-trace"), { strokeDashoffset: 0, duration: 1.3, ease: "power2.inOut" }, 0.5)
-      .to(q(".scene__mark-trace"), { fillOpacity: 1, duration: 0.5, ease: "power2.out" }, 1.9)
-      .from(".scene__p1 .scene__wordmark", { autoAlpha: 0, y: 24, duration: 0.9 }, 2.3)
-      .from(".scene__p1 .scene__cote", { autoAlpha: 0, duration: 0.6 }, 2.9)
-      .to(".scene__p1", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 4.1);
+    /* ---- grammaire ---- */
+    const rise = (sel: string, t: number, stagger = 0.1, duration = 1.0) => tl.from(qa(`${sel} .w > i`), { yPercent: 112, duration, stagger, ease: "power4.out" }, t);
+    const sink = (sel: string, t: number) => tl.to(qa(`${sel} .w > i`), { yPercent: -112, duration: 0.5, stagger: 0.05, ease: "power3.in" }, t);
+    const fade = (sel: string, t: number, dur = 0.7, y = 18) => tl.from(sel, { autoAlpha: 0, y, duration: dur }, t);
+    const out = (sel: string, t: number, dur = 0.45) => tl.to(sel, { autoAlpha: 0, duration: dur, ease: "power2.in" }, t);
+    const stamp = (sel: string, t: number) => tl.from(sel, { autoAlpha: 0, scale: 1.7, rotation: -6, transformOrigin: "left center", duration: 0.35, ease: "power4.out" }, t);
+    const plan = (sel: string, t: number) => tl.set(sel, { autoAlpha: 1 }, t);
+    const unplan = (sel: string, t: number) => tl.set(sel, { autoAlpha: 0 }, t);
+    /** le volet craie traverse l'écran ; à mi-course, les plans s'échangent */
+    const wipe = (t: number, from: string, to: string) => {
+      tl.fromTo(".film__wipe", { xPercent: -135 }, { xPercent: 135, duration: 0.9, ease: "power3.inOut" }, t);
+      unplan(from, t + 0.45);
+      plan(to, t + 0.45);
+    };
+    const kenburns = (sel: string, t: number, dur: number, from = 1.1, to = 1.0) => tl.fromTo(sel, { scale: from }, { scale: to, duration: dur, ease: "none" }, t);
+    const typed = (sel: string, text: string, t: number, step = 0.055) => {
+      const el = q(sel);
+      for (let i = 1; i <= text.length; i++) tl.set(el, { textContent: text.slice(0, i) }, t + i * step);
+      return t + text.length * step;
+    };
 
-    /* ---- plan 2 : le chantier se monte sous le titre ---- */
-    tl.set(d, { active: true }, T3D - 0.05)
-      .from(".scene__stage", { autoAlpha: 0, duration: 1.2 }, T3D)
-      .from(".scene__p2", { autoAlpha: 0, duration: 0.01 }, T3D)
-      .from(qa(".scene__p2 .scene__title > span > i"), { yPercent: 110, duration: 1.1, stagger: 0.12, ease: "power4.out" }, 4.9)
-      .from(".scene__p2 .scene__sub", { autoAlpha: 0, y: 18, duration: 0.8 }, 6.0)
-      .from(".scene__p2 .scene__cotes", { autoAlpha: 0, duration: 0.6 }, 6.6)
-      .to(".scene__p2", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 13.0)
-      .to(".scene__stage", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 13.0)
-      .set(d, { active: false }, 13.6);
+    // états de départ possédés par GSAP (jamais par le CSS : une transformation CSS en % se cumulerait)
+    gsap.set(".film__wipe", { xPercent: -135, skewX: -8 });
+    gsap.set(".film__steps-rail-fill", { scaleX: 0, transformOrigin: "left center" });
 
-    /* ---- plan 3 : trois zones grises ---- */
-    tl.from(".scene__p3", { autoAlpha: 0, duration: 0.01 }, 13.4)
-      .from(qa(".scene__p3 .scene__title > span > i"), { yPercent: 110, duration: 1.0, stagger: 0.12, ease: "power4.out" }, 13.5)
-      .from(".scene__p3 .scene__zones", { scaleX: 0, transformOrigin: "left center", duration: 0.01 }, 14.2)
-      .from(qa(".scene__p3 .scene__zone"), { autoAlpha: 0, y: 26, duration: 0.8, stagger: 0.45 }, 14.4)
-      .to(".scene__p3", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 18.1);
+    /* ================= 0 · ouverture : BATIRÉEL × MÉTHODE AURA ================= */
+    prepareStrokes(qa(".film__p0 [data-stroke]"));
+    plan(".film__p0", 0);
+    tl.to(qa(".film__p0 .film__ligne"), { strokeDashoffset: 0, duration: 1.0, ease: "power2.inOut", stagger: 0.07 }, 0.05)
+      .to(q(".film__p0 .film__mark-trace"), { strokeDashoffset: 0, duration: 1.3, ease: "power2.inOut" }, 0.4)
+      .to(q(".film__p0 .film__mark-trace"), { fillOpacity: 1, duration: 0.45, ease: "power2.out" }, 1.75)
+      .from(".film__p0 .film__wordmark", { autoAlpha: 0, y: 22, duration: 0.8 }, 2.15)
+      .from(".film__p0 .film__rule", { scaleX: 0, transformOrigin: "center", duration: 0.9, ease: "power4.out" }, 2.6)
+      .from(".film__p0 .film__collab-label", { autoAlpha: 0, y: 12, duration: 0.6 }, 2.95)
+      .from(".film__p0 .film__collab-logo", { autoAlpha: 0, scale: 0.9, transformOrigin: "center", duration: 0.9, ease: "power3.out" }, 3.1)
+      .from(".film__p0 .film__collab-note", { autoAlpha: 0, duration: 0.6 }, 3.7);
+    wipe(6.3, ".film__p0", ".film__p1");
 
-    /* ---- plan 4 : comparez autrement ---- */
-    tl.from(".scene__p4", { autoAlpha: 0, duration: 0.01 }, 18.5)
-      .from(qa(".scene__p4 .scene__title > span > i"), { yPercent: 110, duration: 1.0, stagger: 0.12, ease: "power4.out" }, 18.6)
-      .from(".scene__p4 .scene__sub", { autoAlpha: 0, y: 14, duration: 0.7 }, 19.2)
-      .from(".scene__p4 thead", { autoAlpha: 0, y: 10, duration: 0.6 }, 19.4)
-      .from(qa(".scene__p4 tbody tr"), { autoAlpha: 0, y: 16, duration: 0.6, stagger: 0.38 }, 19.7)
-      .from(qa(".scene__p4 tbody .statut--alerte"), { autoAlpha: 0, scale: 0.7, transformOrigin: "left center", duration: 0.45 }, 21.7)
-      .from(".scene__p4 tfoot", { autoAlpha: 0, y: 12, duration: 0.6 }, 22.3)
-      .from(qa(".scene__p4 tfoot .statut--alerte"), { autoAlpha: 0, scale: 0.7, transformOrigin: "left center", duration: 0.45 }, 22.9)
-      .to(".scene__p4", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 23.9);
+    /* ================= 1 · le rêve ================= */
+    kenburns(".film__p1 .film__photo img", T.reve - 0.5, 10, 1.12, 1.0);
+    rise(".film__p1 .film__t1", T.reve + 0.5, 0.14);
+    fade(".film__p1 .film__cote", T.reve + 1.7, 0.6, 10);
+    sink(".film__p1 .film__t1", T.reve + 4.6);
+    rise(".film__p1 .film__t2", T.reve + 5.2, 0.14);
+    // la lumière baisse : quelque chose inquiète
+    tl.to(".film__p1 .film__shade", { opacity: 0.92, duration: 1.2, ease: "power2.in" }, T.peur - 1.3);
+    out(".film__p1 .film__t2", T.peur - 0.9, 0.5);
+    out(".film__p1 .film__cote", T.peur - 0.9, 0.5);
+    unplan(".film__p1", T.peur);
 
-    /* ---- plan 5 : le Passeport Chantier ---- */
-    tl.from(".scene__p5", { autoAlpha: 0, duration: 0.01 }, 24.3)
-      .from(qa(".scene__p5 .scene__title > span > i"), { yPercent: 110, duration: 1.0, stagger: 0.12, ease: "power4.out" }, 24.4)
-      .from(".scene__p5 .scene__rail", { scaleX: 0, transformOrigin: "left center", duration: 2.8, ease: "power2.inOut" }, 25.2)
-      .from(qa(".scene__p5 .scene__etape"), { autoAlpha: 0, y: 30, duration: 0.7, stagger: 0.42 }, 25.3)
-      .from(".scene__p5 .scene__sub", { autoAlpha: 0, y: 12, duration: 0.6 }, 28.3)
-      .to(".scene__p5", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 29.5);
+    /* ================= 2 · la peur ================= */
+    plan(".film__p2", T.peur);
+    kenburns(".film__p2 .film__photo img", T.peur, 16, 1.0, 1.14);
+    rise(".film__p2 .film__t1", T.peur + 0.4, 0.12);
+    sink(".film__p2 .film__t1", T.peur + 3.0);
+    ZONES.forEach((_, i) => {
+      const t = T.peur + 3.4 + i * 2.2;
+      tl.from(`.film__zone-${i}`, { autoAlpha: 0, x: -50, duration: 0.6, ease: "power4.out" }, t);
+      stamp(`.film__zone-${i} .statut`, t + 0.12);
+    });
+    tl.to(".film__p2 .film__zones", { autoAlpha: 0, y: -30, duration: 0.5, ease: "power2.in" }, T.peur + 12.4);
+    tl.to(".film__p2 .film__shade", { opacity: 0.97, duration: 1.0 }, T.peur + 12.2);
+    rise(".film__p2 .film__question", T.peur + 12.9, 0.1, 0.9);
+    tl.to(".film__p2 .film__question", { scale: 1.04, duration: 3.0, ease: "none", transformOrigin: "left center" }, T.peur + 13.6);
+    wipe(T.decision - 0.8, ".film__p2", ".film__p3");
 
-    /* ---- plan 6 : un profil, ses preuves ---- */
-    tl.from(".scene__p6", { autoAlpha: 0, duration: 0.01 }, 29.9)
-      .from(qa(".scene__p6 .scene__title > span > i"), { yPercent: 110, duration: 1.0, stagger: 0.12, ease: "power4.out" }, 30.0)
-      .from(".scene__p6 .scene__card", { autoAlpha: 0, x: 60, duration: 0.9 }, 30.4)
-      .from(qa(".scene__p6 .scene__info"), { autoAlpha: 0, x: 20, duration: 0.5, stagger: 0.3 }, 31.0)
-      .to(".scene__p6", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 32.7);
+    /* ================= 3 · la décision ================= */
+    tl.from(".film__p3 .film__logo-big", { scale: 1.35, autoAlpha: 0, transformOrigin: "center", duration: 0.55, ease: "power4.out" }, T.decision);
+    tl.from(".film__p3 .film__halo", { scale: 0.2, autoAlpha: 0, transformOrigin: "center", duration: 1.6, ease: "power3.out" }, T.decision);
+    rise(".film__p3 .film__t1", T.decision + 0.9, 0.12);
+    tl.to(".film__p3 .film__logo-big", { y: -120, duration: 0.9, ease: "power3.inOut" }, T.decision + 3.4);
+    tl.to(".film__p3 .film__t1", { y: -120, duration: 0.9, ease: "power3.inOut" }, T.decision + 3.4);
+    fade(".film__p3 .film__t2", T.decision + 3.9, 0.7, 14);
+    qa(".film__p3 .film__geste").forEach((g, i) => tl.from(g, { autoAlpha: 0, y: 36, duration: 0.6, ease: "power4.out" }, T.decision + 4.5 + i * 0.35));
+    wipe(T.comparer - 0.8, ".film__p3", ".film__p4");
 
-    /* ---- plan 7 : la villa achevée, la signature, le partenaire ---- */
-    tl.set(d, { active: true }, 33.0)
-      .to(".scene__stage", { autoAlpha: 1, duration: 1.0 }, 33.2)
-      .fromTo(d, { scroll: 0.1 }, { scroll: 0.6, duration: 4.8, ease: "sine.inOut" }, 33.2)
-      .from(".scene__p7", { autoAlpha: 0, duration: 0.01 }, 33.1)
-      .from(qa(".scene__p7 .scene__title > span > i"), { yPercent: 110, duration: 1.0, stagger: 0.12, ease: "power4.out" }, 33.6)
-      .from(".scene__p7 .scene__logo", { autoAlpha: 0, duration: 0.8 }, 34.6)
-      .from(".scene__p7 .scene__partner", { autoAlpha: 0, y: 14, duration: 0.8 }, 36.0);
+    /* ================= 4 · comparer ================= */
+    tl.from(".film__p4 .film__num", { xPercent: -40, autoAlpha: 0, duration: 0.9, ease: "power4.out" }, T.comparer);
+    rise(".film__p4 .film__t1", T.comparer + 0.15, 0.1);
+    tl.from(".film__p4 .film__device", { x: 120, autoAlpha: 0, rotationY: -8, transformOrigin: "left center", duration: 1.0, ease: "power4.out" }, T.comparer + 0.3);
+    // le projet se décrit
+    let tt = T.comparer + 1.3;
+    tt = typed(".film__f-type", "Maison R+1", tt);
+    tt = typed(".film__f-surface", "140 m²", tt + 0.25);
+    tt = typed(".film__f-lieu", "Libreville, Angondjé", tt + 0.25);
+    tl.to(".film__f-btn", { scale: 0.96, duration: 0.12, yoyo: true, repeat: 1, transformOrigin: "center" }, tt + 0.4);
+    tl.to(".film__f-btn", { backgroundColor: "#d08c62", duration: 0.2 }, tt + 0.4);
+    fade(".film__p4 .film__sub1", T.comparer + 1.6, 0.6, 12);
+    stamp(".film__f-reponses", tt + 1.0);
+    const tTable = tt + 2.3;
+    // le comparateur remplace le formulaire
+    tl.to(".film__screen-form", { autoAlpha: 0, x: -40, duration: 0.4, ease: "power2.in" }, tTable - 0.35);
+    tl.from(".film__screen-table", { autoAlpha: 0, x: 40, duration: 0.5 }, tTable);
+    out(".film__p4 .film__sub1", tTable - 0.3, 0.3);
+    fade(".film__p4 .film__sub2", tTable + 0.3, 0.6, 12);
+    tl.from(qa(".film__table thead th"), { autoAlpha: 0, y: -10, duration: 0.5, stagger: 0.08 }, tTable + 0.2);
+    tl.from(qa(".film__table tbody tr"), { autoAlpha: 0, y: 16, duration: 0.55, stagger: 0.4 }, tTable + 0.6);
+    stamp(".film__table .is-absent .statut", tTable + 2.5);
+    tl.from(".film__table tfoot", { autoAlpha: 0, y: 12, duration: 0.6 }, tTable + 3.1);
+    stamp(".film__table tfoot .statut", tTable + 3.7);
+    out(".film__p4 .film__sub2", tTable + 4.4, 0.3);
+    fade(".film__p4 .film__sub3", tTable + 4.8, 0.6, 12);
+    // l'offre complète la moins chère, en grand
+    const tCall = tTable + 5.3;
+    tl.from(".film__callout", { autoAlpha: 0, y: 30, duration: 0.7 }, tCall);
+    const compteur = { v: 0 };
+    const montant = q(".film__callout-montant");
+    tl.to(compteur, { v: totalDevis(devisA), duration: 1.5, ease: "power2.out", onUpdate: () => { montant.textContent = fcfa(Math.round(compteur.v)); } }, tCall + 0.1);
+    stamp(".film__callout .statut", tCall + 1.5);
+    tl.to(".film__table td.is-min", { backgroundColor: "rgba(141,156,143,0.18)", duration: 0.5 }, tCall + 0.3);
+    wipe(T.choisir - 0.8, ".film__p4", ".film__p5");
+
+    /* ================= 5 · choisir ================= */
+    tl.from(".film__p5 .film__num", { xPercent: -40, autoAlpha: 0, duration: 0.9, ease: "power4.out" }, T.choisir);
+    rise(".film__p5 .film__t1", T.choisir + 0.15, 0.1);
+    tl.from(".film__p5 .film__card", { x: 120, autoAlpha: 0, duration: 1.0, ease: "power4.out" }, T.choisir + 0.4);
+    tl.from(".film__p5 .film__card img", { scale: 1.15, duration: 6, ease: "none" }, T.choisir + 0.4);
+    fade(".film__p5 .film__sub1", T.choisir + 1.3, 0.6, 12);
+    qa(".film__p5 .film__info").forEach((el, i) => {
+      tl.from(el, { autoAlpha: 0, x: 26, duration: 0.5, ease: "power3.out" }, T.choisir + 1.9 + i * 0.55);
+      stamp(`.film__p5 .film__info-${i} .statut`, T.choisir + 2.1 + i * 0.55);
+    });
+    out(".film__p5 .film__sub1", T.choisir + 5.2, 0.3);
+    fade(".film__p5 .film__sub2", T.choisir + 5.6, 0.6, 12);
+    qa(".film__p5 .film__real").forEach((el, i) => tl.from(el, { autoAlpha: 0, x: 20, duration: 0.5 }, T.choisir + 6.2 + i * 0.3));
+    tl.from(".film__p5 .film__c-btn", { autoAlpha: 0, y: 14, duration: 0.5 }, T.choisir + 8.0);
+    tl.to(".film__p5 .film__c-btn", { scale: 0.96, duration: 0.12, yoyo: true, repeat: 1, transformOrigin: "center" }, T.choisir + 9.6);
+    tl.from(".film__p5 .film__chosen", { autoAlpha: 0, scale: 0.6, transformOrigin: "center", duration: 0.5, ease: "back.out(2.5)" }, T.choisir + 10.0);
+    out(".film__p5 .film__sub2", T.choisir + 10.4, 0.3);
+    fade(".film__p5 .film__sub3", T.choisir + 10.8, 0.6, 12);
+    wipe(T.suivre - 0.8, ".film__p5", ".film__p6");
+
+    /* ================= 6 · suivre : la villa se monte, le Passeport se remplit ================= */
+    tl.set(d, { active: true }, T.suivre - 0.2);
+    tl.from(".film__stage", { autoAlpha: 0, duration: 1.0 }, T3D - 0.3);
+    tl.from(".film__p6 .film__num", { xPercent: -40, autoAlpha: 0, duration: 0.9, ease: "power4.out" }, T.suivre);
+    rise(".film__p6 .film__t1", T.suivre + 0.15, 0.1);
+    fade(".film__p6 .film__sub1", T.suivre + 1.2, 0.6, 12);
+    tl.from(".film__steps", { autoAlpha: 0, y: 40, duration: 0.8 }, T.suivre + 0.8);
+    // les étapes s'allument au rythme du chantier
+    [0.9, 2.3, 3.7, 5.3, 6.9].forEach((dt, i) => {
+      const t = T3D + dt;
+      tl.to(`.film__step-${i} .film__step-dim`, { opacity: 0, duration: 0.45 }, t);
+      tl.from(`.film__step-${i} .film__step-pic`, { scale: 1.12, duration: 0.8, ease: "power3.out" }, t);
+      stamp(`.film__step-${i} .statut`, t + 0.25);
+      tl.to(`.film__steps-rail-fill`, { scaleX: (i + 1) / 6, duration: 1.2, ease: "power2.inOut" }, t);
+    });
+    out(".film__p6 .film__sub1", T3D + 4.0, 0.3);
+    fade(".film__p6 .film__sub2", T3D + 4.4, 0.6, 12);
+    // un écart relevé, puis résolu
+    const tAlerte = T3D + 8.6;
+    tl.from(".film__alert", { autoAlpha: 0, y: 30, duration: 0.6, ease: "power4.out" }, tAlerte);
+    stamp(".film__alert .film__alert-tag", tAlerte + 0.15);
+    out(".film__p6 .film__sub2", tAlerte - 0.3, 0.3);
+    fade(".film__p6 .film__sub3", tAlerte + 0.4, 0.6, 12);
+    tl.to(".film__alert", { autoAlpha: 0, y: -20, duration: 0.4, ease: "power2.in" }, tAlerte + 3.6);
+    tl.from(".film__resolu", { autoAlpha: 0, y: 30, duration: 0.6, ease: "power4.out" }, tAlerte + 3.9);
+    stamp(".film__resolu .film__alert-tag", tAlerte + 4.05);
+    out(".film__p6 .film__sub3", tAlerte + 4.2, 0.3);
+    fade(".film__p6 .film__sub4", tAlerte + 4.6, 0.6, 12);
+    // la caméra se rapproche de la villa achevée
+    tl.fromTo(d, { scroll: 0.15 }, { scroll: 0.62, duration: 10, ease: "sine.inOut" }, T3D + 9.5);
+    // livraison
+    const tLiv = T3D + 16.6;
+    tl.to(".film__resolu", { autoAlpha: 0, duration: 0.4 }, tLiv - 0.5);
+    tl.to(".film__step-5 .film__step-dim", { opacity: 0, duration: 0.45 }, tLiv);
+    tl.from(".film__step-5 .film__step-pic", { scale: 1.12, duration: 0.8, ease: "power3.out" }, tLiv);
+    stamp(".film__step-5 .statut", tLiv + 0.25);
+    tl.to(".film__steps-rail-fill", { scaleX: 1, duration: 1.0, ease: "power2.inOut" }, tLiv);
+    out(".film__p6 .film__sub4", tLiv - 0.2, 0.3);
+    fade(".film__p6 .film__sub5", tLiv + 0.3, 0.6, 12);
+    wipe(T.resultat - 0.6, ".film__p6", ".film__p7");
+    tl.set(d, { active: false }, T.resultat + 0.3);
+    tl.to(".film__stage", { autoAlpha: 0, duration: 0.3 }, T.resultat - 0.15);
+
+    /* ================= 7 · le résultat ================= */
+    kenburns(".film__p7 .film__photo-a img", T.resultat - 0.5, 7, 1.14, 1.0);
+    rise(".film__p7 .film__t1", T.resultat + 0.5, 0.12);
+    fade(".film__p7 .film__cote", T.resultat + 1.6, 0.6, 10);
+    tl.fromTo(".film__p7 .film__photo-b", { clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)", duration: 1.0, ease: "power4.inOut" }, T.resultat + 4.2);
+    kenburns(".film__p7 .film__photo-b img", T.resultat + 4.2, 4, 1.0, 1.08);
+    sink(".film__p7 .film__t1", T.resultat + 4.0);
+    rise(".film__p7 .film__t2", T.resultat + 4.9, 0.12);
+    wipe(T.fin - 0.6, ".film__p7", ".film__p8");
+
+    /* ================= 8 · l'appel, la signature, le partenaire ================= */
+    tl.from(".film__p8 .film__logo-big", { scale: 1.35, autoAlpha: 0, transformOrigin: "center", duration: 0.55, ease: "power4.out" }, T.fin);
+    tl.from(".film__p8 .film__halo", { scale: 0.2, autoAlpha: 0, transformOrigin: "center", duration: 1.6, ease: "power3.out" }, T.fin);
+    rise(".film__p8 .film__t1", T.fin + 0.8, 0.12);
+    qa(".film__p8 .film__geste").forEach((g, i) => tl.from(g, { autoAlpha: 0, y: 30, duration: 0.6, ease: "power4.out" }, T.fin + 2.2 + i * 0.3));
+    tl.from(".film__p8 .film__rule", { scaleX: 0, transformOrigin: "center", duration: 0.9, ease: "power4.out" }, T.fin + 3.6);
+    tl.from(".film__p8 .film__collab-label", { autoAlpha: 0, y: 12, duration: 0.6 }, T.fin + 3.9);
+    tl.from(".film__p8 .film__collab-logo", { autoAlpha: 0, scale: 0.9, transformOrigin: "center", duration: 0.9, ease: "power3.out" }, T.fin + 4.05);
+    tl.from(".film__p8 .film__collab-note", { autoAlpha: 0, duration: 0.6 }, T.fin + 4.7);
+    tl.from(".film__p8 .film__fictif", { autoAlpha: 0, duration: 0.6 }, T.fin + 5.2);
+    tl.to(".film__p8", { autoAlpha: 0, duration: 1.0, ease: "power2.in" }, DUREE - 1.2);
+    tl.to({}, { duration: 0.01 }, DUREE);
+
+    /* ---- la bande-son : repères envoyés à l'encodeur ---- */
+    const zoneStamps = ZONES.map((_, i) => T.peur + 3.52 + i * 2.2);
+    window.SON = {
+      tempo: 96,
+      pads: [
+        { t0: 0, t1: 7.6, chord: "Dm", gain: 0.085, fc: 420 },
+        { t0: 7.0, t1: 16.4, chord: "F", gain: 0.095, fc: 640 },
+        { t0: 16.0, t1: 32.2, chord: "Dt", gain: 0.1, fc: 380 },
+        { t0: 32.4, t1: 42.4, chord: "Bb", gain: 0.1, fc: 760 },
+        { t0: 42.0, t1: 47.0, chord: "F", gain: 0.085, fc: 700 },
+        { t0: 47.0, t1: 52.0, chord: "Dm", gain: 0.085, fc: 700 },
+        { t0: 52.0, t1: 57.0, chord: "Bb", gain: 0.085, fc: 700 },
+        { t0: 57.0, t1: 62.0, chord: "C", gain: 0.085, fc: 760 },
+        { t0: 61.5, t1: 66.5, chord: "Gm", gain: 0.085, fc: 700 },
+        { t0: 66.5, t1: 71.5, chord: "Bb", gain: 0.085, fc: 700 },
+        { t0: 71.5, t1: 77.8, chord: "F", gain: 0.085, fc: 760 },
+        { t0: 77.4, t1: 83.0, chord: "Dm", gain: 0.09, fc: 640 },
+        { t0: 83.0, t1: 88.5, chord: "Bb", gain: 0.09, fc: 680 },
+        { t0: 88.5, t1: 94.0, chord: "F", gain: 0.09, fc: 720 },
+        { t0: 94.0, t1: 100.0, chord: "C", gain: 0.095, fc: 820 },
+        { t0: 99.4, t1: 107.4, chord: "F", gain: 0.11, fc: 900 },
+        { t0: 107.0, t1: 112.0, chord: "Bb", gain: 0.1, fc: 820 },
+        { t0: 112.0, t1: DUREE, chord: "F", gain: 0.1, fc: 900 },
+      ],
+      drone: [[T.peur + 2.0, T.decision - 0.6]],
+      pulse: [[T.decision + 0.6, T.resultat - 0.6]],
+      arp: [[T.comparer, T.resultat - 1.2]],
+      hits: [T.decision, T.fin],
+      chocs: [T3D + 1.4, T3D + 3.75, T3D + 5.4],
+      stamps: [...zoneStamps, tTable + 2.5, tTable + 3.7, tAlerte + 0.15],
+      ticks: [
+        ...Array.from({ length: 10 }, (_, i) => T.comparer + 1.3 + i * 0.22),
+        ...[0, 1, 2, 3].map((i) => tTable + 0.6 + i * 0.4),
+        ...[0, 1, 2, 3].map((i) => T.choisir + 1.9 + i * 0.55),
+        ...[0.9, 2.3, 3.7, 5.3, 6.9].map((dt) => T3D + dt),
+      ],
+      pings: [1.95, 3.2, tCall + 0.1, T.choisir + 10.0, tAlerte + 3.9, tLiv + 0.25, T.fin + 4.05],
+      risers: [[T.decision - 4.6, T.decision], [T.fin - 2.4, T.fin]],
+      whooshes: [6.3, T.decision - 0.8, T.comparer - 0.8, T.choisir - 0.8, T.suivre - 0.8, T.resultat - 0.6, T.fin - 0.6],
+      duree: DUREE,
+    };
 
     window.DUREE = DUREE;
     window.seek = (t: number) => {
       const tt = clamp(t, 0, DUREE);
       tl.seek(tt, false);
-      // le chantier se monte pendant le plan 2 et reste achevé pour le plan 7
-      film.current.time = tt < 20 ? Math.min(tt - T3D, 11.0) : 9.0 + (tt - 33) * 1e-4;
+      // le chantier se monte à partir de T3D, reste achevé ensuite ; l'instant change à chaque image
+      film.current.time = tt < T3D ? -1 : Math.min(tt - T3D, 11.0) + (tt - T3D) * 1e-5;
     };
     window.seek(0);
     return () => {
       tl.kill();
     };
-  }, []);
+  }, [devisA]);
 
   // prêt quand la scène 3D a compilé ses programmes, les polices et les images sont là
   useEffect(() => {
@@ -143,206 +357,302 @@ export default function Scene() {
     });
   }, [ready3d]);
 
+  const collab = (
+    <>
+      <span className="film__rule" />
+      <span className="film__collab-label">{FOOTER.partner.label}</span>
+      <img className="film__collab-logo" src="/partenaires/methode-aura.png" alt={FOOTER.partner.name} width="800" height="246" />
+      <span className="film__collab-note">{FOOTER.partner.note}</span>
+    </>
+  );
+
   return (
-    <div className="scene" ref={root}>
-      {/* la scène 3D, partagée par les plans 2 et 7 */}
-      <div className="scene__stage" aria-hidden="true">
+    <div className="film" ref={root}>
+      {/* la scène 3D, derrière le plan « suivre » */}
+      <div className="film__stage" aria-hidden="true">
         <Suspense fallback={null}>
           <HeroScene drive={drive} lite={false} film={film} onReady={onReady} />
         </Suspense>
       </div>
 
-      {/* plan 1 */}
-      <section className="scene__plan scene__p1">
-        <svg className="scene__lignes" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
-          <g stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.55">
-            <path className="scene__ligne" data-stroke d="M0 220H1920" />
-            <path className="scene__ligne" data-stroke d="M0 860H1920" />
-            <path className="scene__ligne" data-stroke d="M420 0V1080" />
-            <path className="scene__ligne" data-stroke d="M1500 0V1080" />
+      {/* 0 · ouverture */}
+      <section className="film__plan film__p0">
+        <svg className="film__lignes" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+          <g stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.5">
+            <path className="film__ligne" data-stroke d="M0 180H1920" />
+            <path className="film__ligne" data-stroke d="M0 900H1920" />
+            <path className="film__ligne" data-stroke d="M360 0V1080" />
+            <path className="film__ligne" data-stroke d="M1560 0V1080" />
           </g>
         </svg>
-        <svg className="scene__mark" viewBox="14 10 72 80" aria-hidden="true">
-          <path className="scene__mark-trace" data-stroke d={MARK_PATH} fill="currentColor" fillRule="evenodd" fillOpacity="0" stroke="currentColor" strokeWidth="1.2" />
+        <svg className="film__mark" viewBox="14 10 72 80" aria-hidden="true">
+          <path className="film__mark-trace" data-stroke d={MARK_PATH} fill="currentColor" fillRule="evenodd" fillOpacity="0" stroke="currentColor" strokeWidth="1.2" />
         </svg>
-        <div className="scene__wordmark">
-          <Logo size={64} withMark={false} />
+        <div className="film__wordmark">
+          <Logo size={60} withMark={false} />
         </div>
-        <p className="scene__cote cote">Libreville · plateforme en conception</p>
+        <div className="film__collab">{collab}</div>
       </section>
 
-      {/* plan 2 */}
-      <section className="scene__plan scene__p2">
-        <div className="scene__copy">
-          <p className="scene__title">
-            <span><i>{HERO.title[0]}</i></span>
-            <span><i>{HERO.title[1]}</i></span>
-          </p>
-          <p className="scene__sub">{HERO.subtitle}</p>
-          <p className="scene__cotes">
-            <span className="cote">{HERO.cotes[0]}</span>
-            <span className="cote">{HERO.cotes[1]}</span>
-          </p>
+      {/* 1 · le rêve */}
+      <section className="film__plan film__p1">
+        <figure className="film__photo">
+          <img src="/photos/film-couple-reve.webp" alt="" width="1920" height="1080" />
+          <span className="film__shade film__shade--left" />
+        </figure>
+        <div className="film__copy film__copy--low">
+          <Lines className="film__t1" lines={["Un terrain", "à Libreville.", "Un rêve : leur maison."]} />
+          <Lines className="film__t2 film__title--abs" lines={["Nadège et Joël", "sont prêts", "à construire."]} />
+          <p className="film__cote cote">Nadège et Joël · couple fictif</p>
         </div>
       </section>
 
-      {/* plan 3 */}
-      <section className="scene__plan scene__p3 scene__plan--craie sheet" data-tone="light">
-        <div className="scene__inner">
-          <p className="scene__title scene__title--compact">
-            <span><i>Trois zones grises,</i></span>
-            <span><i>un seul chantier.</i></span>
-          </p>
-          <ol className="scene__zones">
-            {CONSTAT.points.map((p, i) => (
-              <li className="scene__zone" key={p.title}>
-                <span className="scene__zone-num tabular">0{i + 1}</span>
-                <div>
-                  <h3>{p.title}</h3>
-                  <p className="cote cote--plain">{p.note}</p>
-                </div>
+      {/* 2 · la peur */}
+      <section className="film__plan film__p2">
+        <figure className="film__photo film__photo--sombre">
+          <img src="/photos/film-chantier-arret.webp" alt="" width="1920" height="1080" />
+          <span className="film__shade film__shade--dark" />
+        </figure>
+        <div className="film__copy film__copy--high">
+          <Lines className="film__t1" lines={["Mais autour d'eux,", "tout le monde a une histoire."]} />
+          <ol className="film__zones">
+            {ZONES.map((z, i) => (
+              <li className={`film__zone film__zone-${i}`} key={z}>
+                <span className="statut statut--alerte">Zone grise</span>
+                <span className="film__zone-text">{z}</span>
+              </li>
+            ))}
+          </ol>
+          <Lines className="film__question film__title--abs" lines={["Comment construire", "sans se faire avoir ?"]} />
+        </div>
+      </section>
+
+      {/* 3 · la décision */}
+      <section className="film__plan film__p3 film__plan--centre">
+        <span className="film__halo" />
+        <div className="film__logo-big">
+          <LogoMark size={150} />
+          <Logo size={100} withMark={false} />
+        </div>
+        <Lines className="film__t1 film__title--centre" lines={["Le chantier.", "Sans zone grise."]} />
+        <div className="film__gestes">
+          <p className="film__t2 film__sub film__sub--centre">Nadège et Joël choisissent BATIRÉEL. Trois gestes.</p>
+          <ol className="film__geste-list">
+            {["Comparer", "Choisir", "Suivre"].map((g, i) => (
+              <li className="film__geste" key={g}>
+                <span className="film__geste-num tabular">0{i + 1}</span>
+                <span className="film__geste-label">{g}</span>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      {/* plan 4 */}
-      <section className="scene__plan scene__p4">
-        <div className="scene__inner">
-          <div className="scene__head">
-            <p className="scene__title scene__title--compact">
-              <span><i>Comparez</i></span>
-              <span><i>autrement.</i></span>
-            </p>
-            <p className="scene__sub scene__sub--right">Trois devis ramenés aux mêmes lignes. Une offre à laquelle il manque un poste n'est jamais « la plus basse ».</p>
+      {/* 4 · comparer */}
+      <section className="film__plan film__p4">
+        <div className="film__copy film__copy--step">
+          <span className="film__num tabular">01</span>
+          <Lines className="film__t1 film__title--step" lines={["Comparer."]} />
+          <p className="film__sub film__sub1">Ils décrivent leur projet. Une fois.</p>
+          <p className="film__sub film__sub2">Trois entreprises répondent. Les devis sont ramenés aux mêmes lignes, aux mêmes quantités.</p>
+          <p className="film__sub film__sub3">Le poste manquant saute aux yeux. L'offre complète la moins chère aussi.</p>
+          <div className="film__callout">
+            <span className="film__callout-label">{devisA.label} · {devisA.entreprise}</span>
+            <span className="film__callout-montant tabular">{fcfa(0)}</span>
+            <span className="statut statut--ok">Complète · la moins chère</span>
           </div>
-          <table className="scene__table">
-            <thead>
-              <tr>
-                <th>Poste</th>
-                {DEVIS.map((dv) => (
-                  <th key={dv.id}>
-                    <b>{dv.label}</b>
-                    <span>{dv.entreprise}</span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {postes.map((p) => {
-                const vals = DEVIS.map((dv) => {
-                  const l = dv.lignes[p.id];
-                  return l.inclus ? l.materiaux + l.main : null;
-                });
-                const present = vals.filter((v): v is number => v !== null);
-                const min = Math.min(...present);
-                return (
-                  <tr key={p.id}>
-                    <th>{p.label}</th>
-                    {DEVIS.map((dv, k) => {
-                      const v = vals[k];
-                      return (
-                        <td key={dv.id} className={v === null ? "is-absent" : v === min ? "is-min" : ""}>
-                          {v === null ? <span className="statut statut--alerte">Non inclus</span> : <span className="tabular">{fcfa(v)}</span>}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th>Total de l'offre</th>
-                {DEVIS.map((dv) => (
-                  <td key={dv.id}>
-                    <span className="tabular">{fcfa(totalDevis(dv))}</span>
-                    {postesManquants(dv).length > 0 && <span className="statut statut--alerte">Incomplète</span>}
-                  </td>
-                ))}
-              </tr>
-            </tfoot>
-          </table>
         </div>
-      </section>
-
-      {/* plan 5 */}
-      <section className="scene__plan scene__p5 scene__plan--craie sheet" data-tone="light">
-        <div className="scene__inner">
-          <p className="scene__title scene__title--compact">
-            <span><i>Le Passeport</i></span>
-            <span><i>Chantier.</i></span>
-          </p>
-          <div className="scene__chrono">
-            <span className="scene__rail" />
-            <ol className="scene__etapes">
-              {ETAPES_PASSEPORT.map((e) => {
-                const v = e.validations[0];
-                return (
-                  <li className="scene__etape" key={e.id}>
-                    <img src={e.photo.replace(".webp", "-900.webp")} alt="" width="900" height="579" />
-                    <span className="scene__etape-num tabular">{e.num}</span>
-                    <b>{e.label}</b>
-                    <span className="scene__etape-date">{e.date}</span>
-                    <span className={`statut ${ETAT[v.state].cls}`}>{ETAT[v.state].text}</span>
-                  </li>
-                );
-              })}
-            </ol>
+        <div className="film__device">
+          <div className="film__device-bar">
+            <i /><i /><i />
+            <span>batireel · mon projet</span>
           </div>
-          <p className="scene__sub scene__sub--encre">Photographies datées, documents et validations, rangés dans une seule chronologie. Chantier fictif.</p>
-        </div>
-      </section>
-
-      {/* plan 6 */}
-      <section className="scene__plan scene__p6">
-        <div className="scene__inner scene__inner--duo">
-          <div className="scene__copy scene__copy--static">
-            <p className="scene__title scene__title--compact">
-              <span><i>Des professionnels,</i></span>
-              <span><i>des preuves.</i></span>
-            </p>
-            <p className="scene__sub">Ce qui a été vérifié est marqué comme tel. Ce qui est déclaré reste une déclaration. Profil fictif.</p>
-          </div>
-          <article className="scene__card">
-            <img src={pro.photo} alt="" width="720" height="900" />
-            <div className="scene__card-body">
-              <h3>{pro.nom}</h3>
-              <p className="cote">
-                {pro.metier} · {pro.lieu}
-              </p>
-              <ul className="scene__infos">
-                {pro.infos.map((i) => (
-                  <li className="scene__info" key={i.label}>
-                    <span>{i.label}</span>
-                    <span className={`statut ${INFO[i.state].cls}`}>{INFO[i.state].text}</span>
-                  </li>
-                ))}
-              </ul>
+          <div className="film__device-screen">
+            <div className="film__screen film__screen-form">
+              <p className="film__screen-title">Décrire mon projet</p>
+              <dl className="film__form">
+                <div><dt>Type de projet</dt><dd className="film__f-type">&nbsp;</dd></div>
+                <div><dt>Surface</dt><dd className="film__f-surface">&nbsp;</dd></div>
+                <div><dt>Commune</dt><dd className="film__f-lieu">&nbsp;</dd></div>
+              </dl>
+              <span className="film__f-btn">Publier mon projet</span>
+              <span className="film__f-reponses statut statut--ok">3 entreprises ont répondu</span>
             </div>
-          </article>
+            <div className="film__screen film__screen-table">
+              <p className="film__screen-title">Comparer les devis</p>
+              <table className="film__table">
+                <thead>
+                  <tr>
+                    <th>Poste</th>
+                    {DEVIS.map((dv) => (
+                      <th key={dv.id}>
+                        <b>{dv.label}</b>
+                        <span>{dv.entreprise.replace(" (entreprise fictive)", "")}</span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {postes.map((p) => {
+                    const vals = DEVIS.map((dv) => {
+                      const l = dv.lignes[p.id];
+                      return l.inclus ? l.materiaux + l.main : null;
+                    });
+                    const present = vals.filter((v): v is number => v !== null);
+                    const min = Math.min(...present);
+                    return (
+                      <tr key={p.id}>
+                        <th>{p.label}</th>
+                        {DEVIS.map((dv, k) => {
+                          const v = vals[k];
+                          return (
+                            <td key={dv.id} className={v === null ? "is-absent" : v === min ? "is-min" : ""}>
+                              {v === null ? <span className="statut statut--alerte">Non inclus</span> : <span className="tabular">{fcfa(v)}</span>}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Total</th>
+                    {DEVIS.map((dv) => (
+                      <td key={dv.id} className={postesManquants(dv).length ? "" : dv.id === devisA.id ? "is-min" : ""}>
+                        <span className="tabular">{fcfa(totalDevis(dv))}</span>
+                        {postesManquants(dv).length > 0 && <span className="statut statut--alerte">Incomplète</span>}
+                      </td>
+                    ))}
+                  </tr>
+                </tfoot>
+              </table>
+              <p className="film__screen-note">Devis et entreprises fictifs · démonstration</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* plan 7 */}
-      <section className="scene__plan scene__p7">
-        <div className="scene__copy">
-          <p className="scene__title">
-            <span><i>Entrez sur</i></span>
-            <span><i>le chantier.</i></span>
-          </p>
-          <div className="scene__logo">
-            <LogoMark size={64} />
-            <Logo size={44} withMark={false} />
+      {/* 5 · choisir */}
+      <section className="film__plan film__p5">
+        <div className="film__copy film__copy--step">
+          <span className="film__num tabular">02</span>
+          <Lines className="film__t1 film__title--step" lines={["Choisir."]} />
+          <p className="film__sub film__sub1">Chaque professionnel montre ses preuves : vérifiées, déclarées… ou manquantes.</p>
+          <p className="film__sub film__sub2">Ses réalisations, ses références. Tout est dit avant de signer.</p>
+          <p className="film__sub film__sub3">Nadège et Joël signent avec une entreprise qu'ils connaissent vraiment.</p>
+        </div>
+        <article className="film__card">
+          <figure className="film__card-photo">
+            <img src={pro.photo} alt="" width="720" height="900" />
+          </figure>
+          <div className="film__card-body">
+            <h3>{pro.nom.replace(" (profil fictif)", "")}</h3>
+            <p className="cote">
+              {pro.metier} · {pro.lieu} · profil fictif
+            </p>
+            <ul className="film__infos">
+              {pro.infos.map((i, k) => (
+                <li className={`film__info film__info-${k}`} key={i.label}>
+                  <span>{i.label}</span>
+                  <span className={`statut ${INFO[i.state].cls}`}>{INFO[i.state].text}</span>
+                </li>
+              ))}
+            </ul>
+            <ul className="film__reals">
+              {pro.realisations.map((r) => (
+                <li className="film__real" key={r}>{r}</li>
+              ))}
+            </ul>
+            <span className="film__c-btn">Choisir cette entreprise</span>
+            <span className="film__chosen statut statut--ok">Entreprise choisie</span>
+          </div>
+        </article>
+      </section>
+
+      {/* 6 · suivre */}
+      <section className="film__plan film__p6">
+        <div className="film__copy film__copy--step">
+          <span className="film__num tabular">03</span>
+          <Lines className="film__t1 film__title--step" lines={["Suivre."]} />
+          <p className="film__sub film__sub1">Le chantier avance par étapes. Chacune est photographiée, datée, validée.</p>
+          <p className="film__sub film__sub2">Documents rangés, validations enregistrées : rien ne se perd entre deux visites.</p>
+          <p className="film__sub film__sub3">Un écart ? Il est relevé avant de coûter.</p>
+          <p className="film__sub film__sub4">Même de loin, Nadège et Joël savent où en est leur maison.</p>
+          <p className="film__sub film__sub5">Cinq mois plus tard, la maison est livrée.</p>
+          <div className="film__alert">
+            <span className="film__alert-tag statut statut--alerte">Écart relevé</span>
+            <b>Carrelage livré différent du devis.</b>
+            <span>Validation suspendue jusqu'à l'accord de Nadège et Joël.</span>
+          </div>
+          <div className="film__alert film__resolu">
+            <span className="film__alert-tag statut statut--ok">Écart résolu</span>
+            <b>Référence du devis respectée.</b>
+            <span>Le chantier reprend, la validation est enregistrée.</span>
           </div>
         </div>
-        <div className="scene__partner">
-          <span className="scene__partner-label">{FOOTER.partner.label}</span>
-          <img className="scene__partner-logo" src="/partenaires/methode-aura.png" alt={FOOTER.partner.name} width="800" height="246" />
-          <span className="scene__partner-note">{FOOTER.partner.note}</span>
+        <div className="film__steps">
+          <span className="film__steps-rail">
+            <i className="film__steps-rail-fill" />
+          </span>
+          <ol className="film__steps-list">
+            {ETAPES_PASSEPORT.map((e, i) => (
+              <li className={`film__step film__step-${i}`} key={e.id}>
+                <figure className="film__step-pic-wrap">
+                  <img className="film__step-pic" src={e.photo.replace(".webp", "-900.webp")} alt="" width="900" height="579" />
+                  <span className="film__step-dim" />
+                </figure>
+                <span className="film__step-num tabular">{e.num}</span>
+                <b>{e.label}</b>
+                <span className="film__step-date">{e.date}</span>
+                <span className="statut statut--ok">Validé</span>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
+
+      {/* 7 · le résultat */}
+      <section className="film__plan film__p7">
+        <figure className="film__photo film__photo-a">
+          <img src="/photos/film-couple-cles.webp" alt="" width="1920" height="1080" />
+          <span className="film__shade film__shade--left" />
+        </figure>
+        <figure className="film__photo film__photo-b">
+          <img src="/photos/film-couple-entree.webp" alt="" width="1920" height="1080" />
+          <span className="film__shade film__shade--left" />
+        </figure>
+        <div className="film__copy film__copy--high">
+          <Lines className="film__t1" lines={["Au prix comparé.", "Chaque étape validée."]} />
+          <Lines className="film__t2 film__title--abs" lines={["Chez eux."]} />
+          <p className="film__cote cote">Histoire fictive · démonstration</p>
+        </div>
+      </section>
+
+      {/* 8 · l'appel */}
+      <section className="film__plan film__p8 film__plan--centre">
+        <span className="film__halo" />
+        <div className="film__logo-big">
+          <LogoMark size={120} />
+          <Logo size={80} withMark={false} />
+        </div>
+        <Lines className="film__t1 film__title--centre film__title--petit" lines={["Vous construisez ?"]} />
+        <ol className="film__geste-list film__geste-list--fin">
+          {["Comparez", "Choisissez", "Suivez"].map((g, i) => (
+            <li className="film__geste" key={g}>
+              <span className="film__geste-num tabular">0{i + 1}</span>
+              <span className="film__geste-label">{g}</span>
+            </li>
+          ))}
+        </ol>
+        <div className="film__collab">{collab}</div>
+        <p className="film__fictif cote cote--plain">Histoire, devis, entreprises et chantier fictifs · démonstration · photographies de banque d'images</p>
+      </section>
+
+      {/* le volet des transitions, et le grain du film */}
+      <div className="film__wipe" aria-hidden="true" />
+      <div className="film__grain" aria-hidden="true" />
+      <div className="film__vignette" aria-hidden="true" />
     </div>
   );
 }

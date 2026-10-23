@@ -3,86 +3,143 @@
 <title>Encodeur BATIRÉEL</title>
 <script src="mp4-muxer.js"></script>
 <script>
-/* Encode les images capturées (frames/iNNNNN.png) en MP4 H.264 + AAC par WebCodecs. */
+/* Encode les images capturées (frames/iNNNNN.png) en MP4 H.264 + AAC par WebCodecs, et compose la bande-son
+   à partir des repères que la scène du film publie (window.SON) : accords, pulsation, arpèges, impacts,
+   tampons, tics, tintements, montées, volets. Tout est synthétisé, rien n'est sous licence. */
 
-/* Bande sonore minérale : une nappe grave et lente, des chocs sourds quand les dalles se posent,
-   des touches claires pour les étapes du Passeport, une respiration finale. Tout est synthétisé. */
-async function bandeSon(duree, reperes) {
+const CHORDS = {
+  Dm: [73.42, 110, 146.83, 174.61, 220],
+  Dt: [73.42, 174.61, 207.65, 293.66],
+  F: [87.31, 130.81, 174.61, 220, 261.63],
+  Bb: [58.27, 87.31, 116.54, 146.83, 174.61],
+  C: [65.41, 98, 130.81, 164.81, 196],
+  Gm: [98, 146.83, 196, 233.08, 293.66],
+  Am: [110, 164.81, 220, 261.63],
+};
+
+async function bandeSon(duree, son) {
   const sr = 48000;
   const ac = new OfflineAudioContext(2, Math.ceil(duree * sr), sr);
-  const master = ac.createGain(); master.gain.value = 0.9; master.connect(ac.destination);
+  const comp = ac.createDynamicsCompressor();
+  comp.threshold.value = -14; comp.ratio.value = 4; comp.attack.value = 0.004; comp.release.value = 0.22;
+  const master = ac.createGain(); master.gain.setValueAtTime(0, 0); master.gain.linearRampToValueAtTime(0.9, 0.8);
+  master.gain.setValueAtTime(0.9, duree - 1.6); master.gain.linearRampToValueAtTime(0, duree - 0.05);
+  master.connect(comp); comp.connect(ac.destination);
+  const noiseBuf = (sec) => { const n = ac.createBuffer(1, Math.ceil(sec * sr), sr); const d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return n; };
+
+  /* nappe : trois oscillateurs désaccordés par note, filtre qui s'ouvre lentement */
   const nappe = (t0, t1, notes, gain, fc) => {
-    const g = ac.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(gain, t0 + 1.8); g.gain.setValueAtTime(gain, t1 - 1.6); g.gain.linearRampToValueAtTime(0, t1);
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(gain, t0 + 1.4); g.gain.setValueAtTime(gain, Math.max(t0 + 1.4, t1 - 1.2)); g.gain.linearRampToValueAtTime(0, t1);
     const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(fc, t0); f.frequency.linearRampToValueAtTime(fc * 1.5, t1);
     g.connect(f); f.connect(master);
-    notes.forEach((fr, i) => { for (const [type, det, k] of [['sine', 0, 1], ['triangle', 5, 0.3], ['sine', -4, 0.5]]) { const o = ac.createOscillator(); o.type = type; o.frequency.value = fr; o.detune.value = det + (i % 2 ? 2 : -2); const og = ac.createGain(); og.gain.value = k / notes.length; o.connect(og); og.connect(g); o.start(t0); o.stop(t1 + 0.1); } });
+    notes.forEach((fr, i) => { for (const [type, det, k] of [['sine', 0, 1], ['triangle', 5, 0.28], ['sine', -4, 0.5]]) { const o = ac.createOscillator(); o.type = type; o.frequency.value = fr; o.detune.value = det + (i % 2 ? 2 : -2); const og = ac.createGain(); og.gain.value = k / notes.length; o.connect(og); og.connect(g); o.start(t0); o.stop(t1 + 0.1); } });
   };
-  const note = (t, fr, gain = 0.1, dur = 1.4) => {
+  /* bourdon grave et inquiet, trémolo lent */
+  const drone = (t0, t1) => {
+    const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = 36.71;
+    const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 140;
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.16, t0 + 2); g.gain.setValueAtTime(0.16, t1 - 0.6); g.gain.linearRampToValueAtTime(0, t1);
+    const lfo = ac.createOscillator(); lfo.frequency.value = 0.9; const lg = ac.createGain(); lg.gain.value = 0.05; lfo.connect(lg); lg.connect(g.gain);
+    o.connect(f); f.connect(g); g.connect(master); o.start(t0); o.stop(t1 + 0.1); lfo.start(t0); lfo.stop(t1 + 0.1);
+  };
+  /* une note claire (tintement) */
+  const ping = (t, fr, gain = 0.07, dur = 1.8) => {
     const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = fr;
-    const o2 = ac.createOscillator(); o2.type = 'sine'; o2.frequency.value = fr * 2; const g2 = ac.createGain(); g2.gain.value = 0.22;
-    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    const o2 = ac.createOscillator(); o2.type = 'sine'; o2.frequency.value = fr * 2.01; const g2 = ac.createGain(); g2.gain.value = 0.22;
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0006, t + dur);
     o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master); o.start(t); o2.start(t); o.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
   };
-  /* un choc sourd : une sinusoïde grave qui descend et un souffle bref, comme une dalle qui se pose */
-  const choc = (t, gain = 0.22) => {
-    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(92, t); o.frequency.exponentialRampToValueAtTime(38, t + 0.35);
-    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0006, t + 0.9);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t + 1);
-    const n = ac.createBuffer(1, Math.ceil(0.25 * sr), sr); const d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-    const s = ac.createBufferSource(); s.buffer = n; const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900;
-    const ng = ac.createGain(); ng.gain.value = gain * 0.5; s.connect(f); f.connect(ng); ng.connect(master); s.start(t);
+  /* grosse caisse ronde */
+  const kick = (t, gain = 0.17) => {
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(118, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.26);
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0006, t + 0.42);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.5);
   };
-  const souffle = (t0, t1, gain = 0.04) => {
-    const n = ac.createBuffer(1, Math.ceil((t1 - t0) * sr), sr); const d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
-    const s = ac.createBufferSource(); s.buffer = n; const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(260, t0); f.frequency.exponentialRampToValueAtTime(2000, t1); f.Q.value = 0.7;
-    const g = ac.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(gain, t1 - 0.1); g.gain.linearRampToValueAtTime(0, t1);
-    s.connect(f); f.connect(g); g.connect(master); s.start(t0); s.stop(t1);
+  /* charleston feutré */
+  const hat = (t, gain = 0.018) => {
+    const s = ac.createBufferSource(); s.buffer = noiseBuf(0.05); const f = ac.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 7000;
+    const g = ac.createGain(); g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(0.0004, t + 0.045);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t);
   };
-  /* Ré mineur → Si bémol majeur → Sol mineur → Fa majeur → Do majeur : calme, grave, sans résolution dramatique */
-  nappe(0.0, 5.2, [73.42, 110, 146.83, 220], 0.11, 420);
-  nappe(4.6, 13.8, [58.27, 116.54, 174.61, 233.08], 0.12, 480);
-  nappe(13.4, 24.8, [98, 146.83, 196, 293.66], 0.10, 560);
-  nappe(24.4, 33.6, [87.31, 130.81, 174.61, 261.63], 0.11, 640);
-  nappe(33.2, duree, [65.41, 130.81, 196, 261.63, 329.63], 0.12, 820);
-  /* plan 1 : le B se trace, puis se coule */
-  [0.5, 0.9, 1.3, 1.7].forEach((t, i) => note(t, [587.33, 659.25, 783.99, 880][i], 0.03, 0.9));
-  note(2.0, 293.66, 0.06, 1.8);
-  note(2.4, 1174.66, 0.04, 1.4);
-  /* plan 2 : les dalles se posent, les murs montent */
-  reperes.forEach((t) => choc(t));
-  souffle(6.6, 7.4, 0.03);
-  souffle(9.0, 9.8, 0.03);
-  note(12.3, 440, 0.05, 1.6); note(12.32, 659.25, 0.04, 1.6);
-  /* plan 3 : trois zones grises */
-  [14.5, 14.95, 15.4].forEach((t, i) => note(t, [392, 440, 523.25][i], 0.045, 1.1));
-  /* plan 4 : les lignes du comparateur, puis l'alerte */
-  [19.8, 20.2, 20.6, 21.0].forEach((t) => note(t, 1046.5, 0.022, 0.4));
-  note(21.8, 311.13, 0.05, 1.2);
-  note(22.4, 523.25, 0.05, 1.4);
-  /* plan 5 : les six étapes du Passeport */
-  [25.4, 25.82, 26.24, 26.66, 27.08, 27.5].forEach((t, i) => note(t, [523.25, 587.33, 659.25, 698.46, 783.99, 880][i], 0.04, 0.9));
-  /* plan 6 : les preuves, une à une */
-  [31.0, 31.3, 31.6, 31.9].forEach((t, i) => note(t, [659.25, 659.25, 523.25, 392][i], 0.035, 0.8));
-  /* plan 7 : la villa achevée, la signature, le partenaire */
-  note(33.4, 261.63, 0.07, 2.8); note(33.42, 392, 0.05, 2.8);
-  note(34.7, 523.25, 0.05, 2.2);
-  note(36.1, 659.25, 0.045, 2.0);
+  /* note pincée (arpège) */
+  const pluck = (t, fr, gain = 0.034) => {
+    const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = fr;
+    const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(2600, t); f.frequency.exponentialRampToValueAtTime(600, t + 0.22);
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.3);
+    o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t + 0.35);
+  };
+  /* choc sourd : une dalle qui se pose */
+  const choc = (t, gain = 0.24) => {
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(96, t); o.frequency.exponentialRampToValueAtTime(36, t + 0.4);
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0006, t + 1.0);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 1.1);
+    const s = ac.createBufferSource(); s.buffer = noiseBuf(0.3); const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 800;
+    const ng = ac.createGain(); ng.gain.setValueAtTime(gain * 0.5, t); ng.gain.exponentialRampToValueAtTime(0.0005, t + 0.28); s.connect(f); f.connect(ng); ng.connect(master); s.start(t);
+  };
+  /* tampon : impact court et sec */
+  const stamp = (t, gain = 0.2) => {
+    const o = ac.createOscillator(); o.type = 'square'; o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(60, t + 0.08);
+    const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900;
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.16);
+    o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t + 0.2);
+    const s = ac.createBufferSource(); s.buffer = noiseBuf(0.08); const bf = ac.createBiquadFilter(); bf.type = 'bandpass'; bf.frequency.value = 2400; bf.Q.value = 0.8;
+    const ng = ac.createGain(); ng.gain.setValueAtTime(gain * 0.35, t); ng.gain.exponentialRampToValueAtTime(0.0005, t + 0.07); s.connect(bf); bf.connect(ng); ng.connect(master); s.start(t);
+  };
+  /* tic d'interface */
+  const tick = (t, gain = 0.03) => {
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = 1760;
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0004, t + 0.07);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.08);
+  };
+  /* montée : souffle filtré et sinus qui grimpent, résolus par l'impact qui suit */
+  const riser = (t0, t1) => {
+    const s = ac.createBufferSource(); s.buffer = noiseBuf(t1 - t0); const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 0.9; f.frequency.setValueAtTime(220, t0); f.frequency.exponentialRampToValueAtTime(3200, t1);
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.09, t1 - 0.05); g.gain.linearRampToValueAtTime(0, t1 + 0.02);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t0); s.stop(t1 + 0.05);
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(110, t0); o.frequency.exponentialRampToValueAtTime(880, t1);
+    const og = ac.createGain(); og.gain.setValueAtTime(0, t0); og.gain.linearRampToValueAtTime(0.05, t1 - 0.05); og.gain.linearRampToValueAtTime(0, t1 + 0.02);
+    o.connect(og); og.connect(master); o.start(t0); o.stop(t1 + 0.05);
+  };
+  /* impact : choc + accord clair */
+  const hit = (t) => { choc(t, 0.3); ping(t + 0.02, 261.63, 0.09, 2.6); ping(t + 0.03, 392, 0.07, 2.6); ping(t + 0.05, 523.25, 0.05, 2.2); };
+  /* volet : souffle bref qui traverse */
+  const whoosh = (t) => {
+    const s = ac.createBufferSource(); s.buffer = noiseBuf(0.9); const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 0.6; f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(2600, t + 0.45); f.frequency.exponentialRampToValueAtTime(300, t + 0.9);
+    const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.07, t + 0.4); g.gain.linearRampToValueAtTime(0, t + 0.9);
+    const p = ac.createStereoPanner(); p.pan.setValueAtTime(-1, t); p.pan.linearRampToValueAtTime(1, t + 0.9);
+    s.connect(f); f.connect(g); g.connect(p); p.connect(master); s.start(t); s.stop(t + 0.95);
+  };
+
+  const pads = son.pads || [];
+  pads.forEach((p) => nappe(p.t0, p.t1, CHORDS[p.chord] || CHORDS.Dm, p.gain, p.fc));
+  (son.drone || []).forEach(([a, b]) => drone(a, b));
+  const chordAt = (t) => { const p = pads.find((x) => t >= x.t0 && t < x.t1 - 0.4) || pads.find((x) => t >= x.t0 && t < x.t1); return CHORDS[p ? p.chord : 'F']; };
+  const beat = 60 / (son.tempo || 96);
+  (son.pulse || []).forEach(([a, b]) => { for (let t = a, i = 0; t < b; t += beat, i++) { kick(t, i % 4 === 0 ? 0.19 : 0.14); hat(t + beat / 2); } });
+  (son.arp || []).forEach(([a, b]) => { let i = 0; for (let t = a; t < b; t += beat / 2, i++) { const c = chordAt(t); const seq = [1, 2, 3, 4, 3, 2]; const fr = c[Math.min(c.length - 1, seq[i % seq.length])] * 2; pluck(t, fr, i % 2 ? 0.026 : 0.034); } });
+  (son.hits || []).forEach((t) => hit(t));
+  (son.chocs || []).forEach((t) => choc(t));
+  (son.stamps || []).forEach((t) => stamp(t));
+  (son.ticks || []).forEach((t) => tick(t));
+  (son.pings || []).forEach((t, i) => ping(t, [523.25, 659.25, 783.99, 880][i % 4]));
+  (son.risers || []).forEach(([a, b]) => riser(a, b));
+  (son.whooshes || []).forEach((t) => whoosh(t));
   return await ac.startRendering();
 }
 
-window.encoder = async ({ dossier, total, ips, largeur, hauteur, debit, reperes }) => {
+window.encoder = async ({ dossier, total, ips, largeur, hauteur, debit, son }) => {
   const vcfg = { codec: 'avc1.640028', width: largeur, height: hauteur, bitrate: debit, framerate: ips, bitrateMode: 'variable', latencyMode: 'quality', avc: { format: 'avc' } };
-  const acfg = { codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 160000 };
+  const acfg = { codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 192000 };
   const vs = await VideoEncoder.isConfigSupported(vcfg);
   const as = await AudioEncoder.isConfigSupported(acfg);
   if (!vs.supported) throw new Error('H.264 non pris en charge');
   const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: largeur, height: hauteur, frameRate: ips }, audio: as.supported ? { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 } : undefined, fastStart: 'in-memory', firstTimestampBehavior: 'offset' });
   window.audio = as.supported;
   if (as.supported) {
-    const son = await bandeSon(total / ips, reperes);
+    const piste = await bandeSon(total / ips, son || {});
     const aenc = new AudioEncoder({ output: (c, m) => muxer.addAudioChunk(c, m), error: (e) => { window.erreur = 'audio ' + e.message; } });
     aenc.configure(acfg);
-    const L = son.getChannelData(0), R = son.getChannelData(1), N = 1024;
+    const L = piste.getChannelData(0), R = piste.getChannelData(1), N = 1024;
     for (let i = 0; i < L.length; i += N) { const n = Math.min(N, L.length - i); const d = new Float32Array(n * 2); d.set(L.subarray(i, i + n), 0); d.set(R.subarray(i, i + n), n); const ad = new AudioData({ format: 'f32-planar', sampleRate: 48000, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round((i * 1e6) / 48000), data: d }); aenc.encode(ad); ad.close(); }
     await aenc.flush();
   }

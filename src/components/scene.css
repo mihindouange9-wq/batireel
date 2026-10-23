@@ -1,4 +1,4 @@
-/* ───────────── Scène du film de présentation (1920 × 1080) ───────────── */
+/* ───────────── Le film (1920 × 1080) ───────────── */
 html.scene,
 html.scene body {
   width: 1920px;
@@ -7,7 +7,7 @@ html.scene body {
   background: var(--graphite);
 }
 
-.scene {
+.film {
   position: relative;
   width: 1920px;
   height: 1080px;
@@ -19,44 +19,347 @@ html.scene body {
   font-family: var(--font-text);
 }
 
-/* aucune transition CSS dans la scène : chaque image est fixée par la ligne de temps */
-.scene *,
-.scene *::before,
-.scene *::after {
+/* aucune transition CSS : chaque image est fixée par la ligne de temps */
+.film *,
+.film *::before,
+.film *::after {
   transition: none !important;
   animation: none !important;
 }
 
-.scene__plan {
+.film__plan {
   position: absolute;
   inset: 0;
+  opacity: 0;
+  visibility: hidden;
 }
 
-/* la scène 3D occupe la droite et s'estompe sous la colonne du titre, comme dans le hero */
-.scene__stage {
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: 1420px;
-  height: 1080px;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.18) 22%, rgb(0 0 0 / 0.5) 44%, #000 62%);
-  mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.18) 22%, rgb(0 0 0 / 0.5) 44%, #000 62%);
-}
-
-.scene__stage canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* ---- plan 1 : le repère ---- */
-.scene__p1 {
+.film__plan--centre {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 28px;
+  text-align: center;
+}
+
+/* ---- le volet des transitions : une feuille craie, bord cuivre, légèrement inclinée ---- */
+.film__wipe {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background: var(--craie);
+  border-left: 14px solid var(--cuivre);
+  border-right: 14px solid var(--cuivre);
+  /* position et inclinaison posées par la ligne de temps (GSAP possède la transformation) */
+  z-index: 50;
+}
+
+/* ---- le grain et la vignette, sur tout le film ---- */
+.film__grain {
+  position: absolute;
+  inset: 0;
+  background: url(/grain-dark.svg) 0 0 / 240px 240px;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.film__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(85% 85% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.45) 100%);
+  pointer-events: none;
+  z-index: 61;
+}
+
+/* ---- la scène 3D (plan « suivre ») ---- */
+.film__stage {
+  position: absolute;
+  inset: -150px 0 auto auto;
+  width: 1500px;
+  height: 1080px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.15) 18%, rgb(0 0 0 / 0.55) 40%, #000 58%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.15) 18%, rgb(0 0 0 / 0.55) 40%, #000 58%);
+}
+
+.film__stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ---- titres : les mots montent derrière leur masque ---- */
+.film__title {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: 124px;
+  font-weight: 800;
+  line-height: 0.94;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+.film__title .w {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.film__title .w > i {
+  display: block;
+  font-style: normal;
+}
+
+.film__title .w:nth-child(2) {
+  color: var(--craie-2);
+}
+
+.film__title--abs {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.film__title--centre {
+  font-size: 136px;
+  text-align: center;
+}
+
+.film__title--petit {
+  font-size: 96px;
+}
+
+.film__title--step {
+  font-size: 150px;
+  line-height: 0.9;
+}
+
+.film__sub {
+  font-size: 32px;
+  line-height: 1.4;
+  max-width: 24ch;
+  color: var(--on-dark-2);
+  text-wrap: pretty;
+}
+
+.film__sub--centre {
+  max-width: 44ch;
+  margin-inline: auto;
+}
+
+.film__cote {
+  margin-top: 26px;
+  font-size: 18px;
+}
+
+/* ---- photographies plein cadre ---- */
+.film__photo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--graphite-deep);
+}
+
+.film__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 55% 50%;
+}
+
+.film__photo--sombre img {
+  filter: saturate(0.35) contrast(1.08) brightness(0.72);
+}
+
+.film__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.film__shade--left {
+  background: linear-gradient(90deg, rgb(18 20 18 / 0.92) 0%, rgb(18 20 18 / 0.72) 34%, rgb(18 20 18 / 0.12) 62%, transparent 85%);
+}
+
+.film__shade--dark {
+  background: linear-gradient(90deg, rgb(18 20 18 / 0.9) 0%, rgb(18 20 18 / 0.72) 50%, rgb(18 20 18 / 0.4) 100%);
+  opacity: 0.85;
+}
+
+/* le voile qui descend à la fin du rêve */
+.film__p1 .film__shade {
+  background: linear-gradient(90deg, rgb(18 20 18 / 0.92) 0%, rgb(18 20 18 / 0.7) 36%, rgb(18 20 18 / 0.1) 64%, transparent 88%), rgb(18 20 18 / 0);
+}
+
+.film__p1 .film__shade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--graphite-deep);
+  opacity: 0;
+}
+
+/* ---- blocs de texte ---- */
+.film__copy {
+  position: absolute;
+  left: 120px;
+  width: 1000px;
+}
+
+.film__copy--low {
+  top: 500px;
+  width: 1120px;
+}
+
+.film__p1 .film__title,
+.film__p7 .film__title {
+  font-size: 104px;
+}
+
+.film__copy--high {
+  top: 170px;
+  width: 1180px;
+}
+
+.film__copy--step {
+  top: 150px;
+  width: 760px;
+}
+
+.film__copy .film__sub {
+  position: absolute;
+  left: 0;
+  top: 410px;
+}
+
+.film__p1 .film__cote,
+.film__p7 .film__cote {
+  position: absolute;
+  left: 0;
+  top: 330px;
+  white-space: nowrap;
+}
+
+.film__p7 .film__cote {
+  top: 236px;
+}
+
+/* ---- 2 · la peur : les zones grises se tamponnent ---- */
+.film__zones {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  display: grid;
+  gap: 26px;
+  width: 1180px;
+}
+
+.film__zone {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  align-items: center;
+  gap: 24px;
+}
+
+.film__zone .statut {
+  font-size: 20px;
+  justify-self: start;
+}
+
+.film__zone-text {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1.02;
+  text-transform: uppercase;
+  color: var(--on-dark);
+}
+
+.film__question {
+  top: 60px;
+  font-size: 128px;
+}
+
+.film__question .w:nth-child(2) {
+  color: var(--cuivre-light);
+}
+
+/* ---- 3 et 8 : le logo en grand, un halo cuivre ---- */
+.film__halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1500px;
+  height: 1500px;
+  margin: -750px 0 0 -750px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(184 111 69 / 0.22) 0%, rgb(184 111 69 / 0.06) 40%, transparent 70%);
+  pointer-events: none;
+}
+
+.film__logo-big {
+  position: relative;
+  display: flex;
+  align-items: center;
   gap: 40px;
 }
 
-.scene__lignes {
+.film__gestes {
+  position: relative;
+  display: grid;
+  gap: 34px;
+  margin-top: 10px;
+}
+
+.film__geste-list {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+}
+
+.film__geste {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 34px;
+  border: 1px solid var(--line-dark-strong);
+  background: rgb(252 251 247 / 0.03);
+}
+
+.film__geste-num {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--cuivre-light);
+}
+
+.film__geste-label {
+  font-family: var(--font-display);
+  font-size: 54px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.film__geste-list--fin {
+  margin-top: 6px;
+}
+
+/* ---- ouverture et fin : la collaboration ---- */
+.film__p0 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+
+.film__lignes {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -64,234 +367,222 @@ html.scene body {
   color: var(--on-dark);
 }
 
-.scene__mark {
-  width: 198px;
-  height: 220px;
+.film__mark {
+  width: 180px;
+  height: 200px;
   color: var(--blanc);
 }
 
-.scene__cote {
-  white-space: nowrap;
+.film__collab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  margin-top: 36px;
 }
 
-/* ---- titres : les mots montent derrière leur masque ---- */
-.scene__title {
-  display: grid;
-  font-family: var(--font-display);
-  font-size: 128px;
-  font-weight: 800;
-  line-height: 0.92;
-  text-transform: uppercase;
-  letter-spacing: -0.005em;
-}
-
-.scene__title--compact {
-  font-size: 104px;
-}
-
-.scene__title span {
+.film__rule {
   display: block;
-  overflow: hidden;
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+  width: 560px;
+  height: 2px;
+  background: var(--cuivre);
 }
 
-.scene__title span > i {
-  display: block;
-  font-style: normal;
-}
-
-.scene__title span:nth-child(2) {
-  color: var(--craie-2);
-}
-
-[data-tone="light"] .scene__title span:nth-child(2) {
-  color: var(--encre-2);
-}
-
-.scene__sub {
-  margin-top: 28px;
-  max-width: 34ch;
-  font-size: 30px;
-  line-height: 1.4;
-  color: var(--on-dark-2);
-  text-wrap: pretty;
-}
-
-.scene__sub--encre {
-  color: var(--encre-2);
-}
-
-.scene__sub--right {
-  margin-top: 0;
-  max-width: 30ch;
+.film__collab-label {
+  margin-top: 10px;
   font-size: 26px;
-  text-align: right;
-}
-
-.scene__cotes {
-  display: flex;
-  gap: 36px;
-  margin-top: 34px;
-}
-
-/* ---- plans 2 et 7 : le texte à gauche, la scène à droite ---- */
-.scene__copy {
-  position: absolute;
-  left: 120px;
-  top: 300px;
-  width: 980px;
-}
-
-.scene__copy--static {
-  position: static;
-  width: auto;
-}
-
-/* un voile de brume derrière le bloc titre, comme dans le hero */
-.scene__p2 .scene__copy::before,
-.scene__p7 .scene__copy::before {
-  content: "";
-  position: absolute;
-  inset: -16% -24% -18% -30%;
-  z-index: -1;
-  background: radial-gradient(70% 65% at 38% 50%, rgb(18 20 18 / 0.72) 0%, rgb(18 20 18 / 0.35) 45%, transparent 72%);
-}
-
-.scene__logo {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  margin-top: 48px;
-}
-
-.scene__partner {
-  position: absolute;
-  left: 120px;
-  bottom: 96px;
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-.scene__partner-label,
-.scene__partner-note {
-  font-size: 20px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  color: var(--on-dark-2);
+}
+
+.film__collab-logo {
+  display: block;
+  width: auto;
+  height: 118px;
+}
+
+.film__collab-note {
+  font-size: 24px;
+  color: var(--on-dark-2);
+}
+
+.film__p8 .film__collab {
+  margin-top: 22px;
+}
+
+.film__p8 .film__collab-logo {
+  height: 96px;
+}
+
+.film__fictif {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 44px;
+  justify-content: center;
+  font-size: 16px;
   color: var(--on-dark-3);
 }
 
-.scene__partner-note {
-  letter-spacing: 0.02em;
-  text-transform: none;
-  color: var(--on-dark-2);
-}
-
-.scene__partner-logo {
+/* ---- numéro d'étape ---- */
+.film__num {
   display: block;
-  width: auto;
-  height: 64px;
-}
-
-/* ---- feuilles ---- */
-.scene__inner {
-  position: absolute;
-  inset: 120px 120px 100px;
-}
-
-.scene__inner--duo {
-  display: grid;
-  grid-template-columns: 900px 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.scene__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 60px;
-}
-
-/* ---- plan 3 : les zones grises ---- */
-.scene__zones {
-  display: grid;
-  margin-top: 72px;
-  border-top: 1px solid var(--line-light-strong);
-}
-
-.scene__zone {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  align-items: baseline;
-  padding: 34px 0;
-  border-bottom: 1px solid var(--line-light);
-}
-
-.scene__zone-num {
+  margin-bottom: 4px;
   font-family: var(--font-display);
-  font-size: 44px;
+  font-size: 150px;
   font-weight: 800;
-  color: var(--cuivre-deep);
+  line-height: 0.9;
+  color: var(--cuivre-light);
 }
 
-.scene__zone h3 {
-  font-family: var(--font-display);
-  font-size: 64px;
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 1;
-  color: var(--encre);
+/* ---- 4 · l'écran ---- */
+.film__device {
+  position: absolute;
+  right: 120px;
+  top: 150px;
+  width: 1040px;
+  height: 780px;
+  background: var(--graphite-deep);
+  box-shadow:
+    inset 0 0 0 1px var(--line-dark-strong),
+    0 40px 80px rgb(0 0 0 / 0.45);
 }
 
-.scene__zone .cote {
-  margin-top: 12px;
-  font-size: 20px;
-}
-
-/* ---- plan 4 : le comparateur ---- */
-.scene__table {
-  width: 100%;
-  margin-top: 56px;
-  border-collapse: collapse;
-  font-size: 26px;
-}
-
-.scene__table th,
-.scene__table td {
-  padding: 22px 20px;
-  text-align: left;
-  vertical-align: top;
+.film__device-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 22px;
   border-bottom: 1px solid var(--line-dark);
+  font-size: 16px;
+  color: var(--on-dark-3);
 }
 
-.scene__table thead th {
-  padding-top: 0;
-  border-bottom: 2px solid var(--craie);
+.film__device-bar i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--graphite-3);
 }
 
-.scene__table thead th b {
-  display: block;
+.film__device-bar span {
+  margin-left: 18px;
+  padding: 6px 16px;
+  background: rgb(252 251 247 / 0.04);
+}
+
+.film__device-screen {
+  position: relative;
+  height: 728px;
+}
+
+.film__screen {
+  position: absolute;
+  inset: 0;
+  padding: 44px 48px;
+}
+
+.film__screen-title {
   font-family: var(--font-display);
   font-size: 40px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.scene__table thead th span {
-  display: block;
-  margin-top: 4px;
-  font-size: 18px;
+.film__form {
+  display: grid;
+  gap: 22px;
+  margin-top: 40px;
+}
+
+.film__form div {
+  display: grid;
+  gap: 8px;
+}
+
+.film__form dt {
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--on-dark-3);
 }
 
-.scene__table thead th:first-child {
-  font-size: 18px;
+.film__form dd {
+  min-height: 70px;
+  padding: 18px 22px;
+  font-size: 30px;
+  border: 1px solid var(--line-dark-strong);
+  background: rgb(252 251 247 / 0.03);
+}
+
+.film__f-btn {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 34px;
+  padding: 0 32px;
+  height: 66px;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--graphite-deep);
+  background: var(--cuivre);
+}
+
+.film__f-reponses {
+  position: absolute;
+  left: 48px;
+  bottom: 48px;
+  font-size: 20px;
+}
+
+/* ---- le comparateur, dans l'écran ---- */
+.film__table {
+  width: 100%;
+  margin-top: 26px;
+  border-collapse: collapse;
+  font-size: 22px;
+}
+
+.film__table th,
+.film__table td {
+  padding: 15px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.film__table thead th {
+  padding-top: 0;
+  border-bottom: 2px solid var(--craie);
+}
+
+.film__table thead th b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.film__table thead th span {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.film__table thead th:first-child {
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -299,172 +590,314 @@ html.scene body {
   vertical-align: bottom;
 }
 
-.scene__table tbody th {
-  width: 30%;
+.film__table tbody th {
+  width: 28%;
   font-weight: 600;
 }
 
-.scene__table td .tabular {
+.film__table td .tabular {
   font-family: var(--font-display);
-  font-size: 38px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1;
 }
 
-.scene__table td.is-min .tabular {
+.film__table td.is-min .tabular {
   color: var(--oxyde-light);
 }
 
-.scene__table td.is-absent {
-  background: rgb(184 77 61 / 0.08);
+.film__table td.is-absent {
+  background: rgb(184 77 61 / 0.1);
 }
 
-.scene__table tfoot th {
-  font-size: 18px;
+.film__table .statut {
+  font-size: 15px;
+}
+
+.film__table tfoot th {
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--on-dark-3);
 }
 
-.scene__table tfoot th,
-.scene__table tfoot td {
+.film__table tfoot th,
+.film__table tfoot td {
   border-top: 2px solid var(--craie);
   border-bottom: 0;
 }
 
-.scene__table tfoot td .tabular {
-  font-size: 46px;
+.film__table tfoot td .tabular {
+  font-size: 34px;
   font-weight: 800;
 }
 
-.scene__table .statut {
-  font-size: 18px;
-}
-
-.scene__table tfoot .statut {
+.film__table tfoot .statut {
   display: inline-flex;
-  margin-left: 16px;
-  vertical-align: middle;
+  margin-top: 8px;
 }
 
-/* ---- plan 5 : le Passeport ---- */
-.scene__chrono {
-  position: relative;
-  margin-top: 90px;
-  padding-top: 40px;
+.film__screen-note {
+  position: absolute;
+  left: 48px;
+  bottom: 30px;
+  font-size: 15px;
+  color: var(--on-dark-3);
 }
 
-.scene__rail {
+.film__callout {
   position: absolute;
   left: 0;
-  right: 0;
-  top: 0;
-  height: 3px;
-  background: var(--cuivre);
-}
-
-.scene__etapes {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 24px;
-}
-
-.scene__etape {
+  top: 560px;
   display: grid;
   gap: 10px;
-  color: var(--encre);
+  padding: 28px 32px;
+  border-left: 4px solid var(--cuivre);
+  background: rgb(252 251 247 / 0.04);
 }
 
-.scene__etape img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  background: var(--pierre);
-}
-
-.scene__etape-num {
-  margin-top: 8px;
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--cuivre-deep);
-}
-
-.scene__etape b {
-  font-family: var(--font-display);
-  font-size: 34px;
-  font-weight: 700;
+.film__callout-label {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.film__callout-montant {
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 800;
   line-height: 1;
 }
 
-.scene__etape-date {
-  font-size: 20px;
-  color: var(--encre-2);
-}
-
-.scene__etape .statut {
+.film__callout .statut {
   justify-self: start;
-  margin-top: 6px;
   font-size: 16px;
 }
 
-.scene__p5 .scene__sub {
-  margin-top: 56px;
-  max-width: 60ch;
-  font-size: 26px;
-}
-
-/* ---- plan 6 : le profil ---- */
-.scene__card {
+/* ---- 5 · la fiche du professionnel ---- */
+.film__card {
+  position: absolute;
+  right: 120px;
+  top: 150px;
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 36px;
-  padding: 36px;
+  grid-template-columns: 380px 1fr;
+  gap: 40px;
+  width: 1040px;
+  padding: 40px;
   background: var(--graphite-deep);
-  box-shadow: inset 0 0 0 1px var(--line-dark-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--line-dark-strong),
+    0 40px 80px rgb(0 0 0 / 0.45);
 }
 
-.scene__card img {
+.film__card-photo {
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.film__card-photo img {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 5;
+  height: 100%;
   object-fit: cover;
 }
 
-.scene__card h3 {
+.film__card h3 {
   font-family: var(--font-display);
-  font-size: 44px;
+  font-size: 48px;
   font-weight: 700;
   text-transform: uppercase;
   line-height: 1;
 }
 
-.scene__card .cote {
+.film__card .cote {
   margin-top: 12px;
-  font-size: 18px;
+  font-size: 17px;
+  white-space: normal;
 }
 
-.scene__infos {
+.film__infos {
   display: grid;
-  margin-top: 30px;
+  margin-top: 26px;
   border-top: 1px solid var(--line-dark);
 }
 
-.scene__info {
+.film__info {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-  padding: 16px 0;
+  padding: 13px 0;
   font-size: 22px;
   border-bottom: 1px solid var(--line-dark);
 }
 
-.scene__info .statut {
+.film__info .statut {
+  font-size: 14px;
+}
+
+.film__reals {
+  display: grid;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 20px;
+  color: var(--on-dark-2);
+}
+
+.film__real::before {
+  content: "— ";
+  color: var(--cuivre-light);
+}
+
+.film__c-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 26px;
+  padding: 0 28px;
+  height: 60px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--graphite-deep);
+  background: var(--cuivre);
+}
+
+.film__chosen {
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  font-size: 18px;
+}
+
+/* ---- 6 · le Passeport ---- */
+.film__steps {
+  position: absolute;
+  left: 120px;
+  right: 120px;
+  bottom: 60px;
+}
+
+.film__steps-rail {
+  display: block;
+  height: 3px;
+  margin-bottom: 26px;
+  background: var(--line-dark-strong);
+}
+
+.film__steps-rail-fill {
+  display: block;
+  height: 100%;
+  background: var(--cuivre);
+}
+
+.film__steps-list {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 18px;
+}
+
+.film__step {
+  display: grid;
+  gap: 6px;
+}
+
+.film__step-pic-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+
+.film__step-pic {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.film__step-dim {
+  position: absolute;
+  inset: 0;
+  background: var(--graphite);
+  opacity: 0.78;
+}
+
+.film__step-num {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--cuivre-light);
+}
+
+.film__step b {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.film__step-date {
+  font-size: 16px;
+  color: var(--on-dark-3);
+}
+
+.film__step .statut {
+  justify-self: start;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.film__p6 .film__sub {
+  top: 310px;
+  max-width: 26ch;
+  font-size: 28px;
+}
+
+.film__alert {
+  position: absolute;
+  left: 0;
+  top: 420px;
+  display: grid;
+  gap: 8px;
+  width: 640px;
+  padding: 24px 28px;
+  border-left: 4px solid var(--controle);
+  background: rgb(18 20 18 / 0.85);
+  box-shadow: inset 0 0 0 1px var(--line-dark-strong);
+  font-size: 22px;
+  color: var(--on-dark-2);
+}
+
+.film__alert b {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--on-dark);
+}
+
+.film__alert-tag {
+  justify-self: start;
   font-size: 15px;
+}
+
+.film__resolu {
+  border-left-color: var(--oxyde-light);
+}
+
+/* ---- 7 · les clés ---- */
+.film__p7 .film__photo-b {
+  clip-path: inset(0 0 0 100%);
+}
+
+.film__p7 .film__t2 {
+  font-size: 170px;
 }

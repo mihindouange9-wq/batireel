@@ -34,7 +34,7 @@ Chaque section porte un cartouche (numéro de feuille, titre, échelle), comme u
 
 ## Film de présentation
 
-`node tools/video-render.mjs` (la prévisualisation doit tourner) rend un film de 38 secondes en 1080p et 720p, H.264 + AAC, dans `public/film/` et `livrables/` : le monogramme se trace et se coule, la villa se monte sous le titre, les trois zones grises, le comparateur, le Passeport Chantier, un profil et ses preuves, la villa achevée avec la signature et le partenaire. La scène (`src/components/Scene.tsx`, `/?scene`) est une ligne de temps GSAP en pause : l'outil place la tête de lecture à chaque image, le chantier 3D reçoit son instant de l'extérieur, puis une seconde page Chrome encode (`video/encodeur.html`, WebCodecs, bande-son synthétisée). `--apercu` produit une planche-contact (`video/apercu.jpg`) sans encoder ; `--sans-mobile` saute le 720p. Le rendu 3D passe par SwiftShader : compter une vingtaine de minutes, et ne pas recompiler le site pendant le rendu.
+`node tools/video-render.mjs` (la prévisualisation doit tourner) rend « Nadège et Joël construisent », un film de 116 secondes en 1080p et 720p, H.264 + AAC, dans `livrables/` (non versionné) avec son affiche. L'histoire d'un couple fictif qui veut construire à Libreville sans se faire avoir : l'ouverture BATIRÉEL × MÉTHODE AURA, le rêve, la peur (les zones grises), la décision, puis les trois gestes (comparer les devis sur les mêmes lignes, choisir un professionnel sur ses preuves, suivre le chantier avec le Passeport pendant que la villa 3D se monte), les clés, l'appel et la signature du partenaire. La scène (`src/components/Scene.tsx`, `/?scene`) est une ligne de temps GSAP en pause : l'outil place la tête de lecture à chaque image, le chantier 3D reçoit son instant de l'extérieur, puis une seconde page Chrome encode (`video/encodeur.html`, WebCodecs) et compose la bande-son synthétisée à partir des repères publiés par la scène (`window.SON` : accords, pulsation, arpèges, impacts, tampons, montées). `--apercu` produit une planche-contact (`video/apercu.jpg`) sans encoder ; `--sans-mobile` saute le 720p ; `--reprendre` reprend un rendu interrompu en gardant les images déjà capturées. Chrome utilise la carte graphique de la machine ; ne pas recompiler le site pendant le rendu.
 
 ## Palette et typographie
 
@@ -53,7 +53,7 @@ Palette imposée par le brief : Noir graphite `#191B19`, Craie minérale `#F0EDE
 ```
 index.html              métadonnées, Open Graph, icônes
 public/                 favicon.svg, favicon-32.png, apple-touch-icon.png, og-image.png (tools/build-brand.mjs),
-                        photos/*.webp (tools/fetch-photos.mjs), textures/*.webp (tools/fetch-textures.mjs), film/ (tools/video-render.mjs),
+                        photos/*.webp (tools/fetch-photos.mjs), textures/*.webp (tools/fetch-textures.mjs),
                         partenaires/ (logo MÉTHODE AURA)
 src/content/site.ts     tous les textes publics (français), navigation, contact
 src/content/demo.ts     données fictives : devis, Passeport Chantier, profils
@@ -65,6 +65,7 @@ src/lib/motion.ts       Lenis, révélations (titres, blocs, tracés, filets), g
 src/styles/             tokens.css (palette, typographie, rythme) et global.css (base, boutons, statuts, cartouche)
 tools/                  build-brand.mjs, fetch-photos.mjs, fetch-textures.mjs, check.mjs, shoot.mjs, fullpage.mjs, render-deploy.mjs, video-render.mjs
 video/                  encodeur.html (WebCodecs, bande-son), mp4-muxer.js
+livrables/              films rendus par tools/video-render.mjs (BATIREEL-film-116s-1080p.mp4, -720p.mp4, affiche), non versionné
 docs/                   credits-photos.md, credits-textures.md
 render.yaml             blueprint Render prêt, non déployé
 PRODUCT.md, DESIGN.md   contexte produit et système de design
