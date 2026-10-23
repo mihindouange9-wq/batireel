@@ -1,6 +1,6 @@
 # Blueprint Render : site statique construit par Vite, servi par le CDN de Render.
-# PRÉPARÉ, NON DÉPLOYÉ : au moment de publier, créer le service par l'API (RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs)
-# ou connecter ce blueprint depuis le tableau de bord Render. Un push ne redéploie pas forcément : relancer tools/render-deploy.mjs.
+# EN LIGNE depuis le 23 oct. 2026 : https://batireel.onrender.com (service créé par l'API avec ce contenu, voir tools/render-deploy.mjs).
+# Un push sur main ne redéploie pas (l'application GitHub de Render n'a pas accès au dépôt) : relancer tools/render-deploy.mjs après chaque mise à jour.
 # VITE_WHATSAPP et VITE_CONTACT_EMAIL restent à renseigner (voir README).
 services:
   - type: web

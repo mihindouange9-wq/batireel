@@ -69,7 +69,7 @@ tools/                  build-brand.mjs, fetch-photos.mjs, fetch-textures.mjs, c
 video/                  encodeur.html (WebCodecs, bande-son), mp4-muxer.js
 livrables/              films rendus par tools/video-render.mjs (BATIREEL-film-116s-1080p.mp4, -720p.mp4, affiche), non versionné
 docs/                   credits-photos.md, credits-textures.md
-render.yaml             blueprint Render prêt, non déployé
+render.yaml             blueprint Render (site statique batireel, en ligne depuis le 23 octobre 2026)
 PRODUCT.md, DESIGN.md   contexte produit et système de design
 ```
 
@@ -83,4 +83,8 @@ Lighthouse 12 sur le build local, le 23 oct. 2026 (les scores de performance var
 
 ## Déploiement
 
-Non effectué. `render.yaml` et `tools/render-deploy.mjs` (`RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs`) sont prêts ; au moment de déployer, renseigner `VITE_SITE_URL`, `VITE_WHATSAPP` et `VITE_CONTACT_EMAIL`.
+En ligne sur Render depuis le 23 octobre 2026 : **https://batireel.onrender.com** (site statique `batireel`, construit par `npm ci && npm run build` depuis la branche `main` du dépôt GitHub public https://github.com/mihindouange9-wq/batireel, servi par le CDN de Render avec les en-têtes de `render.yaml` : CSP, HSTS, cache immuable des assets, réécriture de toute adresse vers `index.html`). Le service a été créé par l'API avec le contenu de `render.yaml`.
+
+Un push sur `main` **ne redéploie pas** le site (l'application GitHub de Render n'a pas accès au dépôt). Après chaque mise à jour, relancer `RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs` : l'outil retrouve le service, conserve les variables déjà renseignées dans le tableau de bord et demande un nouveau déploiement. Autre solution : autoriser l'application GitHub de Render sur le dépôt (https://github.com/apps/render/installations/new), les pushes redéploient alors automatiquement.
+
+Variables du service : `VITE_SITE_URL` = https://batireel.onrender.com ; `VITE_WHATSAPP` et `VITE_CONTACT_EMAIL` sont vides tant que le client ne les a pas fournies. Pour les renseigner : tableau de bord Render → service `batireel` → Environment, puis « Manual Deploy » (ou relancer l'outil), car ces valeurs sont lues au moment de la construction. Vérification du site en ligne : `node tools/check.mjs https://batireel.onrender.com` (46 contrôles passés le 23 octobre 2026, aucune erreur console ni violation de la CSP sur ordinateur et mobile).

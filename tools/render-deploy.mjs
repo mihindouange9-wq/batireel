@@ -4,8 +4,9 @@
 // Usage : RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs
 // La clé se crée dans Render → Account Settings → API Keys (https://dashboard.render.com/u/settings#api-keys).
 // Elle n'est jamais écrite sur le disque : la passer dans l'environnement du processus uniquement.
-// Un push sur main ne redéploie pas forcément (l'application GitHub de Render n'est pas installée) :
-// relancer cet outil après chaque mise à jour, il demande alors un nouveau déploiement.
+// Un push sur main ne redéploie pas (vérifié le 23 oct. 2026 : l'application GitHub de Render n'a pas accès au dépôt) :
+// relancer cet outil après chaque mise à jour ; il retrouve le service, garde les variables renseignées dans le tableau
+// de bord et demande un nouveau déploiement. Site en ligne : https://batireel.onrender.com
 
 const API = "https://api.render.com/v1";
 const KEY = process.env.RENDER_API_KEY;
