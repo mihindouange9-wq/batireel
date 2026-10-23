@@ -373,7 +373,7 @@ Monogramme « B sculpté » : lettre massive en une seule couleur (viewBox 14 10
 - Défaut GSAP : `power4.out`, 1,1 s. Transitions CSS : 200 ms (`--d-fast`, couleurs), 520 ms (`--d`, déplacements), 1 100 ms (`--d-slow`, rail) ; courbes `--ease-out` `cubic-bezier(0.16, 1, 0.3, 1)`, `--ease-inout` `cubic-bezier(0.7, 0, 0.2, 1)`, `--ease` `cubic-bezier(0.4, 0, 0.2, 1)`.
 - `data-title` : mots masqués (`.w > i`) qui montent de 112 % à 0 en 1,2 s, décalés de 50 ms. `data-reveal` : fondu + montée de 28 px en 1,1 s, décalage 80 ms, `data-reveal-delay` optionnel. `data-draw` / `data-stroke` : traits SVG tracés dans l'ordre, 0,35 à 1,6 s selon la longueur, `power2.inOut` ; `data-pop` apparaît ensuite. `data-rule` : filet `scaleX` 0 → 1 en 1,3 s.
 - Lenis : `lerp 0.085`, roue seulement (natif au toucher), désactivé en mouvement réduit ; aller à une section : 1,4 s, quartique.
-- Une seule section épinglée (« Chaque étape », `scrub 0.9`, longueur `n × 70 %`). Scène 3D du hero chargée à la demande sur écrans non tactiles, dessin axonométrique sinon.
+- Une seule section épinglée (« Chaque étape », `scrub 0.9`, longueur `n × 70 %`). Scène 3D du hero (villa R+1 réaliste : textures Poly Haven, ombres portées, cycle construction 7,6 s → tenue 4,2 s → déconstruction 4,4 s → repos 1,6 s, parts qui poussent depuis leur base ou se posent depuis le haut, aucun rebond) chargée à la demande sur écrans non tactiles, dessin axonométrique sinon.
 - Introduction : lignes, murs, cotes, repère tracés en ~2,3 s puis calque effacé vers le haut en 0,9 s ; une fois par session, passable au clic ou à Échap, `?nointro` pour la sauter.
 - Mouvement réduit : toutes les révélations rendent l'état final, Lenis et l'épinglage sont coupés, les durées CSS tombent à 0,01 ms.
 
