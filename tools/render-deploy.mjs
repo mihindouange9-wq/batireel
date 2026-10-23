@@ -28,8 +28,10 @@ const SERVICE = {
   envVars: [
     { key: "NODE_VERSION", value: "22.12.0" },
     { key: "VITE_SITE_URL", value: URL_FINALE },
-    // Adresse de contact des boutons « Discuter du projet » et « Devenir partenaire » : vide tant qu'elle n'est pas fournie.
+    // Adresse de contact du pied de page : vide tant qu'elle n'est pas fournie.
     { key: "VITE_CONTACT_EMAIL", value: "" },
+    // Numéro WhatsApp du formulaire « Décrire mon projet » (indicatif pays sans + ni espaces) : vide tant qu'il n'est pas fourni.
+    { key: "VITE_WHATSAPP", value: "" },
   ],
   serviceDetails: {
     buildCommand: "npm ci && npm run build",

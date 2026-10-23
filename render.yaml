@@ -1,7 +1,7 @@
 # Blueprint Render : site statique construit par Vite, servi par le CDN de Render.
 # PRÉPARÉ, NON DÉPLOYÉ : au moment de publier, créer le service par l'API (RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs)
 # ou connecter ce blueprint depuis le tableau de bord Render. Un push ne redéploie pas forcément : relancer tools/render-deploy.mjs.
-# VITE_SITE_URL et VITE_CONTACT_EMAIL restent à renseigner (voir README).
+# VITE_WHATSAPP et VITE_CONTACT_EMAIL restent à renseigner (voir README).
 services:
   - type: web
     name: batireel
@@ -14,9 +14,14 @@ services:
         value: 22.12.0
       - key: VITE_SITE_URL
         value: https://batireel.onrender.com
-      # Adresse de contact affichée par les boutons « Discuter du projet » et « Devenir partenaire ».
+      # Adresse de contact affichée dans le pied de page.
       # Laisser vide tant qu'elle n'est pas fournie : le site l'indique alors honnêtement.
       - key: VITE_CONTACT_EMAIL
+        value: ""
+      # Numéro WhatsApp qui reçoit les messages du formulaire « Décrire mon projet »
+      # (indicatif pays sans « + » ni espaces, par exemple 241XXXXXXXX).
+      # Laisser vide tant qu'il n'est pas fourni : le formulaire propose alors de copier le message.
+      - key: VITE_WHATSAPP
         value: ""
     routes:
       - type: rewrite
