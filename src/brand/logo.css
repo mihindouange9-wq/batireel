@@ -1,34 +1,17 @@
 .logo {
   --logo-size: 28px;
-  --logo-dot: var(--cuivre);
   display: inline-flex;
   align-items: center;
-  gap: calc(var(--logo-size) * 0.45);
+  gap: calc(var(--logo-size) * 0.5);
   line-height: 1;
 }
 
 .logo--dark {
-  --logo-badge: rgb(252 251 247 / 0.04);
-  --logo-badge-line: var(--line-dark-strong);
   color: var(--blanc);
 }
 
 .logo--light {
-  --logo-badge: var(--graphite);
-  --logo-badge-line: var(--graphite);
   color: var(--graphite);
-}
-
-/* la plaque : un carré fileté, comme la plaque du pied de page et la tuile du favicon */
-.logo__badge {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: calc(var(--logo-size) * 1.3);
-  height: calc(var(--logo-size) * 1.3);
-  background: var(--logo-badge);
-  box-shadow: inset 0 0 0 1px var(--logo-badge-line);
-  color: var(--blanc);
 }
 
 .logo__mark {
@@ -47,7 +30,7 @@
   white-space: nowrap;
 }
 
-/* le É, en cuivre : la seule couleur du mot, en écho à la fenêtre du monogramme */
+/* le É, en cuivre : la seule couleur du bloc-marque */
 .logo__accent {
   color: var(--cuivre-light);
 }

@@ -18,7 +18,7 @@ Node 22 (fichier `.node-version`). Pile : Vite 6, React 19, TypeScript, CSS nati
 
 ## Ce que le site contient
 
-- **Introduction** (moins de trois secondes, une fois par session, passable au clic ou à Échap) : des lignes de construction se tracent, deux cotes s'affichent, le monogramme se trace et sa fenêtre s'allume, puis le calque s'efface et le hero se met en place.
+- **Introduction** (moins de trois secondes, une fois par session, passable au clic ou à Échap) : des lignes de construction se tracent, deux cotes s'affichent, le monogramme se trace puis se coule, puis le calque s'efface et le hero se met en place.
 - **Hero** « Le chantier. Sans zone grise. » : volume architectural en 3D (dalle, corps en porte-à-faux sur trois poteaux, casquette, escalier, montant cuivre), caméra qui se rapproche au défilement, inclinaison au pointeur, lignes structurelles qui apparaissent ; sur écran tactile, sans WebGL ou en mouvement réduit, le même volume en dessin axonométrique tracé au trait (le module 3D n'est alors pas chargé).
 - **Le constat** (feuille claire) : les trois zones grises, relevées dans un dessin technique dont les traits se tracent.
 - **La présentation** : une coupe du bâtiment en trois strates (le prix, la personne, l'avancement), une photographie qui apparaît derrière son dessin, le texte monumental « Bâtir avec confiance » qui traverse l'écran.
@@ -52,7 +52,7 @@ public/                 favicon.svg, favicon-32.png, apple-touch-icon.png, og-im
                         photos/*.webp (tools/fetch-photos.mjs), partenaires/ (logo MÉTHODE AURA)
 src/content/site.ts     tous les textes publics (français), navigation, contact
 src/content/demo.ts     données fictives : devis, Passeport Chantier, profils
-src/brand/Logo.tsx      logo : le B bâti (lettre massive, bols arrondis, contre-formes carrées, fenêtre basse en cuivre) + le mot
+src/brand/Logo.tsx      logo : le B sculpté (lettre massive en une couleur, bols en coussin, entaille fine, chanfreins de béton) + le mot
 src/components/         Intro (introduction), HeroScene (3D), HeroDrawing (dessin), Plan (cartouche, ligne de
                         transition, révélation photographique, texte monumental, annotation)
 src/sections/           une section = un composant + sa feuille de style

@@ -2,23 +2,23 @@ import type { CSSProperties } from "react";
 import "./logo.css";
 
 /* ───────────── Logo BATIRÉEL ─────────────
-   Le monogramme est un B bâti : une lettre massive, deux bols en demi-cercle, deux contre-formes carrées
-   comme les ouvertures d'une élévation. La fenêtre basse est en cuivre : l'étape validée, le point sans
-   zone grise. Le mot, en Barlow Condensed, garde son É en cuivre. Même géométrie dans le favicon, l'image
-   de partage, l'introduction et le pied de page (tools/build-brand.mjs, Intro.tsx, Footer.tsx). Dans le
-   bloc-marque, le monogramme est posé sur une plaque carrée filetée : il se lit comme un symbole, pas comme
-   une lettre de plus devant le mot. */
+   Le monogramme est un B sculpté, en une seule couleur : une lettre massive au fût droit et aux bols en
+   coussin (flanc droit plat, angles arrondis), comme un élément de béton coffré. Deux détails, visibles en
+   grand, effacés en petit : une entaille fine entre le fût et la barre médiane (la dalle passe à côté du
+   poteau) et deux chanfreins aux angles du fût (l'arête du béton). Le mot, en Barlow Condensed, porte la
+   seule couleur du bloc-marque : le É en cuivre. Même géométrie dans le favicon, l'image de partage,
+   l'introduction et la plaque du pied de page (tools/build-brand.mjs, Intro.tsx, Footer.tsx). */
 
-export const MARK_VIEWBOX = "14 10 65 80";
-export const MARK_WIDTH = 65;
+export const MARK_VIEWBOX = "14 10 72 80";
+export const MARK_WIDTH = 72;
 export const MARK_HEIGHT = 80;
-/** Silhouette du B (fût de 20, barres de 14) et ses deux contre-formes, en règle pair-impair. */
-export const MARK_PATH = "M14 10H55A19 19 0 0 1 55 48H58A21 21 0 0 1 58 90H14Z M34 24H52V41H34Z M34 55H56V76H34Z";
-/** La fenêtre basse, remplie de cuivre. */
-export const MARK_WINDOW = { x: 34, y: 55, width: 22, height: 21 } as const;
+/** Silhouette du B (fût de 20, barres de 14, bols à rayons 14 et 16), contre-formes, entaille de 3 ; règle pair-impair. */
+export const MARK_PATH =
+  "M19 10H66A14 14 0 0 1 80 24V34A14 14 0 0 1 66 48H70A16 16 0 0 1 86 64V74A16 16 0 0 1 70 90H19L14 85V15Z " +
+  "M34 24H60A6 6 0 0 1 66 30V35A6 6 0 0 1 60 41H34Z M34 55H64A8 8 0 0 1 72 63V68A8 8 0 0 1 64 76H34Z M34 41H37V55H34Z";
 
 type MarkProps = {
-  /** Hauteur du monogramme en pixels ; la largeur suit (65/80). */
+  /** Hauteur du monogramme en pixels ; la largeur suit (72/80). */
   size?: number;
   className?: string;
   title?: string;
@@ -36,7 +36,6 @@ export function LogoMark({ size = 28, className, title }: MarkProps) {
       aria-label={title}
     >
       <path d={MARK_PATH} fill="currentColor" fillRule="evenodd" />
-      <rect x={MARK_WINDOW.x} y={MARK_WINDOW.y} width={MARK_WINDOW.width} height={MARK_WINDOW.height} fill="var(--logo-dot, #b86f45)" />
     </svg>
   );
 }
@@ -56,11 +55,7 @@ export function Logo({ size = 28, tone = "dark", withWord = true, withMark = tru
   const style = { "--logo-size": `${size}px` } as CSSProperties;
   return (
     <span className={`logo logo--${tone} ${className ?? ""}`} style={style} role="img" aria-label={title}>
-      {withMark && (
-        <span className="logo__badge" aria-hidden="true">
-          <LogoMark size={+(size * 0.94).toFixed(2)} className="logo__mark" />
-        </span>
-      )}
+      {withMark && <LogoMark size={size} className="logo__mark" />}
       {withWord && (
         <span className="logo__word" aria-hidden="true">
           BATIR<span className="logo__accent">É</span>EL

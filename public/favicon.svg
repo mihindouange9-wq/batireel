@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <rect width="64" height="64" rx="12" fill="#191B19"/>
-  <g transform="translate(5.96 4) scale(0.56)">
-    <path fill="#F0EDE4" fill-rule="evenodd" d="M14 10H55A19 19 0 0 1 55 48H58A21 21 0 0 1 58 90H14Z M34 24H52V41H34Z M34 55H56V76H34Z"/>
-    <rect x="34" y="55" width="22" height="21" fill="#B86F45"/>
+  <g transform="translate(4 4) scale(0.56)">
+    <path fill="#F0EDE4" fill-rule="evenodd" d="M19 10H66A14 14 0 0 1 80 24V34A14 14 0 0 1 66 48H70A16 16 0 0 1 86 64V74A16 16 0 0 1 70 90H19L14 85V15Z M34 24H60A6 6 0 0 1 66 30V35A6 6 0 0 1 60 41H34Z M34 55H64A8 8 0 0 1 72 63V68A8 8 0 0 1 64 76H34Z M34 41H37V55H34Z"/>
   </g>
 </svg>
