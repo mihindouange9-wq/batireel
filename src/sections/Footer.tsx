@@ -1,11 +1,13 @@
 import { Logo, LogoMark } from "../brand/Logo";
 import { FOOTER, NAV, NAV_CTA, SITE } from "../content/site";
+import { formaterNumero, lienWhatsapp, normaliserNumero } from "../lib/whatsapp";
 import "./footer.css";
 
 /* Pied de page : les lignes du plan convergent vers le monogramme, puis la navigation, les contacts à
    compléter et les mentions à prévoir. Sobre, architectural. */
 export default function Footer() {
   const email = SITE.contact.email.trim();
+  const whatsapp = normaliserNumero(SITE.contact.whatsapp);
   const year = new Date().getFullYear();
 
   return (
@@ -40,7 +42,13 @@ export default function Footer() {
           </nav>
           <div className="footer__contact">
             <p className="cote cote--plain">Contact</p>
-            {email ? <a href={`mailto:${email}`}>{email}</a> : <p className="footer__pending">À compléter avant publication.</p>}
+            {email && <a href={`mailto:${email}`}>{email}</a>}
+            {whatsapp && (
+              <a href={lienWhatsapp(whatsapp)} target="_blank" rel="noopener">
+                WhatsApp · <span className="tabular">{formaterNumero(whatsapp)}</span>
+              </a>
+            )}
+            {!email && !whatsapp && <p className="footer__pending">À compléter avant publication.</p>}
             <p className="cote cote--plain footer__legal-label">Informations légales</p>
             <p className="footer__pending">{SITE.legal.noticeStatus}</p>
             <p className="footer__pending">{SITE.legal.privacyStatus}</p>

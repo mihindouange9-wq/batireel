@@ -38,6 +38,7 @@
 .header__link {
   position: relative;
   padding: 10px 0;
+  white-space: nowrap;
   font-size: var(--fs-small);
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -74,6 +75,33 @@
   font-size: 1.125rem;
 }
 
+.header__cta-court {
+  display: none;
+}
+
+/* largeurs intermédiaires : liens resserrés, libellé court du bouton */
+@media (max-width: 1140px) {
+  .header__bar {
+    gap: 20px;
+  }
+
+  .header__nav {
+    gap: 18px;
+  }
+
+  .header__cta {
+    padding: 0 16px;
+  }
+
+  .header__cta-long {
+    display: none;
+  }
+
+  .header__cta-court {
+    display: inline;
+  }
+}
+
 .header__toggle {
   display: none;
   width: 46px;
@@ -86,7 +114,7 @@
   display: none;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .header__nav,
   .header__cta {
     display: none;

@@ -44,7 +44,8 @@ Palette imposée par le brief : Noir graphite `#191B19`, Craie minérale `#F0EDE
 
 | Quoi | Où |
 | --- | --- |
-| Adresse de contact (boutons « Décrire mon projet » et « Présenter mon activité », pied de page) | variable `VITE_CONTACT_EMAIL` au déploiement, ou `src/content/site.ts` |
+| Numéro WhatsApp qui reçoit les messages du formulaire « Décrire mon projet » (bouton « Envoyer sur WhatsApp », lien direct, pied de page) | variable `VITE_WHATSAPP` au déploiement : indicatif pays sans « + » ni espaces, par exemple `241XXXXXXXX`. Tant qu’elle est vide, le formulaire le dit et propose de copier le message |
+| Adresse de contact (pied de page) | variable `VITE_CONTACT_EMAIL` au déploiement, ou `src/content/site.ts` |
 | Adresse publique du site (canonical, Open Graph, sitemap, robots) | variable `VITE_SITE_URL` |
 | Mentions légales et politique de confidentialité | `src/content/site.ts` (`SITE.legal`) |
 
@@ -55,7 +56,8 @@ index.html              métadonnées, Open Graph, icônes
 public/                 favicon.svg, favicon-32.png, apple-touch-icon.png, og-image.png (tools/build-brand.mjs),
                         photos/*.webp (tools/fetch-photos.mjs), textures/*.webp (tools/fetch-textures.mjs),
                         partenaires/ (logo MÉTHODE AURA)
-src/content/site.ts     tous les textes publics (français), navigation, contact
+src/content/site.ts     tous les textes publics (français), navigation, contact, formulaire « Décrire mon projet »
+src/lib/whatsapp.ts     composition du message et lien wa.me (le site ne stocke rien : le message part du WhatsApp du visiteur)
 src/content/demo.ts     données fictives : devis, Passeport Chantier, profils
 src/brand/Logo.tsx      logo : le B sculpté (lettre massive en une couleur, bols en coussin, entaille fine, chanfreins de béton) + le mot
 src/components/         Intro (introduction), HeroScene (3D), HeroDrawing (dessin), Scene (film), Plan (cartouche, ligne de
@@ -81,4 +83,4 @@ Lighthouse 12 sur le build local, le 23 oct. 2026 (les scores de performance var
 
 ## Déploiement
 
-Non effectué. `render.yaml` et `tools/render-deploy.mjs` (`RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs`) sont prêts ; au moment de déployer, renseigner `VITE_SITE_URL` et `VITE_CONTACT_EMAIL`.
+Non effectué. `render.yaml` et `tools/render-deploy.mjs` (`RENDER_API_KEY=rnd_xxx node tools/render-deploy.mjs`) sont prêts ; au moment de déployer, renseigner `VITE_SITE_URL`, `VITE_WHATSAPP` et `VITE_CONTACT_EMAIL`.

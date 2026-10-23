@@ -11,6 +11,9 @@ export const SITE = {
   contact: {
     /* Adresse à renseigner par le client (variable VITE_CONTACT_EMAIL). Vide : le site le dit honnêtement. */
     email: (import.meta.env.VITE_CONTACT_EMAIL as string | undefined) ?? "",
+    /* Numéro WhatsApp à renseigner par le client (variable VITE_WHATSAPP : indicatif pays, sans « + » ni espaces,
+       par exemple 241XXXXXXXX). Vide : le formulaire propose de copier le message et le dit. */
+    whatsapp: (import.meta.env.VITE_WHATSAPP as string | undefined) ?? "",
   },
   legal: {
     noticeStatus: "Mentions légales : à prévoir avant publication.",
@@ -26,7 +29,7 @@ export const NAV = [
   { label: "Le terrain", href: "#terrain" },
 ] as const;
 
-export const NAV_CTA = { label: "Rejoindre", href: "#rejoindre" } as const;
+export const NAV_CTA = { label: "Décrire mon projet", court: "Mon projet", href: "#contact" } as const;
 
 export const HERO = {
   title: ["Le chantier.", "Sans zone grise."],
@@ -144,8 +147,53 @@ export const REJOINDRE = {
     text: "Artisan, entreprise, bureau d'études ou architecte : présentez vos réalisations et vos références de façon vérifiable.",
     action: "Présenter mon activité",
   },
-  contactMissing: "Adresse de contact à renseigner avant publication.",
-  contactHint: "Un échange direct avec l'équipe, sans formulaire ni collecte de données.",
+} as const;
+
+export const CONTACT = {
+  title: "Décrivez-nous votre projet.",
+  lead: "Quelques lignes suffisent : ce que vous voulez construire, où, et où vous en êtes. Le message part de votre WhatsApp vers l'équipe BATIRÉEL ; le site n'enregistre rien.",
+  profilLegend: "Vous êtes",
+  profils: [
+    { id: "particulier", label: "Je fais construire", hint: "Particulier, famille ou entreprise" },
+    { id: "pro", label: "Je suis un professionnel", hint: "Artisan, entreprise, bureau d'études, architecte" },
+  ],
+  champs: {
+    nom: { label: "Votre nom", placeholder: "Prénom et nom" },
+    commune: { label: "Commune du projet", placeholder: "Libreville, Akanda, Owendo, Ntoum…" },
+    type: { label: "Type de projet", options: ["Construction neuve", "Rénovation", "Extension ou surélévation", "Aménagement intérieur", "Clôture, portail ou extérieurs", "Autre"] },
+    metier: {
+      label: "Votre métier",
+      options: ["Maçonnerie et gros œuvre", "Électricité", "Plomberie", "Menuiserie", "Carrelage, peinture et finitions", "Charpente et couverture", "Architecte ou bureau d'études", "Entreprise générale", "Autre"],
+    },
+    surface: { label: "Surface approximative", optional: "facultatif, en m²", placeholder: "140" },
+    stade: { label: "Où en êtes-vous ?", options: ["Une idée, pas encore de terrain", "Le terrain est acquis", "Les plans sont prêts", "J'ai déjà reçu des devis", "Le chantier est en cours"] },
+    message: {
+      label: "Votre projet, en quelques lignes",
+      placeholder: "Ce que vous voulez construire, les délais que vous visez, ce qui vous inquiète…",
+      labelPro: "Votre activité, en quelques lignes",
+      placeholderPro: "Vos réalisations récentes, votre zone d'intervention, ce que vous attendez de BATIRÉEL…",
+    },
+  },
+  apercu: "Votre message, tel qu'il partira",
+  etat: { enCours: "En cours de rédaction", pret: "Prêt à envoyer" },
+  envoyer: "Envoyer sur WhatsApp",
+  copier: "Copier le message",
+  direct: "ou écrivez directement au",
+  numeroAbsent: "Le numéro WhatsApp de BATIRÉEL sera ajouté à la publication. En attendant, le message se copie, prêt à envoyer.",
+  statut: {
+    ouvert: "WhatsApp s'ouvre avec votre message. Si rien ne se passe, copiez-le et envoyez-le depuis votre téléphone.",
+    copie: "Message copié",
+    copieImpossible: "La copie n'a pas fonctionné : sélectionnez le texte de l'aperçu pour le copier.",
+    invalide: "Vérifiez les champs signalés.",
+  },
+  erreurs: {
+    nom: "Indiquez votre nom.",
+    commune: "Indiquez la commune du projet.",
+    surface: "Indiquez une surface en chiffres, par exemple 140.",
+    message: "Décrivez votre projet en quelques mots, vingt caractères au moins.",
+  },
+  confidentialite: "Aucune donnée n'est enregistrée par ce site : le message est composé ici, puis envoyé depuis votre propre WhatsApp.",
+  signature: "Envoyé depuis le site BATIRÉEL",
 } as const;
 
 export const FOOTER = {

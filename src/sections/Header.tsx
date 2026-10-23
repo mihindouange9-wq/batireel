@@ -45,7 +45,12 @@ export default function Header() {
           ))}
         </nav>
         <a className="btn btn--primary header__cta" href={NAV_CTA.href}>
-          <span className="btn__label">{NAV_CTA.label}</span>
+          <span className="btn__label">
+            <span className="header__cta-long">{NAV_CTA.label}</span>
+            <span className="header__cta-court" aria-hidden="true">
+              {NAV_CTA.court}
+            </span>
+          </span>
           <span className="btn__arrow" aria-hidden="true" />
         </a>
         <button

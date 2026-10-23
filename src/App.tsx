@@ -10,6 +10,7 @@ import Pros from "./sections/Pros";
 import Etapes from "./sections/Etapes";
 import Terrain from "./sections/Terrain";
 import Rejoindre from "./sections/Rejoindre";
+import Contact from "./sections/Contact";
 import Footer from "./sections/Footer";
 import { ScrollTrigger, createLenis, getLenis, scrollToSection, setupReveals } from "./lib/motion";
 
@@ -62,6 +63,7 @@ export default function App() {
         <Etapes />
         <Terrain />
         <Rejoindre />
+        <Contact />
       </main>
       <Footer />
     </>

@@ -8,6 +8,8 @@ const base = process.argv[2] ?? "http://127.0.0.1:5206";
 const url = base + (base.includes("?") ? "&" : "?") + "nointro";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME ?? "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: "new" });
+// le formulaire de contact copie le message dans le presse-papiers : la lecture est autorisée pour le contrôler
+await browser.defaultBrowserContext().overridePermissions(new URL(base).origin, ["clipboard-read", "clipboard-write"]);
 const results = [];
 const ok = (name, pass, detail = "") => results.push(`${pass ? "OK   " : "ÉCHEC"} ${name}${detail ? " — " + detail : ""}`);
 
@@ -82,7 +84,40 @@ async function fresh(w, h, touch = false, reduced = false) {
   ok("navigation : « Le terrain » amène à la section", Math.abs(landed - 64) < 40, `haut à ${landed} px`);
   ok("navigation : le focus suit l'ancre", await page.evaluate(() => document.activeElement?.id === "terrain"));
   const ctas = await page.$$eval("#rejoindre a.btn", (as) => as.map((a) => a.getAttribute("href")));
-  ok("appel final : les deux boutons ont une destination", ctas.length === 2 && ctas.every((h) => h && h.length > 1), ctas.join(", "));
+  ok("appel final : les deux boutons mènent au formulaire", ctas.length === 2 && ctas.every((h) => h === "#contact"), ctas.join(", "));
+
+  // formulaire « Décrire mon projet » : étiquettes, validation, aperçu, copie, profil choisi depuis l'appel final
+  await page.evaluate(() => window.scrollTo(0, document.querySelector("#contact").offsetTop - 64));
+  await sleep(2000);
+  const sansEtiquette = await page.$$eval("#contact input, #contact select, #contact textarea", (els) => els.filter((el) => !el.labels?.length && !el.getAttribute("aria-label")).length);
+  ok("contact : chaque champ a une étiquette", sansEtiquette === 0, `${sansEtiquette} sans étiquette`);
+  await page.click(".contact__envoyer");
+  await sleep(500);
+  const vide = await page.evaluate(() => ({ invalides: document.querySelectorAll('#contact [aria-invalid="true"]').length, erreurs: document.querySelectorAll("#contact .field__erreur").length, focus: document.activeElement?.getAttribute("name"), statut: (document.querySelector(".contact__statut")?.textContent || "").trim() }));
+  ok("contact : l'envoi à vide signale trois champs et place le focus sur le nom", vide.invalides === 3 && vide.erreurs === 3 && vide.focus === "nom" && vide.statut.length > 0, JSON.stringify(vide));
+  await page.type('#contact input[name="nom"]', "Nadège Obame");
+  await page.type('#contact input[name="commune"]', "Akanda");
+  await page.type('#contact input[name="surface"]', "140");
+  await page.type('#contact textarea[name="message"]', "Nous voulons construire une maison R+1 sur un terrain déjà acquis.");
+  await sleep(300);
+  const apercu = await page.evaluate(() => ({ texte: document.querySelector(".contact__bulle-texte").textContent, pret: !!document.querySelector(".contact__bulle .statut--ok"), invalides: document.querySelectorAll('#contact [aria-invalid="true"]').length }));
+  ok("contact : l'aperçu reprend la saisie et passe « prêt à envoyer »", apercu.texte.includes("Nadège Obame") && apercu.texte.includes("Akanda · 140\u00a0m²") && apercu.texte.includes("maison R+1") && apercu.pret && apercu.invalides === 0, JSON.stringify(apercu).slice(0, 220));
+  const numero = await page.$eval("#contact", (s) => !!s.querySelector(".contact__direct"));
+  if (numero) {
+    const lien = await page.$eval(".contact__direct", (a) => a.getAttribute("href"));
+    ok("contact : le numéro WhatsApp est affiché en lien direct wa.me", /^https:\/\/wa\.me\/\d{8,15}$/.test(lien), lien);
+  } else {
+    await page.click(".contact__envoyer");
+    await sleep(500);
+    const presse = await page.evaluate(() => navigator.clipboard.readText().catch(() => ""));
+    ok("contact : sans numéro, l'envoi copie le message prêt à envoyer", presse.startsWith("Bonjour BATIRÉEL") && presse.includes("Envoyé depuis le site BATIRÉEL"), JSON.stringify(presse.slice(0, 40)));
+  }
+  await page.evaluate(() => window.scrollTo(0, document.querySelector("#rejoindre").offsetTop - 64));
+  await sleep(1500);
+  await page.click('#rejoindre a[data-profil="pro"]');
+  await sleep(2600);
+  const pro = await page.evaluate(() => ({ profil: document.querySelector('#contact input[name="profil"]:checked')?.value, metier: !!document.querySelector('#contact select[name="metier"]'), haut: Math.round(document.querySelector("#contact").getBoundingClientRect().top) }));
+  ok("contact : « Présenter mon activité » ouvre le formulaire en profil professionnel", pro.profil === "pro" && pro.metier && Math.abs(pro.haut - 64) < 60, JSON.stringify(pro));
   ok("aucune erreur console (ordinateur)", errors.length === 0, errors.join(" | "));
   await page.close();
 }

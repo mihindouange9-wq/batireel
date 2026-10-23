@@ -1,4 +1,4 @@
-/* ───────────── Entrer sur le chantier : deux entrées, un point de contact ───────────── */
+/* ───────────── Entrer sur le chantier : deux entrées vers le formulaire ───────────── */
 .rejoindre {
   background:
     radial-gradient(60% 50% at 30% 20%, rgb(184 111 69 / 0.12) 0%, transparent 70%),
@@ -21,6 +21,7 @@
   grid-template-columns: 1fr 1fr;
   margin-top: clamp(48px, 6vw, 96px);
   border-top: 1px solid var(--line-dark-strong);
+  border-bottom: 1px solid var(--line-dark);
 }
 
 .rejoindre__col {
@@ -53,51 +54,6 @@
 .rejoindre__col .btn {
   justify-self: start;
   margin-top: 8px;
-}
-
-/* le point de contact : un nœud sur la ligne */
-.rejoindre__contact {
-  position: relative;
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  margin-top: clamp(32px, 4vw, 56px);
-  padding: 24px 0 28px 36px;
-  border-top: 1px solid var(--line-dark-strong);
-  border-bottom: 1px solid var(--line-dark);
-}
-
-.rejoindre__node {
-  position: absolute;
-  left: 0;
-  top: 32px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid var(--cuivre);
-  background: var(--graphite);
-}
-
-.rejoindre__contact p {
-  display: grid;
-  gap: 6px;
-}
-
-.rejoindre__contact strong {
-  color: var(--cuivre-light);
-}
-
-.rejoindre__mail {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.rejoindre__hint {
-  font-size: var(--fs-small);
-  color: var(--on-dark-3);
 }
 
 .rejoindre .cartouche {
