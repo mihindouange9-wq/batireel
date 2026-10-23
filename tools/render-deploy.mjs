@@ -89,10 +89,17 @@ async function main() {
 
   if (service) {
     console.log(`Service existant : ${service.id} → ${service.serviceDetails?.url ?? ""}`);
-    // les variables d'environnement suivent render.yaml ; VITE_SITE_URL prend l'adresse réelle du service
-    const vars = SERVICE.envVars.map((v) => (v.key === "VITE_SITE_URL" ? { ...v, value: service.serviceDetails?.url ?? URL_FINALE } : v));
+    // Les variables suivent render.yaml, mais une valeur déjà renseignée dans le tableau de bord
+    // (numéro WhatsApp, adresse de contact) est conservée ; VITE_SITE_URL prend l'adresse réelle du service.
+    const actuelles = new Map((await api("GET", `/services/${service.id}/env-vars?limit=100`)).map((e) => [e.envVar.key, e.envVar.value]));
+    const vars = SERVICE.envVars.map((v) => {
+      if (v.key === "VITE_SITE_URL") return { ...v, value: service.serviceDetails?.url ?? URL_FINALE };
+      const existante = actuelles.get(v.key);
+      return existante ? { ...v, value: existante } : v;
+    });
+    for (const [key, value] of actuelles) if (!vars.some((v) => v.key === key)) vars.push({ key, value });
     await api("PUT", `/services/${service.id}/env-vars`, vars);
-    console.log(`Variables mises à jour : ${vars.map((v) => v.key).join(", ")}`);
+    console.log(`Variables : ${vars.map((v) => (v.value ? v.key : `${v.key} (vide)`)).join(", ")}`);
     const deploy = await api("POST", `/services/${service.id}/deploys`, { clearCache: "do_not_clear" });
     deployId = deploy.id;
     console.log(`Nouveau déploiement demandé : ${deployId}`);
