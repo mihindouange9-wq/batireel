@@ -26,6 +26,9 @@
 
 .header__logo {
   display: inline-flex;
+  align-items: center;
+  /* zone tactile : le logo mesure 31 px de haut, le lien en offre 44 */
+  min-height: 44px;
   margin-right: auto;
 }
 

@@ -10,7 +10,7 @@ web
 
 ## Stack
 
-delegated : Vite 6 + React 19 + TypeScript, CSS natif (variables, grilles), GSAP + ScrollTrigger pour la narration au défilement, Lenis pour l'inertie, Three.js avec React Three Fiber pour la scène 3D du hero (chargée à la demande sur les écrans non tactiles, remplacée par une illustration SVG sur mobile, sans WebGL ou en mouvement réduit), Lucide pour les icônes, polices auto-hébergées par fontsource (Barlow Condensed pour les titres, Manrope pour le texte). Chaîne de contrôle reprise des sites TALORA, LOCAGAB et PAVEN du même client (captures, contrôles automatisés, déploiement statique Render préparé).
+delegated : Vite 6 + React 19 + TypeScript, CSS natif (variables, grilles), GSAP + ScrollTrigger pour la narration au défilement, Lenis pour l'inertie, Three.js avec React Three Fiber pour la scène 3D du hero (chargée à la demande sur les écrans non tactiles, remplacée par une illustration SVG sur mobile, sans WebGL ou en mouvement réduit), Lucide pour les icônes, polices auto-hébergées par fontsource (Barlow Condensed pour les titres, Manrope pour le texte). Chaîne de contrôle reprise des sites LOCAGAB et PAVEN du même client (captures, contrôles automatisés, déploiement statique Render préparé).
 
 ## Users
 

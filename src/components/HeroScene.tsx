@@ -38,6 +38,11 @@ const D_UNBUILD = 1.25;
 const SLOT_BUILD = (BUILD - D_BUILD) / (PHASES - 1);
 const SLOT_UNBUILD = (UNBUILD - D_UNBUILD) / (PHASES - 1);
 
+/* ---- mesure de fluidité (millisecondes, images par seconde) ---- */
+const PROBE_WARMUP = 1500;
+const PROBE_WINDOW = 3000;
+const PROBE_MIN_FPS = 18;
+
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const easeOutQuart = (p: number) => 1 - Math.pow(1 - p, 4);
 const easeOutCubic = (p: number) => 1 - Math.pow(1 - p, 3);
@@ -241,7 +246,7 @@ function Villa({ m, lite }: { m: Mats; lite: boolean }) {
 }
 
 /* ---- la caméra, le pointeur, l'horloge du chantier ---- */
-function Driver({ drive, clock, film, onReady, children }: { drive: MutableRefObject<SceneDrive>; clock: MutableRefObject<number>; film?: MutableRefObject<FilmDrive>; onReady?: () => void; children: ReactNode }) {
+function Driver({ drive, clock, film, onReady, onFail, children }: { drive: MutableRefObject<SceneDrive>; clock: MutableRefObject<number>; film?: MutableRefObject<FilmDrive>; onReady?: () => void; onFail?: () => void; children: ReactNode }) {
   const group = useRef<THREE.Group>(null);
   const rot = useRef({ x: 0, y: 0 });
   const ready = useRef(false);
@@ -260,6 +265,31 @@ function Driver({ drive, clock, film, onReady, children }: { drive: MutableRefOb
         ready.current = true;
         onReady?.();
       });
+    // contexte WebGL perdu (pilote, mémoire, onglet mis en veille) : le dessin reprend la place de la scène
+    const canvas = gl.domElement;
+    const onLost = () => onFail?.();
+    canvas.addEventListener("webglcontextlost", onLost);
+    // mesure de fluidité, une seule fois : après l'échauffement, trois secondes d'images comptées ; sous
+    // dix-huit images par seconde (rendu logiciel, carte trop faible), la scène rend la main au dessin
+    let probed = !!film || !onFail;
+    let probeStart = 0;
+    let probeFrames = 0;
+    let lastFrame = 0;
+    const probe = (now: number) => {
+      // un trou de plus de deux secondes (onglet masqué, fenêtre réduite) ne dit rien de la carte : on recommence
+      if (document.hidden || (lastFrame && now - lastFrame > 2000)) probeStart = 0;
+      lastFrame = now;
+      if (!probeStart) {
+        probeStart = now + PROBE_WARMUP;
+        probeFrames = 0;
+      } else if (now >= probeStart) {
+        probeFrames++;
+        if (now - probeStart >= PROBE_WINDOW) {
+          probed = true;
+          if (probeFrames / (PROBE_WINDOW / 1000) < PROBE_MIN_FPS) onFail?.();
+        }
+      }
+    };
     const loop = (now: number) => {
       if (ready.current && drive.current.active) {
         // en mode film, une seule image par instant demandé : le rendu logiciel est lent
@@ -270,7 +300,10 @@ function Driver({ drive, clock, film, onReady, children }: { drive: MutableRefOb
           }
         } else {
           advance(now);
+          if (!probed) probe(now);
         }
+      } else if (!probed) {
+        probeStart = 0;
       }
       raf = requestAnimationFrame(loop);
     };
@@ -278,8 +311,9 @@ function Driver({ drive, clock, film, onReady, children }: { drive: MutableRefOb
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
+      canvas.removeEventListener("webglcontextlost", onLost);
     };
-  }, [drive, advance, gl, scene, camera, onReady, film]);
+  }, [drive, advance, gl, scene, camera, onReady, onFail, film]);
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.25);
@@ -414,7 +448,20 @@ function useMaterials(): Mats {
   }, [bitmaps]);
 }
 
-export default function HeroScene({ drive, lite, film, onReady }: { drive: MutableRefObject<SceneDrive>; lite: boolean; film?: MutableRefObject<FilmDrive>; onReady?: () => void }) {
+export default function HeroScene({
+  drive,
+  lite,
+  film,
+  onReady,
+  onFail,
+}: {
+  drive: MutableRefObject<SceneDrive>;
+  lite: boolean;
+  film?: MutableRefObject<FilmDrive>;
+  onReady?: () => void;
+  /** la scène ne peut pas tenir (contexte WebGL perdu, rendu trop lent) : l'appelant revient au dessin */
+  onFail?: () => void;
+}) {
   const m = useMaterials();
   // le chantier commence une fois l'introduction passée, puis boucle
   const clock = useRef(typeof document !== "undefined" && document.documentElement.classList.contains("intro-active") ? -2.6 : -0.4);
@@ -450,7 +497,7 @@ export default function HeroScene({ drive, lite, film, onReady }: { drive: Mutab
       />
       <directionalLight position={[-10, 6, -8]} intensity={0.45} color="#9db0c4" />
       <ClockCtx.Provider value={clock}>
-        <Driver drive={drive} clock={clock} film={film} onReady={onReady}>
+        <Driver drive={drive} clock={clock} film={film} onReady={onReady} onFail={onFail}>
           {/* le terrain */}
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} material={m.sol} receiveShadow>
             <planeGeometry args={[90, 90]} />

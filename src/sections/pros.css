@@ -42,7 +42,9 @@
   align-items: start;
 }
 
+/* le métier occupe sa ligne : sans cela, l'intitulé suivant vient se coller à sa suite quand la fiche est large */
 .pros__body .cote {
+  display: flex;
   white-space: normal;
 }
 
@@ -145,5 +147,15 @@
 
   .pros__cols {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* téléphone à l'horizontale : une photographie en pleine largeur dépasse deux écrans ; la fiche reprend la
+   disposition large, photographie à gauche, informations à droite */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 560px) {
+  .pros__feature,
+  .pros__card {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 28px;
   }
 }

@@ -129,6 +129,8 @@
 @media (max-width: 900px) {
   .etapes {
     align-items: flex-start;
+    /* la section s'épingle en haut de l'écran : le titre doit rester sous l'en-tête fixe */
+    padding-top: calc(var(--header-h) + 28px);
   }
 
   .etapes__grid {
@@ -201,5 +203,58 @@
 @media (max-width: 640px) {
   .etapes__svg text {
     font-size: 19px;
+  }
+}
+
+/* 8. téléphone à l'horizontale : l'écran épinglé est trop bas pour empiler le texte et la coupe ; le texte passe
+   à gauche, la coupe à droite, à la hauteur de l'écran, pour que le bâtiment se monte bien sous les yeux */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 560px) {
+  .etapes {
+    align-items: center;
+    padding-block: calc(var(--header-h) + 10px) 14px;
+  }
+
+  .etapes__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-rows: 1fr auto;
+    gap: 8px 28px;
+    align-items: center;
+  }
+
+  .etapes__copy h2 {
+    font-size: clamp(1.75rem, 4.4vw, 2.5rem);
+  }
+
+  .etapes__lead {
+    margin-top: 10px;
+    font-size: 0.9375rem;
+  }
+
+  .etapes__stage {
+    margin-top: 0;
+  }
+
+  .etapes__svg {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: calc(100svh - var(--header-h) - 84px);
+    margin-inline: auto;
+  }
+
+  .etapes__svg text {
+    font-size: 19px;
+  }
+
+  .etapes__phase-num {
+    font-size: 2rem;
+  }
+
+  .etapes__phase-label {
+    font-size: 1.125rem;
+  }
+
+  .etapes__cartouche .cartouche {
+    padding-top: 8px;
   }
 }

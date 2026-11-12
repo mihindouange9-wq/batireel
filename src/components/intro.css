@@ -28,3 +28,10 @@
     opacity: 0;
   }
 }
+
+/* téléphone à l'horizontale : le plan est recadré en hauteur, l'invitation descend pour ne pas toucher la cote */
+@media (orientation: landscape) and (max-height: 480px) {
+  .intro__skip {
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+}

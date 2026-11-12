@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Component, lazy, Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowDown } from "lucide-react";
 import HeroDrawing from "../components/HeroDrawing";
 import type { SceneDrive } from "../components/HeroScene";
@@ -9,15 +9,32 @@ import "./hero.css";
 
 const HeroScene = lazy(() => import("../components/HeroScene"));
 
-/** WebGL disponible, pas de mouvement réduit, pas de `?no3d` : la scène 3D remplace le dessin (hors écrans tactiles). */
+/** WebGL accéléré disponible, pas de mouvement réduit, pas de `?no3d` : la scène 3D remplace le dessin (hors écrans
+    tactiles). Un WebGL réduit au rendu logiciel est refusé d'emblée : le dessin vaut mieux qu'une scène saccadée. */
 function canRender3D() {
   if (typeof window === "undefined") return false;
   if (prefersReducedMotion() || window.location.search.includes("no3d")) return false;
   try {
     const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    const opts: WebGLContextAttributes = { failIfMajorPerformanceCaveat: true };
+    const gl = (c.getContext("webgl2", opts) || c.getContext("webgl", opts)) as WebGLRenderingContext | null;
+    // le contexte de sonde est rendu tout de suite : les navigateurs n'en accordent qu'un petit nombre par page
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
+    return !!gl;
   } catch {
     return false;
+  }
+}
+
+/** Garde-fou de la scène 3D : module ou textures non chargés (connexion instable), contexte WebGL refusé…
+    Toute erreur de la scène s'arrête ici et le dessin la remplace ; le reste de la page n'est jamais touché. */
+class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
   }
 }
 
@@ -29,6 +46,8 @@ export default function Hero() {
   const drive = useRef<SceneDrive>({ scroll: 0, px: 0, py: 0, active: true });
   const [mode, setMode] = useState<"drawing" | "3d">("drawing");
   const lite = isTouch() || (typeof window !== "undefined" && window.innerWidth < 760);
+  // contexte WebGL perdu ou rendu trop lent : retour définitif au dessin
+  const onSceneFail = useCallback(() => setMode("drawing"), []);
 
   useEffect(() => {
     // sur écran tactile ou étroit, le dessin suffit : ni WebGL ni module 3D à charger (poids, batterie)
@@ -107,9 +126,11 @@ export default function Hero() {
     <section className="hero" id="top" ref={root} aria-labelledby="hero-title">
       <div className="hero__stage" aria-hidden="true">
         {mode === "3d" ? (
-          <Suspense fallback={<HeroDrawing className="hero__drawing hero__drawing--fallback" />}>
-            <HeroScene drive={drive} lite={lite} />
-          </Suspense>
+          <SceneBoundary fallback={<HeroDrawing className="hero__drawing" />}>
+            <Suspense fallback={<HeroDrawing className="hero__drawing hero__drawing--fallback" />}>
+              <HeroScene drive={drive} lite={lite} onFail={onSceneFail} />
+            </Suspense>
+          </SceneBoundary>
         ) : (
           <HeroDrawing className="hero__drawing" />
         )}

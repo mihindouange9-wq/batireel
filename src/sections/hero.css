@@ -262,3 +262,21 @@
     font-size: 22px;
   }
 }
+
+/* téléphone à l'horizontale : la scène est basse ; le dessin se cale sur sa hauteur pour rester entier */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 560px) {
+  .hero__stage {
+    height: max(62svh, 230px);
+  }
+
+  .hero__drawing {
+    top: 50%;
+    width: auto;
+    height: 100%;
+    max-width: 92vw;
+  }
+
+  .hero__drawing text {
+    font-size: 22px;
+  }
+}

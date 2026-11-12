@@ -96,10 +96,12 @@
   scrollbar-width: thin;
 }
 
+/* colonnes d'offres de même largeur, quel que soit leur contenu : les montants se lisent sur une même ligne */
 .comparateur__table {
   width: 100%;
   min-width: 700px;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .comparateur__table th,
@@ -134,6 +136,7 @@
 }
 
 .comparateur__poste-head {
+  width: 26%;
   font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -315,6 +318,16 @@
 @media (max-width: 900px) {
   .comparateur__head {
     grid-template-columns: 1fr;
+  }
+
+  /* tablette : la colonne des postes cède un peu de place aux montants */
+  .comparateur__poste-head {
+    width: 22%;
+  }
+
+  .comparateur__table th,
+  .comparateur__table td {
+    padding-inline: 10px;
   }
 }
 
