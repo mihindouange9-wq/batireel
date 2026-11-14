@@ -31,7 +31,7 @@ export default function Contact() {
   const id = (champ: string) => `${base}-${champ}`;
   const form = useRef<HTMLFormElement>(null);
 
-  const [profil, setProfil] = useState<Profil>("particulier");
+  const [profil, setProfil] = useState<Profil>(() => (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("profil") === "pro" ? "pro" : "particulier"));
   const [nom, setNom] = useState("");
   const [typeProjet, setTypeProjet] = useState<string>(CONTACT.champs.type.options[0]);
   const [metier, setMetier] = useState<string>(CONTACT.champs.metier.options[0]);
@@ -268,7 +268,7 @@ export default function Contact() {
           </p>
         </form>
 
-        <aside className="contact__apercu" aria-label={CONTACT.apercu} data-reveal data-reveal-delay="0.12">
+        <div className="contact__apercu" role="group" aria-label={CONTACT.apercu} data-reveal data-reveal-delay="0.12">
           <p className="cote cote--plain">{CONTACT.apercu}</p>
           <div className="contact__bulle">
             <p className="contact__bulle-head">
@@ -292,10 +292,10 @@ export default function Contact() {
               {copie ? CONTACT.statut.copie : CONTACT.copier}
             </button>
           )}
-        </aside>
+        </div>
 
         <div className="contact__cartouche">
-          <Cartouche num={10} label="Décrire mon projet" />
+          <Cartouche num={1} total={1} label="Décrire mon projet" />
         </div>
       </div>
     </section>

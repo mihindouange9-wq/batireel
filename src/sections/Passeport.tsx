@@ -78,7 +78,7 @@ export default function Passeport() {
             <p className="passeport__hint">{PASSEPORT.hint}</p>
           </div>
 
-          <article className="passeport__sheet" id="passeport-panel" role="tabpanel" aria-labelledby={`passeport-tab-${etape.id}`}>
+          <div className="passeport__sheet" id="passeport-panel" role="tabpanel" aria-labelledby={`passeport-tab-${etape.id}`}>
             <figure className="passeport__photo" key={etape.id}>
               <img src={etape.photo} srcSet={etape.photoSet} sizes="(max-width: 900px) calc(100vw - 40px), min(62vw, 880px)" alt={etape.photoAlt} width="1400" height="900" loading="lazy" decoding="async" />
               <figcaption className="passeport__stamp">
@@ -126,11 +126,11 @@ export default function Passeport() {
                 </div>
               </div>
             </div>
-          </article>
+          </div>
         </div>
 
         <Note className="passeport__demo">{PASSEPORT.demoNote}</Note>
-        <Cartouche num={4} label="Le Passeport Chantier" />
+        <Cartouche num={1} total={1} label="Le Passeport Chantier" />
       </div>
     </section>
   );

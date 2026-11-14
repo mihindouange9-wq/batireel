@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { Logo } from "../brand/Logo";
 import { NAV, NAV_CTA } from "../content/site";
+import { useRoute } from "../lib/router";
 import "./header.css";
 
 /* En-tête : transparent sur le hero, puis minéral et plus bas au défilement, sans déplacer le contenu.
@@ -10,6 +11,10 @@ export default function Header() {
   const [compact, setCompact] = useState(false);
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
+  const route = useRoute();
+
+  // changement de page : le menu mobile se referme
+  useEffect(() => setOpen(false), [route]);
 
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > 32);
@@ -34,12 +39,12 @@ export default function Header() {
   return (
     <header className={`header ${compact ? "is-compact" : ""} ${open ? "is-open" : ""}`}>
       <div className="header__bar">
-        <a className="header__logo" href="#top" aria-label="BATIRÉEL, retour en haut de page">
+        <a className="header__logo" href="/" aria-label="BATIRÉEL, accueil">
           <Logo size={22} tone="dark" />
         </a>
         <nav className="header__nav" aria-label="Navigation principale">
           {NAV.map((item) => (
-            <a key={item.href} href={item.href} className="header__link">
+            <a key={item.href} href={item.href} className={`header__link ${route === item.href ? "is-current" : ""}`} aria-current={route === item.href ? "page" : undefined}>
               {item.label}
             </a>
           ))}
@@ -68,7 +73,7 @@ export default function Header() {
       <div className="header__menu" id="menu-mobile" hidden={!open}>
         <nav aria-label="Navigation mobile">
           {NAV.map((item, i) => (
-            <a key={item.href} href={item.href} className="header__menu-link" style={{ "--i": i } as React.CSSProperties} onClick={() => setOpen(false)}>
+            <a key={item.href} href={item.href} className="header__menu-link" aria-current={route === item.href ? "page" : undefined} style={{ "--i": i } as React.CSSProperties} onClick={() => setOpen(false)}>
               <span className="header__menu-num tabular">0{i + 1}</span>
               {item.label}
             </a>

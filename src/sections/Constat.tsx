@@ -19,7 +19,7 @@ export default function Constat() {
         </div>
 
         <div className="constat__drawing" data-reveal>
-          <svg viewBox="0 0 560 520" data-draw aria-hidden="true">
+          <svg viewBox="0 0 560 520" data-draw data-parallax="7" aria-hidden="true">
             {/* zone 1 : le devis, trois colonnes qui ne s'alignent pas */}
             <g stroke="currentColor" strokeWidth="1.2" fill="none">
               <path data-stroke d="M40 40H220V200H40Z" />
@@ -88,7 +88,7 @@ export default function Constat() {
         </ol>
 
         <div className="constat__cartouche">
-          <Cartouche num={2} label="Le constat" />
+          <Cartouche num={2} total={5} label="Le constat" />
         </div>
       </div>
     </section>

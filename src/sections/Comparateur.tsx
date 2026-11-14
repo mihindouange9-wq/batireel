@@ -199,7 +199,7 @@ export default function Comparateur() {
           </li>
         </ul>
         <Note>Montants et entreprises inventés pour la démonstration ; aucun tarif réel n'est présenté.</Note>
-        <Cartouche num={5} label="Comparez autrement" />
+        <Cartouche num={1} total={1} label="Comparez autrement" />
       </div>
     </section>
   );

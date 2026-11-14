@@ -21,7 +21,7 @@ export default function Presentation() {
 
         <div className="presentation__grid">
           <div className="presentation__coupe" data-reveal>
-            <svg viewBox="0 0 520 440" data-draw aria-hidden="true">
+            <svg viewBox="0 0 520 440" data-draw data-parallax="7" aria-hidden="true">
               {/* la coupe : trois niveaux, un escalier, le sol */}
               <g stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinejoin="round">
                 <path data-stroke d="M40 400H480" strokeWidth="2" />
@@ -76,7 +76,7 @@ export default function Presentation() {
 
         <ImageReveal className="presentation__image" src={MATIERE.photo} srcSet={MATIERE.photoSet} sizes="(max-width: 900px) calc(100vw - 40px), min(100vw - 128px, 1360px)" width={MATIERE.width} height={MATIERE.height} alt={MATIERE.alt} caption="Du trait à la matière : le ferraillage d'une dalle, photographié sur chantier (banque d'images)." ratio="21 / 9" />
 
-        <Cartouche num={3} label="La présentation" />
+        <Cartouche num={1} total={2} label="La présentation" />
       </div>
       <Marquee text={PRESENTATION.marquee} />
     </section>

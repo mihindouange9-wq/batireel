@@ -67,7 +67,7 @@ export default function Terrain() {
         </div>
 
         <div className="terrain__cartouche">
-          <Cartouche num={8} label="Pensé pour le terrain" scale="1:50 000" />
+          <Cartouche num={2} total={2} label="Pensé pour le terrain" scale="1:50 000" />
         </div>
       </div>
     </section>

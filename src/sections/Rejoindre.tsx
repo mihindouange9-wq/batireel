@@ -22,7 +22,7 @@ export default function Rejoindre() {
             <h3>{REJOINDRE.particuliers.title}</h3>
             <span className="cote">Entrée A</span>
             <p>{REJOINDRE.particuliers.text}</p>
-            <a className="btn btn--primary" href="#contact" data-profil="particulier">
+            <a className="btn btn--primary" href="/projet" data-profil="particulier">
               <span className="btn__label">{REJOINDRE.particuliers.action}</span>
               <span className="btn__arrow" aria-hidden="true" />
             </a>
@@ -31,14 +31,14 @@ export default function Rejoindre() {
             <h3>{REJOINDRE.pros.title}</h3>
             <span className="cote">Entrée B</span>
             <p>{REJOINDRE.pros.text}</p>
-            <a className="btn btn--ghost" href="#contact" data-profil="pro">
+            <a className="btn btn--ghost" href="/projet?profil=pro" data-profil="pro">
               <span className="btn__label">{REJOINDRE.pros.action}</span>
               <span className="btn__arrow" aria-hidden="true" />
             </a>
           </div>
         </div>
 
-        <Cartouche num={9} label="Entrer sur le chantier" />
+        <Cartouche num={5} total={5} label="Entrer sur le chantier" />
       </div>
     </section>
   );

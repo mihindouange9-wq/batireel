@@ -1,0 +1,325 @@
+/* ───────────── Pages intérieures : en-tête de feuille, feuille suivante, volet de transition ───────────── */
+
+.page-head {
+  position: relative;
+  min-height: min(78svh, 760px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding-block: calc(var(--header-h) + clamp(48px, 9vw, 120px)) clamp(48px, 7vw, 96px) !important;
+  background-color: var(--graphite-deep);
+}
+
+.page-head::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(55% 60% at 78% 35%, rgb(184 111 69 / 0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page-head__in {
+  position: relative;
+  z-index: 1;
+}
+
+/* le numéro de feuille, immense et en simple contour, derrière le titre */
+.page-head__num {
+  position: absolute;
+  right: -0.04em;
+  bottom: -0.2em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(14rem, 38vw, 34rem);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-dark-strong);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+.page-head__plan {
+  position: absolute;
+  right: clamp(16px, 7vw, 120px);
+  top: calc(var(--header-h) + 24px);
+  width: min(44vw, 520px);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.page-head__plan path {
+  fill: none;
+  stroke: var(--on-dark-3);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.page-head__plan .page-head__cote {
+  stroke: var(--cuivre-light);
+}
+
+.page-head__plan circle {
+  fill: var(--cuivre);
+}
+
+.page-head__kicker {
+  margin-bottom: clamp(20px, 3vw, 36px);
+}
+
+.page-head__back {
+  color: var(--on-dark);
+  text-decoration: underline;
+  text-decoration-color: var(--cuivre-light);
+  text-underline-offset: 4px;
+  /* zone tactile */
+  display: inline-block;
+  padding-block: 12px;
+  margin-block: -12px;
+}
+
+.page-head__title {
+  display: grid;
+  gap: 0.02em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3.25rem, 10.5vw, 9.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  will-change: transform;
+}
+
+.page-head__line {
+  display: block;
+}
+
+.page-head__line:nth-child(2) {
+  margin-left: clamp(0px, 5vw, 96px);
+  color: var(--cuivre-light);
+}
+
+.page-head__lead {
+  max-width: 46ch;
+  margin-top: clamp(24px, 3.2vw, 44px);
+  color: var(--on-dark-2);
+}
+
+.page-head__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--cuivre);
+}
+
+@media (max-width: 760px) {
+  .page-head {
+    min-height: 0;
+  }
+  .page-head__plan {
+    width: 46vw;
+    right: 16px;
+    opacity: 0.5;
+  }
+  .page-head__num {
+    opacity: 0.35;
+  }
+}
+
+/* ── la feuille suivante ── */
+.page-next {
+  padding-block: 0 !important;
+  border-top: 1px solid var(--line-dark);
+  background: var(--graphite-deep);
+}
+
+.page-next__link {
+  position: relative;
+  display: block;
+  padding-block: clamp(56px, 9vw, 128px);
+  overflow: hidden;
+  color: var(--on-dark);
+}
+
+/* la dalle cuivre qui monte au survol */
+.page-next__link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--cuivre);
+  transform: translateY(101%);
+  transition: transform 0.75s var(--ease-out);
+}
+
+.page-next__link:hover::before,
+.page-next__link:focus-visible::before {
+  transform: translateY(0);
+}
+
+.page-next__in {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 12px clamp(16px, 4vw, 56px);
+}
+
+.page-next__in .cote {
+  grid-column: 1 / -1;
+  transition: color var(--d) var(--ease);
+}
+
+.page-next__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3rem, 10vw, 9rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+  transition:
+    transform 0.75s var(--ease-out),
+    color var(--d) var(--ease);
+}
+
+.page-next__arrow {
+  width: clamp(40px, 6vw, 88px);
+  height: auto;
+  margin-bottom: 0.4em;
+  color: var(--cuivre-light);
+  transition:
+    transform 0.75s var(--ease-out),
+    color var(--d) var(--ease);
+}
+
+.page-next__link:hover .page-next__title,
+.page-next__link:focus-visible .page-next__title {
+  transform: translateX(clamp(8px, 1.6vw, 28px));
+  color: var(--graphite-deep);
+}
+
+.page-next__link:hover .page-next__arrow,
+.page-next__link:focus-visible .page-next__arrow {
+  transform: translate(8px, -8px);
+  color: var(--graphite-deep);
+}
+
+.page-next__link:hover .cote,
+.page-next__link:focus-visible .cote {
+  color: var(--graphite-deep);
+}
+
+.page-next__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 40px;
+  padding-block: clamp(28px, 4vw, 48px);
+  border-top: 1px solid var(--line-dark);
+  color: var(--on-dark-2);
+}
+
+@media (hover: none) {
+  .page-next__link::before {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .page-next__in {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-next__title {
+    font-size: clamp(2.25rem, 11.5vw, 4rem);
+    overflow-wrap: anywhere;
+  }
+  .page-next__arrow {
+    width: 36px;
+    margin: 0;
+  }
+}
+
+/* ── volet de transition entre deux pages ── */
+.volet {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* la position des dalles est posée par GSAP (yPercent) : aucun transform ici, les deux se cumuleraient */
+.volet__dalle {
+  position: absolute;
+  inset: -1px 0;
+  background: var(--graphite-deep);
+}
+
+.volet__dalle--cuivre {
+  background: var(--cuivre);
+}
+
+.volet__in {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  color: var(--on-dark);
+  visibility: hidden;
+}
+
+/* ── jauge de défilement : un trait cuivre en tête d'écran ── */
+.jauge {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 120;
+  height: 2px;
+  pointer-events: none;
+}
+
+.jauge__barre {
+  height: 100%;
+  background: var(--cuivre-light);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ── lueur du pointeur ── */
+.lueur {
+  position: fixed;
+  left: -280px;
+  top: -280px;
+  z-index: 90;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(208 140 98 / 0.13), transparent);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+}
+
+.lueur.is-on {
+  opacity: 1;
+}
+
+/* le contenu principal reçoit le focus après un changement de page, sans cadre */
+main:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lueur,
+  .jauge {
+    display: none;
+  }
+  .page-next__link::before,
+  .page-next__title,
+  .page-next__arrow {
+    transition: none;
+  }
+}

@@ -21,21 +21,81 @@ export const SITE = {
   },
 } as const;
 
+/* Le site tient en six pages : l'accueil pose le problème et montre le chantier qui se monte, chaque
+   démonstration a sa propre page. */
 export const NAV = [
-  { label: "Le constat", href: "#constat" },
-  { label: "Passeport Chantier", href: "#passeport" },
-  { label: "Comparer", href: "#comparer" },
-  { label: "Professionnels", href: "#professionnels" },
-  { label: "Le terrain", href: "#terrain" },
+  { label: "Le concept", href: "/concept" },
+  { label: "Passeport Chantier", href: "/passeport" },
+  { label: "Comparer", href: "/comparateur" },
+  { label: "Professionnels", href: "/professionnels" },
 ] as const;
 
-export const NAV_CTA = { label: "Décrire mon projet", court: "Mon projet", href: "#contact" } as const;
+export const NAV_CTA = { label: "Décrire mon projet", court: "Mon projet", href: "/projet" } as const;
+
+/** En-tête de chaque page intérieure : repère de feuille, titre monumental, phrase d'entrée, page suivante. */
+export const PAGES = {
+  "/": { doc: "BATIRÉEL — Le chantier. Sans zone grise.", nom: "Accueil" },
+  "/concept": {
+    doc: "Le concept — BATIRÉEL",
+    nom: "Le concept",
+    feuille: "02",
+    titre: ["Rendre le chantier", "lisible."],
+    texte: "Le prix, la personne, l'avancement : trois éléments qu'un chantier laisse d'ordinaire dans le flou, réunis sur un même plan.",
+    suivante: "/passeport",
+  },
+  "/passeport": {
+    doc: "Passeport Chantier — BATIRÉEL",
+    nom: "Passeport Chantier",
+    feuille: "03",
+    titre: ["Passeport", "Chantier."],
+    texte: "Étapes, photographies datées, documents et validations rangés dans une seule chronologie. Démonstration sur un chantier fictif.",
+    suivante: "/comparateur",
+  },
+  "/comparateur": {
+    doc: "Comparer les devis — BATIRÉEL",
+    nom: "Comparer",
+    feuille: "04",
+    titre: ["Comparer,", "ligne par ligne."],
+    texte: "Trois devis fictifs pour un même projet, ramenés aux mêmes postes : les écarts apparaissent, les oublis aussi.",
+    suivante: "/professionnels",
+  },
+  "/professionnels": {
+    doc: "Professionnels — BATIRÉEL",
+    nom: "Professionnels",
+    feuille: "05",
+    titre: ["Des métiers,", "des preuves."],
+    texte: "Ce qui a été vérifié est marqué comme tel ; ce qui est déclaré reste une déclaration. Profils fictifs.",
+    suivante: "/projet",
+  },
+  "/projet": {
+    doc: "Décrire mon projet — BATIRÉEL",
+    nom: "Décrire mon projet",
+    feuille: "06",
+    titre: ["Votre projet,", "en quelques lignes."],
+    texte: "Dites-nous ce que vous voulez construire, où, et où vous en êtes. Le message part de votre WhatsApp ; le site n'enregistre rien.",
+    suivante: "/",
+  },
+} as const;
+
+/** Sommaire de l'accueil : une ligne par page, lue comme la nomenclature d'un dossier de plans. */
+export const EXPLORER = {
+  title: "Le dossier, feuille par feuille.",
+  lead: "Chaque démonstration a sa page : ouvrez celle qui répond à votre question du moment.",
+  items: [
+    { href: "/concept", num: "02", label: "Le concept", text: "Ce que BATIRÉEL rend lisible : le prix, la personne, l'avancement.", action: "Lire le concept" },
+    { href: "/passeport", num: "03", label: "Passeport Chantier", text: "Une chronologie datée du chantier, étape par étape.", action: "Ouvrir le passeport" },
+    { href: "/comparateur", num: "04", label: "Comparer les devis", text: "Trois offres ramenées aux mêmes lignes, écarts affichés.", action: "Lancer la comparaison" },
+    { href: "/professionnels", num: "05", label: "Professionnels", text: "Des profils qui séparent le vérifié du déclaré.", action: "Voir les profils" },
+  ],
+} as const;
+
+export const HERO_BANDE = "Comparer · Choisir · Suivre";
 
 export const HERO = {
   title: ["Le chantier.", "Sans zone grise."],
   subtitle: "Comparez les devis. Choisissez les bons professionnels. Suivez l'avancement de vos travaux en toute transparence.",
-  primary: { label: "Découvrir BATIRÉEL", href: "#presentation" },
-  secondary: { label: "Explorer le concept", href: "#constat" },
+  primary: { label: "Découvrir BATIRÉEL", href: "/concept" },
+  secondary: { label: "Décrire mon projet", href: "/projet" },
   cotes: ["Libreville · 0°23′ N, 9°27′ E", "Feuille 01 · échelle 1:100", "Plateforme en conception"],
   scroll: "Descendre sur le chantier",
 } as const;

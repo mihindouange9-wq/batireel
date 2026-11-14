@@ -1,0 +1,142 @@
+/* ───────────── Le sommaire : la nomenclature du dossier, une ligne par page ───────────── */
+.explorer__head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: end;
+  gap: 24px clamp(24px, 6vw, 96px);
+  margin-bottom: clamp(40px, 6vw, 88px);
+}
+
+.explorer__list {
+  list-style: none;
+  margin: 0 0 clamp(40px, 6vw, 80px);
+  padding: 0;
+  border-bottom: 1px solid var(--line-light-strong);
+}
+
+.explorer__item {
+  position: relative;
+}
+
+.explorer__rule {
+  display: block;
+  height: 1px;
+  background: var(--line-light-strong);
+}
+
+.explorer__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1.5fr) minmax(0, 17rem) auto;
+  align-items: center;
+  gap: 8px clamp(16px, 3vw, 48px);
+  padding: clamp(20px, 3vw, 40px) clamp(0px, 1.5vw, 24px);
+  overflow: hidden;
+  color: var(--encre);
+}
+
+/* la dalle graphite qui monte dans la ligne au survol */
+.explorer__row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--graphite);
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.explorer__row > * {
+  position: relative;
+}
+
+.explorer__num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--cuivre-deep);
+  transition: color var(--d) var(--ease);
+}
+
+.explorer__label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.25rem, 5.4vw, 5.25rem);
+  overflow-wrap: anywhere;
+  line-height: 0.95;
+  text-transform: uppercase;
+  will-change: transform;
+  transition: color var(--d) var(--ease);
+}
+
+.explorer__text {
+  font-size: var(--fs-body);
+  color: var(--encre-2);
+  transition: color var(--d) var(--ease);
+}
+
+.explorer__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--encre);
+  transition: color var(--d) var(--ease);
+}
+
+.explorer__action svg {
+  transition: transform 0.6s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .explorer__row:hover::before,
+  .explorer__row:focus-visible::before {
+    transform: scaleY(1);
+  }
+  .explorer__row:hover .explorer__label,
+  .explorer__row:focus-visible .explorer__label,
+  .explorer__row:hover .explorer__action,
+  .explorer__row:focus-visible .explorer__action {
+    color: var(--on-dark);
+  }
+  .explorer__row:hover .explorer__text,
+  .explorer__row:focus-visible .explorer__text {
+    color: var(--on-dark-2);
+  }
+  .explorer__row:hover .explorer__num,
+  .explorer__row:focus-visible .explorer__num {
+    color: var(--cuivre-light);
+  }
+  .explorer__row:hover .explorer__action svg,
+  .explorer__row:focus-visible .explorer__action svg {
+    transform: translate(5px, -5px);
+  }
+}
+
+@media (max-width: 1000px) {
+  .explorer__head {
+    grid-template-columns: 1fr;
+  }
+  .explorer__row {
+    grid-template-columns: 3rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+  .explorer__text,
+  .explorer__action {
+    grid-column: 2;
+  }
+  .explorer__action {
+    min-height: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explorer__row::before,
+  .explorer__action svg {
+    transition: none;
+  }
+}

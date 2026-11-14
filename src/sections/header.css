@@ -68,8 +68,13 @@
 }
 
 .header__link:hover::after,
-.header__link:focus-visible::after {
+.header__link:focus-visible::after,
+.header__link.is-current::after {
   transform: scaleX(1);
+}
+
+.header__link.is-current {
+  color: var(--on-dark);
 }
 
 .header__cta {

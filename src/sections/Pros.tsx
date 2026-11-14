@@ -104,7 +104,7 @@ export default function Pros() {
         </div>
 
         <Note>Profils inventés pour la démonstration : les photographies viennent d'une banque d'images et ne représentent pas ces personnes ni ces entreprises.</Note>
-        <Cartouche num={6} label="Des professionnels, des preuves" />
+        <Cartouche num={1} total={1} label="Des professionnels, des preuves" />
       </div>
     </section>
   );

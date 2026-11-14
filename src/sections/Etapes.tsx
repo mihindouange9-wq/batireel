@@ -156,7 +156,7 @@ export default function Etapes() {
         </div>
 
         <div className="etapes__cartouche">
-          <Cartouche num={7} label="Chaque étape sous contrôle" scale="1:50" />
+          <Cartouche num={3} total={5} label="Chaque étape sous contrôle" scale="1:50" />
         </div>
       </div>
     </section>

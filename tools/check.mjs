@@ -5,7 +5,9 @@ import puppeteer from "puppeteer-core";
 
 const base = process.argv[2] ?? "http://127.0.0.1:5206";
 // l'introduction a son propre test : ici on ouvre le site directement
-const url = base + (base.includes("?") ? "&" : "?") + "nointro";
+const adresse = (chemin = "/") => base.replace(/\/$/, "") + chemin + (chemin.includes("?") ? "&" : "?") + "nointro";
+const PAGES = ["/", "/concept", "/passeport", "/comparateur", "/professionnels", "/projet"];
+const chemin = (page) => page.evaluate(() => location.pathname);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME ?? "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: "new" });
 // le formulaire de contact copie le message dans le presse-papiers : la lecture est autorisée pour le contrôler
@@ -13,7 +15,7 @@ await browser.defaultBrowserContext().overridePermissions(new URL(base).origin, 
 const results = [];
 const ok = (name, pass, detail = "") => results.push(`${pass ? "OK   " : "ÉCHEC"} ${name}${detail ? " — " + detail : ""}`);
 
-async function fresh(w, h, touch = false, reduced = false) {
+async function fresh(w, h, touch = false, reduced = false, route = "/") {
   const page = await browser.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push("pageerror " + e.message));
@@ -21,7 +23,7 @@ async function fresh(w, h, touch = false, reduced = false) {
   page.on("response", (r) => r.status() >= 400 && errors.push(r.status() + " " + r.url()));
   if (reduced) await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
   await page.setViewport({ width: w, height: h, isMobile: touch, hasTouch: touch, deviceScaleFactor: 1 });
-  await page.goto(url, { waitUntil: "networkidle0", timeout: 90000 });
+  await page.goto(adresse(route), { waitUntil: "networkidle0", timeout: 90000 });
   await sleep(2800);
   return { page, errors };
 }
@@ -44,8 +46,14 @@ async function fresh(w, h, touch = false, reduced = false) {
   ok("l'en-tête devient compact au défilement", await page.evaluate(async () => { window.scrollTo(0, 400); await new Promise((r) => setTimeout(r, 900)); return document.querySelector(".header").classList.contains("is-compact"); }));
 
   // Passeport Chantier : onglets au clic et au clavier
-  await page.evaluate(() => window.scrollTo(0, document.querySelector("#passeport").offsetTop - 64));
-  await sleep(2200);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await sleep(500);
+  await page.click('.header__nav a[href="/passeport"]');
+  await sleep(2800);
+  const versPasseport = await page.evaluate(() => ({ chemin: location.pathname, h1: document.querySelectorAll("h1").length, haut: Math.round(scrollY), titre: document.title, volet: getComputedStyle(document.querySelector(".volet")).visibility, courant: document.querySelector('.header__nav a[aria-current="page"]')?.getAttribute("href") }));
+  ok("pages : le lien « Passeport Chantier » ouvre sa page (un h1, haut de page, titre, volet levé, lien actif)", versPasseport.chemin === "/passeport" && versPasseport.h1 === 1 && versPasseport.haut < 5 && versPasseport.titre.startsWith("Passeport") && versPasseport.volet === "hidden" && versPasseport.courant === "/passeport", JSON.stringify(versPasseport));
+  await page.evaluate(() => document.querySelector("#passeport").scrollIntoView());
+  await sleep(1500);
   await page.click('#passeport-tab-finitions');
   await sleep(500);
   const p1 = await page.evaluate(() => ({ titre: document.querySelector("#passeport-panel h3").textContent, alerte: !!document.querySelector(".passeport__alerte"), selected: document.querySelector('[role="tab"][aria-selected="true"]').id }));
@@ -58,8 +66,12 @@ async function fresh(w, h, touch = false, reduced = false) {
   ok("passeport : Début revient à Préparation", (await page.$eval("#passeport-panel h3", (h) => h.textContent)) === "Préparation");
 
   // comparateur : désélection, minimum deux offres, écarts
-  await page.evaluate(() => window.scrollTo(0, document.querySelector("#comparer").offsetTop - 64));
-  await sleep(2200);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await sleep(500);
+  await page.click('.header__nav a[href="/comparateur"]');
+  await sleep(2800);
+  await page.evaluate(() => document.querySelector("#comparer").scrollIntoView());
+  await sleep(1500);
   const cols0 = await page.$$eval(".comparateur__table thead th", (t) => t.length - 1);
   await page.click('.comparateur__pick[aria-pressed="true"]');
   await sleep(300);
@@ -75,20 +87,37 @@ async function fresh(w, h, touch = false, reduced = false) {
   const ecart = await page.$$eval(".comparateur__table tfoot tr:nth-child(2) td", (tds) => tds.map((t) => t.textContent.trim().slice(0, 32)));
   ok("comparateur : l'offre incomplète n'est jamais « la plus basse »", ecart.some((t) => t.startsWith("Incomplète")) && ecart.some((t) => t.startsWith("Offre complète la plus basse")), ecart.join(" | "));
 
-  // navigation par ancre
+  // historique : précédent revient à la page d'avant, la feuille suivante enchaîne, le logo ramène à l'accueil
+  await page.goBack();
+  await sleep(1500);
+  ok("pages : le bouton précédent revient au Passeport Chantier", (await chemin(page)) === "/passeport" && (await page.$("#passeport")) !== null);
+  await page.evaluate(() => document.querySelector(".page-next__link").scrollIntoView({ block: "center" }));
+  await sleep(1200);
+  await page.click(".page-next__link");
+  await sleep(2800);
+  ok("pages : « Feuille suivante » mène au comparateur", (await chemin(page)) === "/comparateur");
+  await page.click(".header__logo");
+  await sleep(2800);
+  ok("pages : le logo ramène à l'accueil, avec son hero", (await chemin(page)) === "/" && (await page.$(".hero")) !== null);
+  const sommaire = await page.$$eval(".explorer__row", (as) => as.map((a) => a.getAttribute("href")));
+  ok("accueil : le sommaire mène aux quatre pages", sommaire.join() === "/concept,/passeport,/comparateur,/professionnels", sommaire.join(", "));
   await page.evaluate(() => window.scrollTo(0, 0));
-  await sleep(600);
-  await page.click('.header__nav a[href="#terrain"]');
+  await sleep(700);
+  await page.click(".hero__scroll");
   await sleep(2600);
-  const landed = await page.evaluate(() => Math.round(document.querySelector("#terrain").getBoundingClientRect().top));
-  ok("navigation : « Le terrain » amène à la section", Math.abs(landed - 64) < 40, `haut à ${landed} px`);
-  ok("navigation : le focus suit l'ancre", await page.evaluate(() => document.activeElement?.id === "terrain"));
+  const landed = await page.evaluate(() => Math.round(document.querySelector("#constat").getBoundingClientRect().top));
+  ok("navigation : « Descendre sur le chantier » amène au constat", Math.abs(landed - 64) < 40, `haut à ${landed} px`);
+  ok("navigation : le focus suit l'ancre", await page.evaluate(() => document.activeElement?.id === "constat"));
   const ctas = await page.$$eval("#rejoindre a.btn", (as) => as.map((a) => a.getAttribute("href")));
-  ok("appel final : les deux boutons mènent au formulaire", ctas.length === 2 && ctas.every((h) => h === "#contact"), ctas.join(", "));
+  ok("appel final : les deux boutons mènent au formulaire", ctas.length === 2 && ctas.every((h) => h.startsWith("/projet")), ctas.join(", "));
 
   // formulaire « Décrire mon projet » : étiquettes, validation, aperçu, copie, profil choisi depuis l'appel final
-  await page.evaluate(() => window.scrollTo(0, document.querySelector("#contact").offsetTop - 64));
-  await sleep(2000);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await sleep(600);
+  await page.click(".header__cta");
+  await sleep(2800);
+  await page.evaluate(() => document.querySelector("#contact").scrollIntoView());
+  await sleep(1500);
   const sansEtiquette = await page.$$eval("#contact input, #contact select, #contact textarea", (els) => els.filter((el) => !el.labels?.length && !el.getAttribute("aria-label")).length);
   ok("contact : chaque champ a une étiquette", sansEtiquette === 0, `${sansEtiquette} sans étiquette`);
   await page.click(".contact__envoyer");
@@ -112,19 +141,33 @@ async function fresh(w, h, touch = false, reduced = false) {
     const presse = await page.evaluate(() => navigator.clipboard.readText().catch(() => ""));
     ok("contact : sans numéro, l'envoi copie le message prêt à envoyer", presse.startsWith("Bonjour BATIRÉEL") && presse.includes("Envoyé depuis le site BATIRÉEL"), JSON.stringify(presse.slice(0, 40)));
   }
-  await page.evaluate(() => window.scrollTo(0, document.querySelector("#rejoindre").offsetTop - 64));
-  await sleep(1500);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await sleep(500);
+  await page.click(".header__logo");
+  await sleep(2800);
+  await page.evaluate(() => document.querySelector("#rejoindre").scrollIntoView({ block: "center" }));
+  await sleep(1800);
   await page.click('#rejoindre a[data-profil="pro"]');
-  await sleep(2600);
-  const pro = await page.evaluate(() => ({ profil: document.querySelector('#contact input[name="profil"]:checked')?.value, metier: !!document.querySelector('#contact select[name="metier"]'), haut: Math.round(document.querySelector("#contact").getBoundingClientRect().top) }));
-  ok("contact : « Présenter mon activité » ouvre le formulaire en profil professionnel", pro.profil === "pro" && pro.metier && Math.abs(pro.haut - 64) < 60, JSON.stringify(pro));
+  await sleep(2800);
+  const pro = await page.evaluate(() => ({ chemin: location.pathname, profil: document.querySelector('#contact input[name="profil"]:checked')?.value, metier: !!document.querySelector('#contact select[name="metier"]') }));
+  ok("contact : « Présenter mon activité » ouvre le formulaire en profil professionnel", pro.chemin === "/projet" && pro.profil === "pro" && pro.metier, JSON.stringify(pro));
   ok("aucune erreur console (ordinateur)", errors.length === 0, errors.join(" | "));
   await page.close();
 }
 
-// ── Débordements à cinq largeurs
-for (const w of [1600, 1280, 768, 390, 320]) {
-  const { page, errors } = await fresh(w, 900, w < 800);
+// ── Adresse directe et adresse inconnue
+{
+  const { page } = await fresh(1280, 900, false, false, "/professionnels");
+  ok("adresse directe : /professionnels s'ouvre sur sa page", (await page.$("#professionnels")) !== null && (await page.$$eval("h1", (h) => h.length)) === 1);
+  await page.close();
+  const autre = await fresh(1280, 900, false, false, "/inconnue");
+  ok("adresse inconnue : l'accueil s'affiche", (await autre.page.$(".hero")) !== null);
+  await autre.page.close();
+}
+
+// ── Débordements : chaque page à quatre largeurs
+for (const route of PAGES) for (const w of [1600, 768, 390, 320]) {
+  const { page, errors } = await fresh(w, 900, w < 800, false, route);
   const over = await page.evaluate(async () => {
     const steps = 10;
     for (let i = 0; i <= steps; i++) {
@@ -138,34 +181,34 @@ for (const w of [1600, 1280, 768, 390, 320]) {
     }).length;
     return { sw, out };
   });
-  ok(`${w} px : pas de défilement horizontal`, over.sw <= 0, `${over.sw} px`);
-  ok(`${w} px : aucun élément hors écran`, over.out === 0, `${over.out} éléments`);
-  ok(`${w} px : aucune erreur console`, errors.length === 0, errors.join(" | "));
+  ok(`${route} à ${w} px : pas de défilement horizontal`, over.sw <= 0, `${over.sw} px`);
+  ok(`${route} à ${w} px : aucun élément hors écran`, over.out === 0, `${over.out} éléments`);
+  ok(`${route} à ${w} px : aucune erreur console`, errors.length === 0, errors.join(" | "));
   await page.close();
 }
 
 // ── Mobile : menu et cibles tactiles
 {
   const { page } = await fresh(390, 844, true);
+  const mobile3d = await page.evaluate(() => ({ canvas: document.querySelectorAll(".hero__stage canvas").length, dessin: document.querySelectorAll(".hero__drawing").length, module: performance.getEntriesByType("resource").some((e) => /trois-/.test(e.name)) }));
+  ok("mobile : le dessin remplace la scène 3D et le module 3D n'est pas chargé", mobile3d.canvas === 0 && mobile3d.dessin === 1 && !mobile3d.module, JSON.stringify(mobile3d));
   await page.tap(".header__toggle");
   await sleep(700);
   const menu = await page.evaluate(() => ({ expanded: document.querySelector(".header__toggle").getAttribute("aria-expanded"), links: [...document.querySelectorAll("#menu-mobile a")].filter((a) => a.offsetParent).length }));
-  ok("menu mobile : ouvert, six liens", menu.expanded === "true" && menu.links === 6, JSON.stringify(menu));
+  ok("menu mobile : ouvert, cinq liens", menu.expanded === "true" && menu.links === 5, JSON.stringify(menu));
   await page.keyboard.press("Escape");
   await sleep(400);
   ok("menu mobile : Échap le referme", (await page.$eval(".header__toggle", (b) => b.getAttribute("aria-expanded"))) === "false");
   await page.tap(".header__toggle");
   await sleep(600);
-  await page.tap('#menu-mobile a[href="#comparer"]');
-  await sleep(1500);
-  ok("menu mobile : se referme après un choix", (await page.$eval(".header__toggle", (b) => b.getAttribute("aria-expanded"))) === "false");
+  await page.tap('#menu-mobile a[href="/comparateur"]');
+  await sleep(2800);
+  ok("menu mobile : se referme après un choix et ouvre la page", (await page.$eval(".header__toggle", (b) => b.getAttribute("aria-expanded"))) === "false" && (await chemin(page)) === "/comparateur");
   const small = await page.evaluate(() => [...document.querySelectorAll("a, button")]
     .filter((el) => el.offsetParent)
     .map((el) => ({ t: (el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 28), h: Math.round(el.getBoundingClientRect().height), w: Math.round(el.getBoundingClientRect().width) }))
     .filter((e) => e.h < 40 && e.w < 40));
   ok("cibles tactiles d'au moins 40 px", small.length === 0, JSON.stringify(small));
-  const mobile3d = await page.evaluate(() => ({ canvas: document.querySelectorAll(".hero__stage canvas").length, dessin: document.querySelectorAll(".hero__drawing").length, module: performance.getEntriesByType("resource").some((e) => /trois-/.test(e.name)) }));
-  ok("mobile : le dessin remplace la scène 3D et le module 3D n'est pas chargé", mobile3d.canvas === 0 && mobile3d.dessin === 1 && !mobile3d.module, JSON.stringify(mobile3d));
   const fiche = await page.evaluate(() => {
     const row = document.querySelector(".comparateur__table tbody tr");
     const tds = [...row.querySelectorAll("td")];

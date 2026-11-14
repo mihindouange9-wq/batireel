@@ -128,11 +128,21 @@ export function setupReveals(scope: HTMLElement) {
   );
   rules.forEach((el) => ruleObserver.observe(el));
 
+  // parallaxe : `data-parallax="7"` fait glisser l'élément de +7 % à −7 % de sa hauteur pendant sa traversée de l'écran
+  const parallax = gsap.utils.toArray<HTMLElement>("[data-parallax]", scope).map((el) => {
+    const k = parseFloat(el.dataset.parallax || "6");
+    return gsap.fromTo(el, { yPercent: k }, { yPercent: -k, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 0.6 } });
+  });
+
   return () => {
     titleObserver.disconnect();
     observer.disconnect();
     drawObserver.disconnect();
     ruleObserver.disconnect();
+    parallax.forEach((t) => {
+      t.scrollTrigger?.kill();
+      t.kill();
+    });
   };
 }
 

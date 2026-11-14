@@ -105,6 +105,8 @@ export default function Hero() {
         },
       });
       gsap.to(scope.querySelector(".hero__copy"), { yPercent: -10, ease: "none", scrollTrigger: { trigger: scope, start: "top top", end: "bottom top", scrub: 0.6 } });
+      // les deux lignes du titre s'écartent, comme deux dalles qu'on fait glisser
+      if (window.innerWidth >= 900) lines.forEach((l, i) => gsap.to(l, { xPercent: i % 2 ? 7 : -5, ease: "none", scrollTrigger: { trigger: scope, start: "top top", end: "bottom top", scrub: 0.6 } }));
 
       // le pointeur incline la composition, sans jamais bloquer les interactions natives
       const onMove = (e: PointerEvent) => {
@@ -171,7 +173,7 @@ export default function Hero() {
             </li>
           ))}
         </ul>
-        <a className="hero__scroll" href="#constat">
+        <a className="hero__scroll" href="/#constat">
           <ArrowDown size={16} strokeWidth={2} aria-hidden="true" />
           {HERO.scroll}
         </a>
